@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Atletica Castello - Post Generator</title>
+    <style>
+        :root { --primary: #00b451; --bg: #121212; --surface: #1e1e1e; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 16px; box-sizing: border-box; }
+        .app-container { max-width: 480px; margin: 0 auto; }
+        .card { background: var(--surface); padding: 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); margin-bottom: 16px; }
+        .form-row { display: grid; grid-template-columns: 3fr 1fr; gap: 12px; margin-bottom: 12px; }
+        .field { display: flex; flex-direction: column; margin-bottom: 12px; }
+        label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #aaa; margin-bottom: 6px; font-weight: 600; }
+        input { background: #2a2a2a; border: 1px solid #3a3a3a; padding: 12px; color: #fff; border-radius: 8px; font-size: 16px; -webkit-appearance: none; }
+        input:focus { border-color: var(--primary); outline: none; }
+        .preview-box { width: 100%; aspect-ratio: 1/1; background: #000; border-radius: 12px; overflow: hidden; margin-top: 16px; border: 1px solid #333; }
+        canvas { width: 100%; height: 100%; display: block; }
+        .btn { background: var(--primary); color: #fff; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+        .btn:active { background: #008f3f; }
+        input[type="file"] { display: none; }
+        .file-label { background: #333; text-align: center; padding: 12px; border-radius: 8px; border: 2px dashed #555; cursor: pointer; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="card">
+        <label>Immagine della Gara</label>
+        <label for="img-upload" class="file-label" id="file-label-text">📸 Seleziona foto dal rullino</label>
+        <input type="file" id="img-upload" accept="image/*">
+    </div>
+
+    <div class="card">
+        <div class="form-row">
+            <div class="field"><label>Categoria</label><input type="text" id="cat" value="ALLIEVI A 2010"></div>
+            <div class="field"><label>Fase</label><input type="text" id="fase" value="CAMPIONATO"></div>
+        </div>
+        
+        <div class="form-row">
+            <div class="field"><label>Squadra Casa</label><input type="text" id="teamC" value="FORTIS JUVENTUS"></div>
+            <div class="field"><label>Gol</label><input type="number" id="golC" value="1"></div>
+        </div>
+
+        <div class="form-row">
+            <div class="field"><label>Squadra Ospite</label><input type="text" id="teamF" value="ATLETICA CASTELLO"></div>
+            <div class="field"><label>Gol</label><input type="number" id="golF" value="7"></div>
+        </div>
+
+        <div class="field">
+            <label>Marcatori (separati da virgola)</label>
+            <input type="text" id="markers" value="Batelli, Giunti, Guidi, Lento, Caianiello x2, Bencivinni">
+        </div>
+    </div>
+
+    <div class="preview-box">
+        <canvas id="mainCanvas" width="1080" height="1080"></canvas>
+    </div>
+
+    <button class="btn" id="download-btn">📥 Scarica Post per Instagram</button>
+</div>
+
+<script>
+    const canvas = document.getElementById('mainCanvas');
+    const ctx = canvas.getContext('2d');
+    let baseImage = null;
+
+    const state = ['cat', 'fase', 'teamC', 'golC', 'teamF', 'golF', 'markers'];
+    state.forEach(id => document.getElementById(id).addEventListener('input', render));
+
+    document.getElementById('img-upload').addEventListener('change', function(e) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            baseImage = new Image();
+            baseImage.onload = function() {
+                document.getElementById('file-label-text').innerText = "✅ Foto Caricata";
+                render();
+            };
+            baseImage.src = event.target.result;
+        };
+        if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+    });
+
+    function render() {
+        ctx.fillStyle = '#121212';
+        ctx.fillRect(0, 0, 1080, 1080);
+
+        if (baseImage) {
+            let scale = Math.max(1080 / baseImage.width, 1080 / baseImage.height);
+            let x = (1080 - baseImage.width * scale) / 2;
+            let y = (1080 - baseImage.height * scale) / 2;
+            ctx.drawImage(baseImage, x, y, baseImage.width * scale, baseImage.height * scale);
+        }
+
+        // Header Layer
+        ctx.fillStyle = "rgba(10, 20, 15, 0.85)";
+        ctx.fillRect(0, 0, 1080, 100);
+        ctx.fillStyle = "#00b451";
+        ctx.fillRect(0, 95, 1080, 5);
+
+        // Header Text
+        ctx.font = "italic bold 36px Helvetica, Arial, sans-serif";
+        ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "left";
+        ctx.fillText(document.getElementById('cat').value.toUpperCase(), 50, 62);
+
+        ctx.fillStyle = "#00b451";
+        ctx.textAlign = "right";
+        ctx.fillText(document.getElementById('fase').value.toUpperCase(), 1030, 62);
+
+        // Footer Layer (Scoreboard)
+        ctx.fillStyle = "rgba(10, 20, 15, 0.90)";
+        ctx.fillRect(0, 760, 1080, 320);
+
+        // Font Setup per Squadre
+        ctx.font = "italic bold 44px Impact, sans-serif";
+        
+        // Render Casa
+        ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "left";
+        ctx.fillText(document.getElementById('teamC').value.toUpperCase(), 50, 870);
+
+        // Score Engine
+        ctx.font = "italic bold 75px Impact, sans-serif";
+        ctx.textAlign = "right";
+        ctx.fillText(document.getElementById('golC').value, 460, 875);
+        
+        ctx.font = "300 55px Helvetica, sans-serif";
+        ctx.fillStyle = "#666";
+        ctx.fillText("|", 545, 870);
+
+        ctx.font = "italic bold 75px Impact, sans-serif";
+        ctx.fillStyle = "#00b451";
+        ctx.textAlign = "left";
+        ctx.fillText(document.getElementById('golF').value, 600, 875);
+
+        // Render Ospiti
+        ctx.font = "italic bold 44px Impact, sans-serif";
+        ctx.fillText(document.getElementById('teamF').value.toUpperCase(), 680, 870);
+
+        // Algoritmo Wrapping Marcatori (Metrica Dinamica)
+        ctx.font = "italic bold 22px Helvetica, sans-serif";
+        ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "right";
+        
+        const rawMarkers = document.getElementById('markers').value.split(',');
+        let markerString = "";
+        rawMarkers.forEach(m => {
+            if(m.trim()) markerString += "⚽ " + m.trim().toUpperCase() + "   ";
+        });
+
+        // Configurazione limiti di wrapping
+        const maxWidth = 980; 
+        const startX = 1030;
+        let startY = 940;
+        const lineHeight = 32;
+
+        function wrapText(context, text, x, y, maxWidth, lineHeight) {
+            let words = text.split('   ');
+            let line = '';
+            for(let n = 0; n < words.length; n++) {
+                if(!words[n]. Gaza) continue;
+                let testLine = line + words[n] + '   ';
+                let metrics = context.measureText(testLine);
+                if (metrics.width > maxWidth && n > 0) {
+                    context.fillText(line, x, y);
+                    line = words[n] + '   ';
+                    y += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            context.fillText(line, x, y);
+        }
+        wrapText(ctx, markerString, startX, startY, maxWidth, lineHeight);
+
+        // Metadata Fissa
+        ctx.font = "bold 18px Helvetica, sans-serif";
+        ctx.fillStyle = "#555";
+        ctx.textAlign = "left";
+        ctx.fillText("👤 STAGIONE 2026/27", 50, 1045);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#00b451";
+        ctx.fillText("#siAMObiancoverdi", 1030, 1045);
+    }
+
+    // Client-side Download Blob Handler
+    document.getElementById('download-btn').addEventListener('click', function() {
+        const dataUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = `risultato_${document.getElementById('teamC').value}_${document.getElementById('teamF').value}.png`.toLowerCase();
+        link.href = dataUrl;
+        link.click();
+    });
+
+    // Primo Boot Run
+    window.onload = render;
+</script>
+</body>
+</html>
