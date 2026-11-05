@@ -133,6 +133,50 @@
       box-shadow: 0 2px 10px rgba(37, 174, 63, 0.4);
     }
 
+    /* Struttura ad albero per Macro-Categorie */
+    .tree-macro-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: rgba(11, 135, 49, 0.14);
+      border: 1px solid rgba(37, 174, 63, 0.35);
+      color: #F7F8F1;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.73rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .tree-macro-btn:hover {
+      background: rgba(37, 174, 63, 0.25);
+      border-color: #25AE3F;
+    }
+
+    .tree-macro-btn.open {
+      background: rgba(37, 174, 63, 0.28);
+      border-color: #25AE3F;
+      color: #FFFFFF;
+    }
+
+    .tree-children {
+      display: none;
+      padding: 8px 6px 4px 14px;
+      margin-left: 10px;
+      border-left: 2px solid rgba(37, 174, 63, 0.45);
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tree-children.open {
+      display: flex;
+    }
+
     /* Tag marcatore aggiunto */
     .scorer-pill {
       display: inline-flex;
@@ -289,76 +333,100 @@
           id="resetAllBtn"
           type="button"
           class="text-[11px] font-bold text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-2.5 py-1.5 rounded-lg border border-white/15 transition"
-          title="Ripristina i valori predefiniti"
         >
           Ripristina
         </button>
       </div>
 
-      <!-- 1. Caricamento Foto Partita -->
-      <div class="bg-[#041B0F]/75 border border-[#0B8731]/40 rounded-xl p-3.5">
-        <label class="field-label !mb-2">1. Foto della Partita</label>
+      <!-- 1. Foto della Partita -->
+      <div>
+        <label class="field-label">1. Foto della Partita (Sfondo)</label>
         <label for="bgImageInput" class="upload-dropzone block">
           <input type="file" id="bgImageInput" accept="image/*" class="hidden" />
           <div class="flex flex-col items-center gap-1">
             <svg class="w-6 h-6 text-[#25AE3F]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span class="text-xs font-extrabold text-[#F7F8F1]">TOCCA PER CARICARE LA FOTO</span>
-            <span id="bgFileName" class="text-[11px] text-emerald-300/80 font-medium">
-              Usa gli slider sopra l'anteprima o 2 dita sulla foto per fare zoom/spostare
+            <span class="text-xs font-extrabold text-[#F7F8F1]" id="bgFileName">
+              Tocca per caricare la foto della partita
+            </span>
+            <span class="text-[11px] text-gray-400">
+              Pizzica con 2 dita sulla foto per fare zoom o usa gli slider sopra l'anteprima
             </span>
           </div>
         </label>
       </div>
 
-      <!-- 2. Categoria + Suggerimenti Cliccabili divisi per Macro-Categorie -->
+      <!-- 2. Categoria + Albero Esplorabile per Macro-Categorie -->
       <div>
         <label for="categoriaInput" class="field-label">2. Categoria (In alto a sinistra)</label>
-        <input type="text" id="categoriaInput" class="sport-input" value="" placeholder="" />
-        <div class="mt-2.5 space-y-2 bg-[#041B0F]/65 border border-[#0B8731]/35 rounded-xl p-2.5" id="categoriaChips">
-          <!-- Macro: PRIMA SQUADRA (Menu a tendina) -->
-          <div>
-            <label class="block text-[10px] font-black uppercase tracking-wider text-emerald-400/75 mb-1 select-none" for="macroPrimaSquadraSelect">PRIMA SQUADRA</label>
-            <select id="macroPrimaSquadraSelect" class="sport-input !py-1.5 !text-xs macro-dropdown" data-macro="PRIMA SQUADRA">
-              <option value="" disabled selected>-- Seleziona Categoria --</option>
-              <option value="PRIMA SQUADRA">PRIMA SQUADRA</option>
-            </select>
+        <input type="text" id="categoriaInput" class="sport-input" value="" placeholder="Scrivi categoria o esplora le macro-categorie sotto..." />
+        <div class="mt-2 space-y-1.5 bg-[#041B0F]/65 border border-[#0B8731]/35 rounded-xl p-2.5" id="categoriaTree">
+          <!-- Nodo Albero 1: PRIMA SQUADRA -->
+          <div class="tree-node">
+            <button type="button" class="tree-macro-btn" data-macro="PRIMA SQUADRA" data-gara="SECONDA CATEGORIA">
+              <span class="flex items-center gap-2">
+                <span class="tree-arrow text-[#25AE3F] text-xs transition-transform">▸</span>
+                <span>PRIMA SQUADRA</span>
+              </span>
+              <span class="text-[10px] font-bold text-emerald-300/70">1 cat.</span>
+            </button>
+            <div class="tree-children">
+              <button type="button" class="quick-chip cat-leaf" data-value="PRIMA SQUADRA" data-gara="SECONDA CATEGORIA">PRIMA SQUADRA</button>
+            </div>
           </div>
-          <!-- Macro: SETTORE GIOVANILE (Menu a tendina) -->
-          <div class="pt-1.5 border-t border-emerald-900/40">
-            <label class="block text-[10px] font-black uppercase tracking-wider text-emerald-400/75 mb-1 select-none" for="macroSettoreGiovanileSelect">SETTORE GIOVANILE</label>
-            <select id="macroSettoreGiovanileSelect" class="sport-input !py-1.5 !text-xs macro-dropdown" data-macro="SETTORE GIOVANILE">
-              <option value="" disabled selected>-- Seleziona Categoria --</option>
-              <option value="JUNIORES">JUNIORES</option>
-              <option value="ALLIEVI A 2010">ALLIEVI A 2010</option>
-              <option value="ALLIEVI B 2011">ALLIEVI B 2011</option>
-              <option value="GIOVANISSIMI A 2012">GIOVANISSIMI A 2012</option>
-              <option value="GIOVANISSIMI B 2013">GIOVANISSIMI B 2013</option>
-            </select>
+
+          <!-- Nodo Albero 2: SETTORE GIOVANILE -->
+          <div class="tree-node">
+            <button type="button" class="tree-macro-btn" data-macro="SETTORE GIOVANILE" data-gara="CAMPIONATO">
+              <span class="flex items-center gap-2">
+                <span class="tree-arrow text-[#25AE3F] text-xs transition-transform">▸</span>
+                <span>SETTORE GIOVANILE</span>
+              </span>
+              <span class="text-[10px] font-bold text-emerald-300/70">5 cat.</span>
+            </button>
+            <div class="tree-children">
+              <button type="button" class="quick-chip cat-leaf" data-value="JUNIORES" data-gara="CAMPIONATO">JUNIORES</button>
+              <button type="button" class="quick-chip cat-leaf" data-value="ALLIEVI A 2010" data-gara="CAMPIONATO">ALLIEVI A 2010</button>
+              <button type="button" class="quick-chip cat-leaf" data-value="ALLIEVI B 2011" data-gara="CAMPIONATO">ALLIEVI B 2011</button>
+              <button type="button" class="quick-chip cat-leaf" data-value="GIOVANISSIMI A 2012" data-gara="CAMPIONATO">GIOVANISSIMI A 2012</button>
+              <button type="button" class="quick-chip cat-leaf" data-value="GIOVANISSIMI B 2013" data-gara="CAMPIONATO">GIOVANISSIMI B 2013</button>
+            </div>
           </div>
-          <!-- Macro: ESORDIENTI (Menu a tendina) -->
-          <div class="pt-1.5 border-t border-emerald-900/40">
-            <label class="block text-[10px] font-black uppercase tracking-wider text-emerald-400/75 mb-1 select-none" for="macroEsordientiSelect">ESORDIENTI</label>
-            <select id="macroEsordientiSelect" class="sport-input !py-1.5 !text-xs macro-dropdown" data-macro="ESORDIENTI">
-              <option value="" disabled selected>-- Seleziona Categoria --</option>
-              <option value="ESORDIENTI 2014">ESORDIENTI 2014</option>
-              <option value="ESORDIENTI MISTI 2014/15">ESORDIENTI MISTI 2014/15</option>
-              <option value="ESORDIENTI 2015">ESORDIENTI 2015</option>
-            </select>
+
+          <!-- Nodo Albero 3: ESORDIENTI -->
+          <div class="tree-node">
+            <button type="button" class="tree-macro-btn" data-macro="ESORDIENTI" data-gara="RISULTATO FIGC">
+              <span class="flex items-center gap-2">
+                <span class="tree-arrow text-[#25AE3F] text-xs transition-transform">▸</span>
+                <span>ESORDIENTI</span>
+              </span>
+              <span class="text-[10px] font-bold text-emerald-300/70">3 cat.</span>
+            </button>
+            <div class="tree-children">
+              <button type="button" class="quick-chip cat-leaf" data-value="ESORDIENTI 2014" data-gara="RISULTATO FIGC">ESORDIENTI 2014</button>
+              <button type="button" class="quick-chip cat-leaf" data-value="ESORDIENTI MISTI 2014/15" data-gara="RISULTATO FIGC">ESORDIENTI MISTI 2014/15</button>
+              <button type="button" class="quick-chip cat-leaf" data-value="ESORDIENTI 2015" data-gara="RISULTATO FIGC">ESORDIENTI 2015</button>
+            </div>
           </div>
-          <!-- Macro: PULCINI E PRIMI CALCI (Menu a tendina) -->
-          <div class="pt-1.5 border-t border-emerald-900/40">
-            <label class="block text-[10px] font-black uppercase tracking-wider text-emerald-400/75 mb-1 select-none" for="macroPulciniPrimiCalciSelect">PULCINI E PRIMI CALCI</label>
-            <select id="macroPulciniPrimiCalciSelect" class="sport-input !py-1.5 !text-xs macro-dropdown" data-macro="PULCINI e PRIMI CALCI">
-              <option value="" disabled selected>-- Seleziona Categoria --</option>
-              <option value="PULCINI 2016">PULCINI 2016</option>
-              <option value="PULCINI MISTI 2016/2017">PULCINI MISTI 2016/2017</option>
-              <option value="PULCINI 2017">PULCINI 2017</option>
-              <option value="PRIMI CALCI 2018">PRIMI CALCI 2018</option>
-              <option value="PRIMI CALCI MISTI 2018/19">PRIMI CALCI MISTI 2018/19</option>
-              <option value="PRIMI CALCI 2019">PRIMI CALCI 2019</option>
-            </select>
+
+          <!-- Nodo Albero 4: PULCINI E PRIMI CALCI -->
+          <div class="tree-node">
+            <button type="button" class="tree-macro-btn" data-macro="PULCINI E PRIMI CALCI" data-gara="RISULTATO FIGC">
+              <span class="flex items-center gap-2">
+                <span class="tree-arrow text-[#25AE3F] text-xs transition-transform">▸</span>
+                <span>PULCINI E PRIMI CALCI</span>
+              </span>
+              <span class="text-[10px] font-bold text-emerald-300/70">6 cat.</span>
+            </button>
+            <div class="tree-children">
+              <button type="button" class="quick-chip cat-leaf" data-value="PULCINI 2016" data-gara="RISULTATO FIGC">PULCINI 2016</button>
+              <button type="button" class="quick-chip cat-leaf" data-value="PULCINI MISTI 2016/2017" data-gara="RISULTATO FIGC">PULCINI MISTI 2016/2017</button>
+              <button type="button" class="quick-chip cat-leaf" data-value="PULCINI 2017" data-gara="RISULTATO FIGC">PULCINI 2017</button>
+              <button type="button" class="quick-chip cat-leaf" data-value="PRIMI CALCI 2018" data-gara="RISULTATO FIGC">PRIMI CALCI 2018</button>
+              <button type="button" class="quick-chip cat-leaf" data-value="PRIMI CALCI MISTI 2018/19" data-gara="RISULTATO FIGC">PRIMI CALCI MISTI 2018/19</button>
+              <button type="button" class="quick-chip cat-leaf" data-value="PRIMI CALCI 2019" data-gara="RISULTATO FIGC">PRIMI CALCI 2019</button>
+            </div>
           </div>
         </div>
       </div>
@@ -366,7 +434,7 @@
       <!-- 3. Tipo Gara + Suggerimenti Cliccabili -->
       <div>
         <label for="tipoGaraInput" class="field-label">3. Tipo Gara (In alto a destra)</label>
-        <input type="text" id="tipoGaraInput" class="sport-input !text-[#25AE3F]" value="CAMPIONATO" placeholder="Es. CAMPIONATO" />
+        <input type="text" id="tipoGaraInput" class="sport-input !text-[#25AE3F]" value="" placeholder="CAMPIONATO" />
         <div class="flex flex-wrap gap-1.5 mt-2" id="tipoGaraChips">
           <button type="button" class="quick-chip" data-value="SECONDA CATEGORIA">SECONDA CATEGORIA</button>
           <button type="button" class="quick-chip active" data-value="CAMPIONATO">CAMPIONATO</button>
@@ -378,7 +446,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
         <div class="sm:col-span-6">
           <label for="ospiteInput" class="field-label">4. Squadra Avversaria</label>
-          <input type="text" id="ospiteInput" class="sport-input" value="" placeholder="" />
+          <input type="text" id="ospiteInput" class="sport-input" value="" placeholder="Scrivi squadra avversaria..." />
         </div>
         <div class="grid grid-cols-2 gap-2.5 sm:col-span-6">
           <div>
@@ -607,14 +675,34 @@
           </select>
         </div>
 
-        <button id="downloadBtn" type="button" class="btn-download">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-          </svg>
-          SCARICA GRAFICA (PNG)
-        </button>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <button id="downloadBtn" type="button" class="btn-download flex-1">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            SCARICA GRAFICA (PNG)
+          </button>
+
+          <button
+            id="iosShareBtn"
+            type="button"
+            class="hidden px-4 py-3 rounded-xl font-extrabold text-xs uppercase bg-[#004B20] hover:bg-[#0B8731] text-white border border-[#25AE3F]/60 transition items-center justify-center gap-2 shrink-0"
+            title="Salva direttamente nel Rullino Foto di iPhone o condividi su WhatsApp/Instagram"
+          >
+            <span>📱 Salva in Foto / Condividi</span>
+          </button>
+        </div>
 
         <p id="statusFeedback" class="text-center text-[11px] text-[#25AE3F] font-bold min-h-[16px] -mt-1"></p>
+
+        <!-- Box di salvataggio rapido per Safari iOS (compare se Safari blocca il download diretto) -->
+        <div id="safariPreviewFallbackBox" class="hidden bg-[#072013] border border-[#25AE3F] rounded-xl p-3 text-center">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-extrabold text-[#F7F8F1]">📲 Su iPhone/Safari: tieni premuto sull'immagine qui sotto e scegli "Salva su Foto"</span>
+            <button type="button" id="closeSafariPreviewBtn" class="text-xs font-black text-gray-300 hover:text-white px-2 py-0.5 rounded bg-black/40">✕</button>
+          </div>
+          <img id="safariFallbackImg" alt="Anteprima Post Partita" class="w-48 h-48 mx-auto rounded-lg border border-white/30 shadow-lg object-contain" />
+        </div>
       </div>
     </section>
 
@@ -739,6 +827,10 @@
       const resetAllBtn = document.getElementById('resetAllBtn');
       const exportResolutionSelect = document.getElementById('exportResolutionSelect');
       const downloadBtn = document.getElementById('downloadBtn');
+      const iosShareBtn = document.getElementById('iosShareBtn');
+      const safariPreviewFallbackBox = document.getElementById('safariPreviewFallbackBox');
+      const safariFallbackImg = document.getElementById('safariFallbackImg');
+      const closeSafariPreviewBtn = document.getElementById('closeSafariPreviewBtn');
       const statusFeedback = document.getElementById('statusFeedback');
 
       // Stato interno dell'applicazione
@@ -811,10 +903,28 @@
         const svgDataUrl = getDefaultSvgDataUrl();
         const svgImg = new Image();
         svgImg.onload = function () {
-          state.logoImage = svgImg;
-          state.logoDataUrl = svgDataUrl;
-          updateLogoUIStatus('⚠️ SVG di fallback (file non caricato)', false);
-          renderCanvas();
+          // Rasterizza subito l'SVG in un PNG offscreen per evitare bug di WebKit/Safari durante toDataURL/toBlob
+          try {
+            const offCanvas = document.createElement('canvas');
+            offCanvas.width = 768;
+            offCanvas.height = 1110;
+            const offCtx = offCanvas.getContext('2d');
+            offCtx.drawImage(svgImg, 0, 0, 768, 1110);
+            const rasterPngUrl = offCanvas.toDataURL('image/png');
+            const rasterImg = new Image();
+            rasterImg.onload = function () {
+              state.logoImage = rasterImg;
+              state.logoDataUrl = rasterPngUrl;
+              updateLogoUIStatus('⚠️ SVG di fallback (file non caricato)', false);
+              renderCanvas();
+            };
+            rasterImg.src = rasterPngUrl;
+          } catch (e) {
+            state.logoImage = svgImg;
+            state.logoDataUrl = svgDataUrl;
+            updateLogoUIStatus('⚠️ SVG di fallback (file non caricato)', false);
+            renderCanvas();
+          }
         };
         svgImg.src = svgDataUrl;
       }
@@ -1103,12 +1213,12 @@
           targetCtx.fillText(categoriaText, 118, 46);
         }
 
-        const tipoGaraText = (tipoGaraInput.value || 'CAMPIONATO').trim().toUpperCase();
+        const effectiveTipoGara = (tipoGaraInput.value || tipoGaraInput.placeholder || 'CAMPIONATO').trim().toUpperCase();
         targetCtx.font = `italic 700 35px ${CONDENSED_FONT_STACK}`;
         targetCtx.fillStyle = COLORS.brightGreen;
         targetCtx.textAlign = 'right';
         targetCtx.textBaseline = 'middle';
-        targetCtx.fillText(tipoGaraText, CW - 42, 46);
+        targetCtx.fillText(effectiveTipoGara, CW - 42, 46);
 
         targetCtx.restore();
       }
@@ -1498,185 +1608,103 @@
 
       /**
        * ==========================================================================
-       * GESTIONE LISTA MARCATORI
+       * SUGGERIMENTI CLICCABILI PER TIPO GARA & ALBERO ESPLORABILE CATEGORIE
        * ==========================================================================
        */
-      function getEffectiveScorers() {
-        const list = [...state.scorersList];
-        const pending = scorerSingleInput.value.trim();
-        if (pending) {
-          pending.split(',').forEach((part) => {
-            const clean = part.replace(/⚽/g, '').trim().toUpperCase();
-            if (clean) list.push(clean);
-          });
-        }
-        return list;
-      }
-
-      function renderScorerChips() {
-        scorersTagsContainer.innerHTML = '';
-        if (state.scorersList.length === 0) {
-          const emptyHint = document.createElement('span');
-          emptyHint.className = 'text-[11px] text-gray-500 italic';
-          emptyHint.textContent = 'Nessun marcatore inserito';
-          scorersTagsContainer.appendChild(emptyHint);
-          return;
-        }
-
-        state.scorersList.forEach((name, idx) => {
-          const pill = document.createElement('span');
-          pill.className = 'scorer-pill';
-          pill.innerHTML = `<span class="inline-flex items-center gap-1">⚽ <span>${name}</span></span>`;
-
-          const removeBtn = document.createElement('button');
-          removeBtn.type = 'button';
-          removeBtn.className = 'ml-1 text-white/80 hover:text-white font-black text-xs leading-none';
-          removeBtn.textContent = '✕';
-          removeBtn.title = 'Rimuovi marcatore';
-          removeBtn.addEventListener('click', () => {
-            state.scorersList.splice(idx, 1);
-            renderScorerChips();
-            renderCanvas();
-          });
-
-          pill.appendChild(removeBtn);
-          scorersTagsContainer.appendChild(pill);
-        });
-      }
-
-      function addScorersFromText(rawText) {
-        if (!rawText) return;
-        const parts = rawText.split(',');
-        parts.forEach((p) => {
-          const clean = p.replace(/⚽/g, '').trim().toUpperCase();
-          if (clean) {
-            state.scorersList.push(clean);
+      function syncTipoGaraChipsUI() {
+        const container = document.getElementById('tipoGaraChips');
+        if (!container) return;
+        const buttons = container.querySelectorAll('.quick-chip');
+        const effectiveVal = (tipoGaraInput.value.trim() || tipoGaraInput.placeholder || '').toUpperCase();
+        buttons.forEach((btn) => {
+          if (btn.dataset.value.toUpperCase() === effectiveVal) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
           }
         });
-        scorerSingleInput.value = '';
-        renderScorerChips();
-        renderCanvas();
       }
 
-      addScorerBtn.addEventListener('click', function () {
-        addScorersFromText(scorerSingleInput.value);
-      });
-
-      scorerSingleInput.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          addScorersFromText(this.value);
-        }
-      });
-
-      scorerSingleInput.addEventListener('input', function () {
-        if (this.value.includes(',')) {
-          addScorersFromText(this.value);
-        } else {
-          renderCanvas();
-        }
-      });
-
-      clearScorersBtn.addEventListener('click', function () {
-        state.scorersList = [];
-        scorerSingleInput.value = '';
-        renderScorerChips();
-        renderCanvas();
-      });
-
-      /**
-       * ==========================================================================
-       * SUGGERIMENTI CLICCABILI PER CATEGORIA E TIPO GARA
-       * ==========================================================================
-       */
       function setupQuickChips(containerId, targetInput) {
         const container = document.getElementById(containerId);
         if (!container) return;
         const buttons = container.querySelectorAll('.quick-chip');
 
-        function syncActiveChip() {
-          const currentVal = targetInput.value.trim().toUpperCase();
-          buttons.forEach((btn) => {
-            if (btn.dataset.value.toUpperCase() === currentVal) {
-              btn.classList.add('active');
-            } else {
-              btn.classList.remove('active');
-            }
-          });
-        }
-
         buttons.forEach((btn) => {
           btn.addEventListener('click', () => {
             targetInput.value = btn.dataset.value;
-            syncActiveChip();
+            syncTipoGaraChipsUI();
             renderCanvas();
           });
         });
 
-        targetInput.addEventListener('input', syncActiveChip);
+        targetInput.addEventListener('input', syncTipoGaraChipsUI);
       }
 
       setupQuickChips('tipoGaraChips', tipoGaraInput);
 
-      // Gestione menu a tendina per le macro-categorie con impostazione automatica del placeholder/valore di Tipo Gara
-      const macroDropdowns = document.querySelectorAll('.macro-dropdown');
-      macroDropdowns.forEach((dropdown) => {
-        dropdown.addEventListener('change', function () {
-          const selectedValue = this.value;
-          const macroName = this.dataset.macro;
+      // Gestione Albero Macro-Categorie (esplorabile cliccando sulle macro-categorie)
+      const macroButtons = document.querySelectorAll('.tree-macro-btn');
+      const catLeafButtons = document.querySelectorAll('.cat-leaf');
 
-          if (selectedValue) {
-            categoriaInput.value = selectedValue;
-            
-            // Imposta il tipo gara in base alla macro categoria scelta
-            if (macroName === 'PRIMA SQUADRA') {
-              tipoGaraInput.value = 'SECONDA CATEGORIA';
-            } else if (macroName === 'SETTORE GIOVANILE') {
-              tipoGaraInput.value = 'CAMPIONATO';
-            } else if (macroName === 'ESORDIENTI' || macroName === 'PULCINI e PRIMI CALCI') {
-              tipoGaraInput.value = 'RISULTATO FIGC';
-            }
+      function syncCategoryLeavesActiveUI() {
+        const currentCat = categoriaInput.value.trim().toUpperCase();
+        catLeafButtons.forEach((leaf) => {
+          if (leaf.dataset.value.toUpperCase() === currentCat) {
+            leaf.classList.add('active');
+          } else {
+            leaf.classList.remove('active');
+          }
+        });
+      }
 
-            // Sincronizza lo stato attivo dei chip di tipo gara se presenti
-            const tipoGaraButtons = document.querySelectorAll('#tipoGaraChips .quick-chip');
-            tipoGaraButtons.forEach((btn) => {
-              if (btn.dataset.value.toUpperCase() === tipoGaraInput.value.toUpperCase()) {
-                btn.classList.add('active');
-              } else {
-                btn.classList.remove('active');
-              }
-            });
+      macroButtons.forEach((macroBtn) => {
+        macroBtn.addEventListener('click', function () {
+          const parentNode = this.closest('.tree-node');
+          const childrenContainer = parentNode.querySelector('.tree-children');
+          const arrow = this.querySelector('.tree-arrow');
+          const isOpen = childrenContainer.classList.contains('open');
 
-            // Resetta gli altri menu a tendina per lasciare attivo solo quello corrente
-            macroDropdowns.forEach((other) => {
-              if (other !== this) other.value = '';
-            });
+          // Chiude gli altri rami per mantenere l'interfaccia compatta e ordinata
+          document.querySelectorAll('.tree-node').forEach((node) => {
+            const c = node.querySelector('.tree-children');
+            const b = node.querySelector('.tree-macro-btn');
+            const a = node.querySelector('.tree-arrow');
+            if (c) c.classList.remove('open');
+            if (b) b.classList.remove('open');
+            if (a) a.textContent = '▸';
+          });
 
+          if (!isOpen) {
+            childrenContainer.classList.add('open');
+            this.classList.add('open');
+            if (arrow) arrow.textContent = '▾';
+          }
+
+          // Imposta subito il placeholder del Tipo Gara in base alla macro-categoria cliccata
+          const targetGaraPlaceholder = this.dataset.gara;
+          if (targetGaraPlaceholder) {
+            tipoGaraInput.placeholder = targetGaraPlaceholder;
+            syncTipoGaraChipsUI();
             renderCanvas();
           }
         });
       });
 
-      categoriaInput.addEventListener('input', function () {
-        const val = this.value.trim().toUpperCase();
-        let matched = false;
-        macroDropdowns.forEach((dropdown) => {
-          const options = dropdown.querySelectorAll('option');
-          let foundInThis = false;
-          options.forEach((opt) => {
-            if (opt.value.toUpperCase() === val) {
-              dropdown.value = opt.value;
-              foundInThis = true;
-              matched = true;
-            }
-          });
-          if (!foundInThis && dropdown.value && dropdown !== document.activeElement) {
-            // non resettiamo se l'utente sta scrivendo liberamente
+      catLeafButtons.forEach((leafBtn) => {
+        leafBtn.addEventListener('click', function () {
+          categoriaInput.value = this.dataset.value;
+          if (this.dataset.gara) {
+            tipoGaraInput.placeholder = this.dataset.gara;
           }
+          syncCategoryLeavesActiveUI();
+          syncTipoGaraChipsUI();
+          renderCanvas();
         });
-        if (!matched) {
-          macroDropdowns.forEach((d) => d.value = '');
-        }
+      });
+
+      categoriaInput.addEventListener('input', function () {
+        syncCategoryLeavesActiveUI();
         renderCanvas();
       });
 
@@ -1963,8 +1991,18 @@
 
       resetAllBtn.addEventListener('click', function () {
         categoriaInput.value = '';
-        macroDropdowns.forEach((d) => d.value = '');
-        tipoGaraInput.value = 'CAMPIONATO';
+        document.querySelectorAll('.tree-node').forEach((node) => {
+          const c = node.querySelector('.tree-children');
+          const b = node.querySelector('.tree-macro-btn');
+          const a = node.querySelector('.tree-arrow');
+          if (c) c.classList.remove('open');
+          if (b) b.classList.remove('open');
+          if (a) a.textContent = '▸';
+        });
+        syncCategoryLeavesActiveUI();
+        tipoGaraInput.value = '';
+        tipoGaraInput.placeholder = 'CAMPIONATO';
+        syncTipoGaraChipsUI();
         ospiteInput.value = '';
         scoreCasaInput.value = '0';
         scoreOspiteInput.value = '0';
@@ -1981,51 +2019,212 @@
         state.panX = 0;
         state.panY = 0;
         syncTransformControlsUI();
-        categoriaInput.dispatchEvent(new Event('input'));
-        tipoGaraInput.dispatchEvent(new Event('input'));
         btnCastelloCasa.click();
         renderCanvas();
       });
 
       /**
-       * Esportazione PNG (1080x1080 Consigliato oppure HQ 2160x2160)
+       * Conversione sincrona DataURL -> Blob (fondamentale per Safari iOS:
+       * mantiene il contesto del tap utente e supera il limite sulle stringhe data:image nei link <a download>)
        */
-      downloadBtn.addEventListener('click', function () {
+      function dataURLToBlobSync(dataUrl) {
+        const parts = dataUrl.split(',');
+        const mimeMatch = parts[0].match(/:(.*?);/);
+        const mime = mimeMatch ? mimeMatch[1] : 'image/png';
+        const bstr = atob(parts[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+      }
+
+      const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      if (isIOSDevice && navigator.share && iosShareBtn) {
+        iosShareBtn.classList.remove('hidden');
+        iosShareBtn.classList.add('inline-flex');
+      }
+
+      if (closeSafariPreviewBtn) {
+        closeSafariPreviewBtn.addEventListener('click', function () {
+          safariPreviewFallbackBox.classList.add('hidden');
+        });
+      }
+
+      function generateExportBlobAndDataUrl() {
         const targetRes = parseInt(exportResolutionSelect.value, 10) || 1080;
         renderCanvas();
 
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = targetRes;
+        exportCanvas.height = targetRes;
+        const exportCtx = exportCanvas.getContext('2d');
+        renderSceneOnContext(exportCtx, targetRes);
+
+        const dataUrl = exportCanvas.toDataURL('image/png', 1.0);
+        const blob = dataURLToBlobSync(dataUrl);
+        return { blob, dataUrl, targetRes };
+      }
+
+      /**
+       * Esportazione PNG compatibile con Safari iPhone, Chrome iOS, Android e Desktop
+       */
+      downloadBtn.addEventListener('click', function () {
         try {
-          const exportCanvas = document.createElement('canvas');
-          exportCanvas.width = targetRes;
-          exportCanvas.height = targetRes;
-          const exportCtx = exportCanvas.getContext('2d');
+          const { blob, dataUrl, targetRes } = generateExportBlobAndDataUrl();
+          const blobUrl = URL.createObjectURL(blob);
 
-          renderSceneOnContext(exportCtx, targetRes);
-
-          const dataUrl = exportCanvas.toDataURL('image/png', 1.0);
           const link = document.createElement('a');
           link.download = 'post_partita.png';
-          link.href = dataUrl;
+          link.href = blobUrl;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
 
-          statusFeedback.textContent = `✓ Scaricato "post_partita.png" in ${targetRes}×${targetRes}px!`;
+          // Su iPhone/Safari mostra anche l'anteprima rapida nel caso l'utente preferisca tenere premuto e fare "Salva su Foto"
+          if (isIOSDevice && safariPreviewFallbackBox && safariFallbackImg) {
+            safariFallbackImg.src = dataUrl;
+            safariPreviewFallbackBox.classList.remove('hidden');
+          }
+
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+
+          statusFeedback.textContent = `✓ Generato "post_partita.png" (${targetRes}×${targetRes}px)!`;
           setTimeout(() => {
             statusFeedback.textContent = '';
-          }, 4000);
+          }, 5000);
         } catch (err) {
           statusFeedback.textContent = 'Impossibile esportare il file PNG. Riprova.';
         }
       });
 
+      // Pulsante dedicato iOS Condividi / Salva direttamente nel Rullino Foto di iPhone
+      if (iosShareBtn) {
+        iosShareBtn.addEventListener('click', async function () {
+          try {
+            const { blob, dataUrl } = generateExportBlobAndDataUrl();
+            const file = new File([blob], 'post_partita.png', { type: 'image/png' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                files: [file],
+                title: 'Post Partita Atletica Castello'
+              });
+              statusFeedback.textContent = '✓ Immagine condivisa / salvata con successo!';
+            } else if (safariPreviewFallbackBox && safariFallbackImg) {
+              safariFallbackImg.src = dataUrl;
+              safariPreviewFallbackBox.classList.remove('hidden');
+            }
+          } catch (err) {
+            if (err && err.name !== 'AbortError') {
+              statusFeedback.textContent = 'Usa il riquadro qui sotto tenendo premuto sull\'immagine per salvarla.';
+            }
+          }
+        });
+      }
+
+      /**
+       * ==========================================================================
+       * GESTIONE LISTA MARCATORI CON PALLONE SEPARATORE
+       * ==========================================================================
+       */
+      function renderScorerChips() {
+        scorersTagsContainer.innerHTML = '';
+        if (state.scorersList.length === 0) {
+          const emptyHint = document.createElement('span');
+          emptyHint.className = 'text-[11px] text-gray-400 italic';
+          emptyHint.textContent = 'Nessun marcatore inserito.';
+          scorersTagsContainer.appendChild(emptyHint);
+          return;
+        }
+
+        state.scorersList.forEach((name, idx) => {
+          const pill = document.createElement('span');
+          pill.className = 'scorer-pill';
+          pill.innerHTML = `
+            <span>⚽ ${name}</span>
+            <button type="button" data-idx="${idx}" class="ml-1 text-white/80 hover:text-white font-black text-xs leading-none" title="Rimuovi">&times;</button>
+          `;
+          pill.querySelector('button').addEventListener('click', function () {
+            state.scorersList.splice(idx, 1);
+            renderScorerChips();
+            renderCanvas();
+          });
+          scorersTagsContainer.appendChild(pill);
+        });
+      }
+
+      function addScorersFromString(rawStr) {
+        if (!rawStr) return;
+        const parts = rawStr
+          .split(/[,;\n]+/)
+          .map((s) => s.trim().toUpperCase())
+          .filter(Boolean);
+
+        if (parts.length > 0) {
+          state.scorersList.push(...parts);
+          renderScorerChips();
+          renderCanvas();
+        }
+      }
+
+      addScorerBtn.addEventListener('click', () => {
+        if (scorerSingleInput.value.trim()) {
+          addScorersFromString(scorerSingleInput.value);
+          scorerSingleInput.value = '';
+          scorerSingleInput.focus();
+        }
+      });
+
+      scorerSingleInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ',') {
+          e.preventDefault();
+          if (scorerSingleInput.value.trim()) {
+            addScorersFromString(scorerSingleInput.value);
+            scorerSingleInput.value = '';
+          }
+        }
+      });
+
+      scorerSingleInput.addEventListener('input', () => {
+        if (scorerSingleInput.value.includes(',')) {
+          addScorersFromString(scorerSingleInput.value);
+          scorerSingleInput.value = '';
+        } else {
+          renderCanvas();
+        }
+      });
+
+      clearScorersBtn.addEventListener('click', () => {
+        state.scorersList = [];
+        scorerSingleInput.value = '';
+        renderScorerChips();
+        renderCanvas();
+      });
+
+      function getEffectiveScorers() {
+        const list = [...state.scorersList];
+        const pending = scorerSingleInput.value.trim().toUpperCase();
+        if (pending) {
+          const extra = pending.split(/[,;\n]+/).map((s) => s.trim()).filter(Boolean);
+          list.push(...extra);
+        }
+        return list;
+      }
+
       // Inizializzazione
       renderScorerChips();
+      syncTransformControlsUI();
       initLogoOnStartup();
+      renderCanvas();
+
       if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(renderCanvas);
-      } else {
-        window.addEventListener('load', renderCanvas);
+        document.fonts.ready.then(() => {
+          renderCanvas();
+        });
       }
     })();
   </script>
