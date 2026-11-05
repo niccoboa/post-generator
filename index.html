@@ -1,200 +1,2033 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Atletica Castello - Post Generator</title>
-    <style>
-        :root { --primary: #00b451; --bg: #121212; --surface: #1e1e1e; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 16px; box-sizing: border-box; }
-        .app-container { max-width: 480px; margin: 0 auto; }
-        .card { background: var(--surface); padding: 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); margin-bottom: 16px; }
-        .form-row { display: grid; grid-template-columns: 3fr 1fr; gap: 12px; margin-bottom: 12px; }
-        .field { display: flex; flex-direction: column; margin-bottom: 12px; }
-        label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #aaa; margin-bottom: 6px; font-weight: 600; }
-        input { background: #2a2a2a; border: 1px solid #3a3a3a; padding: 12px; color: #fff; border-radius: 8px; font-size: 16px; -webkit-appearance: none; }
-        input:focus { border-color: var(--primary); outline: none; }
-        .preview-box { width: 100%; aspect-ratio: 1/1; background: #000; border-radius: 12px; overflow: hidden; margin-top: 16px; border: 1px solid #333; }
-        canvas { width: 100%; height: 100%; display: block; }
-        .btn { background: var(--primary); color: #fff; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
-        .btn:active { background: #008f3f; }
-        input[type="file"] { display: none; }
-        .file-label { background: #333; text-align: center; padding: 12px; border-radius: 8px; border: 2px dashed #555; cursor: pointer; font-weight: 500; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atletica Castello — Generatore Post Partita</title>
+  <!-- Tailwind CSS CDN per utility di supporto -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Roboto Condensed, Fira Sans Condensed e Saira Condensed (tagli netti/squadrati ma curve armoniose) + Montserrat per UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Asap+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700;1,800;1,900&family=Fira+Sans+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Roboto+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700;1,800;1,900&family=Saira+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --castello-primary: #0B8731;
+      --castello-bright: #25AE3F;
+      --castello-darkest: #041B0F;
+      --castello-secondary: #004B20;
+      --castello-warm-white: #F7F8F1;
+      --castello-white: #FFFFFF;
+      --panel-bg: #072013;
+      --panel-border: rgba(37, 174, 63, 0.28);
+      --input-bg: #04140B;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at 15% 15%, #004B20 0%, #041B0F 60%, #020d07 100%);
+      color: var(--castello-warm-white);
+      font-family: 'Avenir Next Condensed', 'Roboto Condensed', 'Fira Sans Condensed', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* Layout principale: 2 colonne su Desktop, 1 colonna impilata su Mobile (Controlli in alto, Anteprima e Scarica in basso) */
+    .app-layout {
+      display: grid;
+      grid-template-columns: 450px 1fr;
+      gap: 26px;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 16px;
+      }
+    }
+
+    /* Card stile sportivo dark basata su #041B0F e #004B20 */
+    .glass-panel {
+      background: linear-gradient(180deg, rgba(7, 35, 20, 0.96) 0%, rgba(4, 27, 15, 0.99) 100%);
+      border: 1px solid var(--panel-border);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(247, 248, 241, 0.04) inset;
+    }
+
+    /* Input personalizzati */
+    .sport-input {
+      width: 100%;
+      background-color: var(--input-bg);
+      border: 1.5px solid rgba(37, 174, 63, 0.35);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: var(--castello-warm-white);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.92rem;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    .sport-input:focus {
+      border-color: var(--castello-bright);
+      box-shadow: 0 0 0 3px rgba(37, 174, 63, 0.22);
+      background-color: #061f11;
+    }
+
+    .sport-input::placeholder {
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .field-label {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #a7f3d0;
+      margin-bottom: 6px;
+    }
+
+    /* Chip di suggerimento rapido */
+    .quick-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 9999px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: rgba(11, 135, 49, 0.18);
+      border: 1px solid rgba(37, 174, 63, 0.4);
+      color: #F7F8F1;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .quick-chip:hover {
+      background: rgba(37, 174, 63, 0.35);
+      border-color: #25AE3F;
+      transform: translateY(-1px);
+    }
+
+    .quick-chip.active {
+      background: #25AE3F;
+      color: #041B0F;
+      border-color: #FFFFFF;
+      box-shadow: 0 2px 10px rgba(37, 174, 63, 0.4);
+    }
+
+    /* Tag marcatore aggiunto */
+    .scorer-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #0B8731;
+      color: #F7F8F1;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    /* Contenitore Canvas Responsive */
+    .canvas-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    @media (max-width: 960px) {
+      .canvas-stage {
+        padding: 14px;
+      }
+    }
+
+    .canvas-wrapper {
+      width: 100%;
+      max-width: 620px;
+      aspect-ratio: 1 / 1;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(37, 174, 63, 0.45);
+      background: #041B0F;
+      position: relative;
+    }
+
+    /* Il Canvas mantiene proporzione 1:1 fluida su mobile */
+    #postCanvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    #postCanvas:active {
+      cursor: grabbing;
+    }
+
+    /* Pulsante Download principale */
+    .btn-download {
+      width: 100%;
+      background: linear-gradient(135deg, #25AE3F 0%, #0B8731 100%);
+      color: #FFFFFF;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: 1.08rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 15px 22px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(11, 135, 49, 0.45);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    }
+
+    .btn-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(37, 174, 63, 0.55);
+      filter: brightness(1.06);
+    }
+
+    .btn-download:active {
+      transform: translateY(0);
+    }
+
+    /* Upload zona foto */
+    .upload-dropzone {
+      border: 2px dashed rgba(37, 174, 63, 0.55);
+      background: rgba(11, 135, 49, 0.08);
+      border-radius: 12px;
+      padding: 13px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .upload-dropzone:hover {
+      border-color: #25AE3F;
+      background: rgba(37, 174, 63, 0.16);
+    }
+
+    /* Range slider custom */
+    input[type="range"] {
+      accent-color: #25AE3F;
+      width: 100%;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="card">
-        <label>Immagine della Gara</label>
-        <label for="img-upload" class="file-label" id="file-label-text">📸 Seleziona foto dal rullino</label>
-        <input type="file" id="img-upload" accept="image/*">
+  <!-- Barra Superiore Brand -->
+  <header class="border-b border-[#0B8731]/40 bg-[#041B0F] backdrop-blur-md">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-[#0B8731]/25 border border-[#25AE3F] flex items-center justify-center font-black italic text-[#25AE3F] text-lg" style="font-family: 'Montserrat', sans-serif;">
+          AC
+        </div>
+        <div style="font-family: 'Montserrat', sans-serif;">
+          <h1 class="text-sm sm:text-base font-black italic tracking-wider uppercase text-[#F7F8F1] leading-tight">
+            Atletica Castello <span class="text-[#25AE3F]">Social Studio</span>
+          </h1>
+          <p class="text-[11px] text-emerald-200/80 font-semibold">
+            Generatore Ufficiale Post-Partita
+          </p>
+        </div>
+      </div>
+      <div class="hidden sm:flex items-center gap-2 text-xs font-bold text-[#F7F8F1] bg-[#004B20]/70 border border-[#25AE3F]/50 px-3 py-1.5 rounded-full" style="font-family: 'Montserrat', sans-serif;">
+        <span class="w-2 h-2 rounded-full bg-[#25AE3F] animate-pulse"></span>
+        <span>#si<strong class="text-[#25AE3F]">AMO</strong>biancoverdi</span>
+      </div>
     </div>
+  </header>
 
-    <div class="card">
-        <div class="form-row">
-            <div class="field"><label>Categoria</label><input type="text" id="cat" value="ALLIEVI A 2010"></div>
-            <div class="field"><label>Fase</label><input type="text" id="fase" value="CAMPIONATO"></div>
+  <!-- Contenitore Principale Responsive -->
+  <main class="app-layout" style="font-family: 'Montserrat', sans-serif;">
+
+    <!-- ================= COLONNA SINISTRA (IN ALTO SU MOBILE): PANNELLO DI CONTROLLO ================= -->
+    <section class="glass-panel p-5 sm:p-6 flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-emerald-900/60 pb-3">
+        <div>
+          <h2 class="text-sm font-black uppercase tracking-wider text-[#25AE3F]">
+            Pannello di Controllo
+          </h2>
+          <p class="text-[11px] text-gray-300">
+            Compila i campi per aggiornare il post in tempo reale
+          </p>
         </div>
-        
-        <div class="form-row">
-            <div class="field"><label>Squadra Casa</label><input type="text" id="teamC" value="FORTIS JUVENTUS"></div>
-            <div class="field"><label>Gol</label><input type="number" id="golC" value="1"></div>
+        <button
+          id="resetAllBtn"
+          type="button"
+          class="text-[11px] font-bold text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-2.5 py-1.5 rounded-lg border border-white/15 transition"
+          title="Ripristina i valori predefiniti"
+        >
+          Ripristina
+        </button>
+      </div>
+
+      <!-- 1. Caricamento Foto Partita -->
+      <div class="bg-[#041B0F]/75 border border-[#0B8731]/40 rounded-xl p-3.5">
+        <label class="field-label !mb-2">1. Foto della Partita</label>
+        <label for="bgImageInput" class="upload-dropzone block">
+          <input type="file" id="bgImageInput" accept="image/*" class="hidden" />
+          <div class="flex flex-col items-center gap-1">
+            <svg class="w-6 h-6 text-[#25AE3F]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+            <span class="text-xs font-extrabold text-[#F7F8F1]">TOCCA PER CARICARE LA FOTO</span>
+            <span id="bgFileName" class="text-[11px] text-emerald-300/80 font-medium">
+              Usa gli slider sopra l'anteprima o 2 dita sulla foto per fare zoom/spostare
+            </span>
+          </div>
+        </label>
+      </div>
+
+      <!-- 2. Categoria + Suggerimenti Cliccabili divisi per Macro-Categorie -->
+      <div>
+        <label for="categoriaInput" class="field-label">2. Categoria (In alto a sinistra)</label>
+        <input type="text" id="categoriaInput" class="sport-input" value="" placeholder="" />
+        <div class="mt-2.5 space-y-2 bg-[#041B0F]/65 border border-[#0B8731]/35 rounded-xl p-2.5" id="categoriaChips">
+          <!-- Macro: PRIMA SQUADRA (Menu a tendina) -->
+          <div>
+            <label class="block text-[10px] font-black uppercase tracking-wider text-emerald-400/75 mb-1 select-none" for="macroPrimaSquadraSelect">PRIMA SQUADRA</label>
+            <select id="macroPrimaSquadraSelect" class="sport-input !py-1.5 !text-xs macro-dropdown" data-macro="PRIMA SQUADRA">
+              <option value="" disabled selected>-- Seleziona Categoria --</option>
+              <option value="PRIMA SQUADRA">PRIMA SQUADRA</option>
+            </select>
+          </div>
+          <!-- Macro: SETTORE GIOVANILE (Menu a tendina) -->
+          <div class="pt-1.5 border-t border-emerald-900/40">
+            <label class="block text-[10px] font-black uppercase tracking-wider text-emerald-400/75 mb-1 select-none" for="macroSettoreGiovanileSelect">SETTORE GIOVANILE</label>
+            <select id="macroSettoreGiovanileSelect" class="sport-input !py-1.5 !text-xs macro-dropdown" data-macro="SETTORE GIOVANILE">
+              <option value="" disabled selected>-- Seleziona Categoria --</option>
+              <option value="JUNIORES">JUNIORES</option>
+              <option value="ALLIEVI A 2010">ALLIEVI A 2010</option>
+              <option value="ALLIEVI B 2011">ALLIEVI B 2011</option>
+              <option value="GIOVANISSIMI A 2012">GIOVANISSIMI A 2012</option>
+              <option value="GIOVANISSIMI B 2013">GIOVANISSIMI B 2013</option>
+            </select>
+          </div>
+          <!-- Macro: ESORDIENTI (Menu a tendina) -->
+          <div class="pt-1.5 border-t border-emerald-900/40">
+            <label class="block text-[10px] font-black uppercase tracking-wider text-emerald-400/75 mb-1 select-none" for="macroEsordientiSelect">ESORDIENTI</label>
+            <select id="macroEsordientiSelect" class="sport-input !py-1.5 !text-xs macro-dropdown" data-macro="ESORDIENTI">
+              <option value="" disabled selected>-- Seleziona Categoria --</option>
+              <option value="ESORDIENTI 2014">ESORDIENTI 2014</option>
+              <option value="ESORDIENTI MISTI 2014/15">ESORDIENTI MISTI 2014/15</option>
+              <option value="ESORDIENTI 2015">ESORDIENTI 2015</option>
+            </select>
+          </div>
+          <!-- Macro: PULCINI E PRIMI CALCI (Menu a tendina) -->
+          <div class="pt-1.5 border-t border-emerald-900/40">
+            <label class="block text-[10px] font-black uppercase tracking-wider text-emerald-400/75 mb-1 select-none" for="macroPulciniPrimiCalciSelect">PULCINI E PRIMI CALCI</label>
+            <select id="macroPulciniPrimiCalciSelect" class="sport-input !py-1.5 !text-xs macro-dropdown" data-macro="PULCINI e PRIMI CALCI">
+              <option value="" disabled selected>-- Seleziona Categoria --</option>
+              <option value="PULCINI 2016">PULCINI 2016</option>
+              <option value="PULCINI MISTI 2016/2017">PULCINI MISTI 2016/2017</option>
+              <option value="PULCINI 2017">PULCINI 2017</option>
+              <option value="PRIMI CALCI 2018">PRIMI CALCI 2018</option>
+              <option value="PRIMI CALCI MISTI 2018/19">PRIMI CALCI MISTI 2018/19</option>
+              <option value="PRIMI CALCI 2019">PRIMI CALCI 2019</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Tipo Gara + Suggerimenti Cliccabili -->
+      <div>
+        <label for="tipoGaraInput" class="field-label">3. Tipo Gara (In alto a destra)</label>
+        <input type="text" id="tipoGaraInput" class="sport-input !text-[#25AE3F]" value="CAMPIONATO" placeholder="Es. CAMPIONATO" />
+        <div class="flex flex-wrap gap-1.5 mt-2" id="tipoGaraChips">
+          <button type="button" class="quick-chip" data-value="SECONDA CATEGORIA">SECONDA CATEGORIA</button>
+          <button type="button" class="quick-chip active" data-value="CAMPIONATO">CAMPIONATO</button>
+          <button type="button" class="quick-chip" data-value="RISULTATO FIGC">RISULTATO FIGC</button>
+        </div>
+      </div>
+
+      <!-- 4. Squadra Ospite & Punteggi -->
+      <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+        <div class="sm:col-span-6">
+          <label for="ospiteInput" class="field-label">4. Squadra Avversaria</label>
+          <input type="text" id="ospiteInput" class="sport-input" value="" placeholder="" />
+        </div>
+        <div class="grid grid-cols-2 gap-2.5 sm:col-span-6">
+          <div>
+            <label for="scoreCasaInput" class="field-label !text-[#25AE3F]">Gol Castello</label>
+            <input type="number" id="scoreCasaInput" class="sport-input text-center text-lg !text-[#25AE3F]" min="0" max="99" value="0" />
+          </div>
+          <div>
+            <label for="scoreOspiteInput" class="field-label !text-white">Gol Avversario</label>
+            <input type="number" id="scoreOspiteInput" class="sport-input text-center text-lg" min="0" max="99" value="0" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Inverti Casa/Trasferta -->
+      <div class="flex items-center justify-between bg-[#041B0F] border border-[#0B8731]/40 rounded-xl px-3.5 py-2">
+        <span class="text-xs font-bold text-gray-200">Posizione Atletica Castello:</span>
+        <div class="flex gap-1.5">
+          <button type="button" id="btnCastelloCasa" class="px-2.5 py-1 rounded-md text-xs font-extrabold bg-[#25AE3F] text-[#041B0F] transition">
+            In Casa (Sinistra)
+          </button>
+          <button type="button" id="btnCastelloFuori" class="px-2.5 py-1 rounded-md text-xs font-extrabold bg-black/50 text-gray-300 hover:text-white transition">
+            Trasferta (Destra)
+          </button>
+        </div>
+      </div>
+
+      <!-- 5. Marcatori Atletica Castello -->
+      <div class="bg-[#041B0F]/70 border border-[#0B8731]/40 rounded-xl p-3.5">
+        <div class="flex items-center justify-between mb-1.5">
+          <label for="scorerSingleInput" class="field-label !mb-0">5. Marcatori Atletica Castello ⚽</label>
+          <button type="button" id="clearScorersBtn" class="text-[10px] font-bold text-emerald-300 hover:text-white underline">
+            Svuota lista
+          </button>
         </div>
 
-        <div class="form-row">
-            <div class="field"><label>Squadra Ospite</label><input type="text" id="teamF" value="ATLETICA CASTELLO"></div>
-            <div class="field"><label>Gol</label><input type="number" id="golF" value="7"></div>
+        <div class="flex gap-2">
+          <input
+            type="text"
+            id="scorerSingleInput"
+            class="sport-input !py-2"
+            placeholder="Scrivi marcatore e premi INVIO (o virgola)..."
+          />
+          <button
+            type="button"
+            id="addScorerBtn"
+            class="px-3.5 py-2 rounded-lg font-extrabold text-xs uppercase bg-[#0B8731] hover:bg-[#25AE3F] text-white transition shrink-0"
+          >
+            + Aggiungi
+          </button>
         </div>
 
-        <div class="field">
-            <label>Marcatori (separati da virgola)</label>
-            <input type="text" id="markers" value="Batelli, Giunti, Guidi, Lento, Caianiello x2, Bencivinni">
+        <!-- Lista Tag dei marcatori inseriti -->
+        <div id="scorersTagsContainer" class="flex flex-wrap gap-1.5 mt-2.5"></div>
+      </div>
+
+      <!-- 6. Impostazioni Avanzate -->
+      <details class="bg-[#041B0F]/80 border border-[#0B8731]/40 rounded-xl p-3 group">
+        <summary class="text-xs font-extrabold uppercase tracking-wider text-[#25AE3F] cursor-pointer select-none flex items-center justify-between">
+          <span>Impostazioni Avanzate (Logo, Sfumatura, Font, Stile)</span>
+          <span class="text-[#25AE3F] group-open:rotate-180 transition-transform">▼</span>
+        </summary>
+        <div class="mt-3 pt-3 border-t border-emerald-900/50 flex flex-col gap-3">
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label for="stagioneInput" class="field-label">Testo Stagione</label>
+              <input type="text" id="stagioneInput" class="sport-input !py-2 !text-xs" value="STAGIONE 2026/27" />
+            </div>
+            <div>
+              <label for="hashtagInput" class="field-label">Hashtag</label>
+              <input type="text" id="hashtagInput" class="sport-input !py-2 !text-xs" value="#siAMObiancoverdi" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-center">
+            <div>
+              <label for="scoreStyleSelect" class="field-label">Stile Punteggio</label>
+              <select id="scoreStyleSelect" class="sport-input !py-2 !text-xs">
+                <option value="outline" selected>Numeri Sagomati (Default)</option>
+                <option value="parallelogram">Parallelogrammi Obliqui</option>
+              </select>
+            </div>
+            <div>
+              <div class="flex justify-between text-[10px] font-bold text-gray-300 mb-1">
+                <span>SFUMATURA FONDO</span>
+                <span id="gradIntensityLabel" class="text-[#25AE3F]">130%</span>
+              </div>
+              <input type="range" id="gradientIntensityInput" min="0" max="150" value="130" step="5" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-center pt-1">
+            <div>
+              <label for="fontPresetSelect" class="field-label">Carattere Grafica (Preset)</label>
+              <select id="fontPresetSelect" class="sport-input !py-2 !text-xs">
+                <option value="roboto" selected>Roboto Condensed (Bilanciato / Squadrato)</option>
+                <option value="fira">Fira Sans Condensed (Sportivo Deciso)</option>
+                <option value="saira">Saira Condensed (Più Squadrato)</option>
+                <option value="asap">Asap Condensed (Più Morbido)</option>
+              </select>
+            </div>
+            <div>
+              <label for="fontFileInput" class="field-label">Oppure Font Locale (.ttf/.otf/.ttc)</label>
+              <input type="file" id="fontFileInput" accept=".ttf,.otf,.ttc,.woff,.woff2" class="block w-full text-[11px] text-gray-300 file:mr-2 file:py-1.5 file:px-2.5 file:rounded-md file:border-0 file:text-[11px] file:font-bold file:bg-[#004B20] file:text-white hover:file:bg-[#0B8731] cursor-pointer" />
+              <span id="fontStatusLabel" class="text-[10px] text-gray-400">Attivo: Roboto Condensed (taglio netto)</span>
+            </div>
+          </div>
+
+          <!-- Gestione Logo Societario -->
+          <div class="pt-2 border-t border-emerald-900/50 flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <label class="field-label !mb-0 flex items-center gap-1.5">
+                <span>Logo Societario</span>
+                <span id="logoBadgeStatus" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-400/50">
+                  ⚠️ SVG di fallback
+                </span>
+              </label>
+              <button type="button" id="resetDefaultSvgLogoBtn" class="text-[10px] font-bold text-emerald-300 hover:text-white underline hidden">
+                Usa SVG di fallback
+              </button>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <label for="logoInput" class="flex-1 cursor-pointer bg-[#004B20]/70 hover:bg-[#0B8731] border border-[#25AE3F]/50 rounded-lg px-3 py-2 text-xs font-extrabold text-[#F7F8F1] text-center transition">
+                📂 Carica altro Logo (SVG/PNG/JPG)
+                <input type="file" id="logoInput" accept="image/*,.svg" class="hidden" />
+              </label>
+              <button
+                type="button"
+                id="embedLogoHtmlBtn"
+                class="px-3 py-2 rounded-lg text-xs font-extrabold bg-[#25AE3F]/20 hover:bg-[#25AE3F] text-[#25AE3F] hover:text-[#041B0F] border border-[#25AE3F] transition disabled:opacity-40 disabled:pointer-events-none"
+                title="Salva un nuovo file .html con il logo corrente incorporato nel codice"
+              >
+                💾 Salva HTML col Logo
+              </button>
+            </div>
+
+            <div class="flex items-center justify-between text-[11px] text-gray-300">
+              <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+                <input type="checkbox" id="removeBlackBgCheckbox" class="accent-[#25AE3F] rounded" />
+                <span>Rimuovi bordi neri esterni (solo per JPG)</span>
+              </label>
+            </div>
+          </div>
         </div>
-    </div>
+      </details>
+    </section>
 
-    <div class="preview-box">
-        <canvas id="mainCanvas" width="1080" height="1080"></canvas>
-    </div>
+    <!-- ================= COLONNA DESTRA (IN BASSO SU MOBILE): SLIDER UNIFICATI + ANTEPRIMA + SCARICA IN FONDO ================= -->
+    <section class="glass-panel canvas-stage">
+      <!-- Banner di avviso visibile se il file immagine del logo non è stato caricato e si sta usando l'SVG generato di fallback -->
+      <div id="logoFallbackWarningBanner" class="w-full max-w-[620px] bg-amber-950/90 border border-amber-400/60 rounded-xl px-3.5 py-2.5 mb-3 shadow-lg hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-start sm:items-center gap-2 text-amber-200 text-xs">
+            <span class="text-base leading-none">⚠️</span>
+            <div>
+              <strong class="font-extrabold text-amber-100 block sm:inline">File immagine del logo non rilevato:</strong>
+              <span>è attualmente in uso il logo SVG di fallback.</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <label for="logoInput" class="cursor-pointer px-2.5 py-1 rounded bg-amber-400 hover:bg-amber-300 text-[#041B0F] font-extrabold text-[11px] transition whitespace-nowrap">
+              📂 Carica file Logo
+            </label>
+            <button type="button" id="dismissLogoWarningBtn" class="px-2 py-1 rounded bg-black/40 hover:bg-black/60 text-amber-200 text-[11px] font-bold transition" title="Nascondi avviso">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
 
-    <button class="btn" id="download-btn">📥 Scarica Post per Instagram</button>
-</div>
+      <!-- Barra UNICA e compatta di Zoom, Orizz. (X), Vert. (Y) e tasto "Reset" subito sopra la foto -->
+      <div class="w-full max-w-[620px] bg-[#041B0F]/95 border border-[#25AE3F]/40 rounded-xl px-3 py-2.5 mb-3 shadow-lg">
+        <div class="flex items-center justify-between gap-2 mb-1.5">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#F7F8F1] flex items-center gap-1.5">
+            <span class="inline-block w-2 h-2 rounded-full bg-[#25AE3F]"></span>
+            Inquadratura Foto
+          </span>
+          <button
+            type="button"
+            id="liveCenterPhotoBtn"
+            class="px-2.5 py-0.5 rounded bg-[#004B20] hover:bg-[#0B8731] text-[#25AE3F] hover:text-white border border-[#25AE3F]/40 text-[11px] font-extrabold transition"
+          >
+            Reset
+          </button>
+        </div>
 
-<script>
-    const canvas = document.getElementById('mainCanvas');
-    const ctx = canvas.getContext('2d');
-    let baseImage = null;
+        <div class="grid grid-cols-3 gap-2.5 sm:gap-4 items-center">
+          <div>
+            <div class="flex justify-between items-center text-[10px] font-extrabold text-gray-300 mb-0.5">
+              <span>ZOOM</span>
+              <span id="liveZoomValLabel" class="text-[#25AE3F] font-mono">0%</span>
+            </div>
+            <input type="range" id="liveBgZoom" min="-60" max="200" value="0" step="1" />
+          </div>
+          <div>
+            <div class="flex justify-between items-center text-[10px] font-extrabold text-gray-300 mb-0.5">
+              <span>ORIZZ. (X)</span>
+              <span id="livePanXValLabel" class="text-[#25AE3F] font-mono">0</span>
+            </div>
+            <input type="range" id="liveBgPanX" min="-100" max="100" value="0" step="1" />
+          </div>
+          <div>
+            <div class="flex justify-between items-center text-[10px] font-extrabold text-gray-300 mb-0.5">
+              <span>VERT. (Y)</span>
+              <span id="livePanYValLabel" class="text-[#25AE3F] font-mono">0</span>
+            </div>
+            <input type="range" id="liveBgPanY" min="-100" max="100" value="0" step="1" />
+          </div>
+        </div>
+      </div>
 
-    const state = ['cat', 'fase', 'teamC', 'golC', 'teamF', 'golF', 'markers'];
-    state.forEach(id => document.getElementById(id).addEventListener('input', render));
+      <!-- Contenitore fluido 1:1 per l'anteprima Canvas -->
+      <div class="canvas-wrapper">
+        <canvas id="postCanvas" width="1080" height="1080"></canvas>
+      </div>
 
-    document.getElementById('img-upload').addEventListener('change', function(e) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            baseImage = new Image();
-            baseImage.onload = function() {
-                document.getElementById('file-label-text').innerText = "✅ Foto Caricata";
-                render();
-            };
-            baseImage.src = event.target.result;
+      <!-- SEZIONE ESPORTAZIONE E PULSANTE "SCARICA" IN FONDO ALLA PAGINA -->
+      <div class="w-full max-w-[620px] mt-4 bg-[#041B0F]/95 border border-[#25AE3F]/45 rounded-xl p-3.5 shadow-xl flex flex-col gap-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <label for="exportResolutionSelect" class="text-xs font-extrabold uppercase tracking-wider text-[#a7f3d0]">
+            Qualità / Risoluzione Immagine:
+          </label>
+          <select id="exportResolutionSelect" class="sport-input !w-auto !py-1.5 !px-3 !text-xs">
+            <option value="1080" selected>Standard — 1080 × 1080 px (Consigliato)</option>
+            <option value="2160">HQ — 2160 × 2160 px (Risoluzione più alta)</option>
+          </select>
+        </div>
+
+        <button id="downloadBtn" type="button" class="btn-download">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          SCARICA GRAFICA (PNG)
+        </button>
+
+        <p id="statusFeedback" class="text-center text-[11px] text-[#25AE3F] font-bold min-h-[16px] -mt-1"></p>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /**
+     * ============================================================================
+     * ATLETICA CASTELLO — GENERATORE POST PARTITA (CON EXPORT MULTI-RISOLUZIONE)
+     * ============================================================================
+     */
+    const EMBEDDED_LOGO_BASE64 = "";
+
+    // Logo Ufficiale Vettoriale SVG ad altissima definizione (1536x2220 per export nitido fino a 3K)
+    const DEFAULT_CASTELLO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 1110" width="1536" height="2220">
+      <defs>
+        <path id="leftArc" d="M 102,690 A 315,455 0 0,1 225,180" />
+        <path id="rightArc" d="M 552,185 A 315,455 0 0,1 666,690" />
+      </defs>
+      <ellipse cx="384" cy="555" rx="376" ry="547" fill="#FFFFFF" stroke="#007D32" stroke-width="6.5" />
+      <ellipse cx="384" cy="535" rx="253" ry="389" fill="#FFFFFF" stroke="#007D32" stroke-width="24" />
+      <text fill="#007D32" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="66" letter-spacing="7">
+        <textPath href="#leftArc" startOffset="6%">ATLETICA</textPath>
+      </text>
+      <text fill="#007D32" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="66" letter-spacing="6">
+        <textPath href="#rightArc" startOffset="5%">CASTELLO</textPath>
+      </text>
+      <text x="384" y="1058" text-anchor="middle" fill="#007D32" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="68" letter-spacing="3">CALCIO</text>
+      <path d="M 369,238 C 396,212 454,228 506,255 C 540,273 561,286 558,320 C 555,349 532,374 532,396 C 522,379 524,354 541,335 C 508,320 434,308 369,346 Z"
+            fill="#FFFFFF" stroke="#007D32" stroke-width="11" stroke-linejoin="round" />
+      <text x="447" y="302" text-anchor="middle" fill="#007D32" font-family="'Arial Narrow', 'Barlow Condensed', sans-serif" font-weight="900" font-size="52" transform="scale(0.88, 1.15) translate(60, -34)">ATLETICA</text>
+      <line x1="369" y1="232" x2="369" y2="822" stroke="#007D32" stroke-width="9" />
+      <polygon points="306,384 369,366 369,465 306,478" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
+      <polygon points="369,366 438,392 438,475 369,465" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
+      <polygon points="176,514 252,505 252,566 222,570 227,656 252,663 252,762 197,738" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
+      <polygon points="252,478 288,473 288,780 276,774 276,685 266,681 266,770 252,762" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
+      <polygon points="265,568 276,567 276,640 265,638" fill="#FFFFFF" stroke="#007D32" stroke-width="8" stroke-linejoin="round" />
+      <polygon points="288,487 326,481 326,554 307,556 307,616 326,619 326,800 295,784 295,695 309,700 309,652 288,646" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
+      <polygon points="326,464 369,458 369,822 339,807 339,545 326,547" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
+      <polygon points="369,458 438,472 438,548 402,542 402,598 424,602 424,668 402,665 402,732 444,715 444,780 369,822" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
+      <polygon points="438,472 466,478 466,708 478,703 478,761 444,780" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
+      <polygon points="466,495 505,502 505,693 515,689 515,742 478,761" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
+      <path d="M 505,496 L 579,512 L 568,718 L 505,746 Z M 526,562 L 521,646 L 547,650 L 552,569 Z" fill="#FFFFFF" fill-rule="evenodd" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
+      <text x="384" y="882" text-anchor="middle" fill="#007D32" font-family="'Brush Script MT', 'Comic Sans MS', cursive, sans-serif" font-style="italic" font-weight="700" font-size="64" letter-spacing="2">Firenze</text>
+    </svg>`;
+
+    (function () {
+      const canvas = document.getElementById('postCanvas');
+      const ctx = canvas.getContext('2d');
+
+      // Spazio geometrico logico di riferimento (1080x1080)
+      const CW = 1080;
+      const CH = 1080;
+
+      // Palette Ufficiale Atletica Castello (bilanciata: più chiara del #056323 ma più scura del #25AE3F)
+      const COLORS = {
+        primaryGreen: '#0D8A34',
+        castelloTeamGreen: '#169E3B',   // Verde per ATLETICA CASTELLO: un po' più chiaro degli altri testi ma più scuro del vecchio #25AE3F
+        castelloResultGreen: '#0D8A34', // Verde per il numero dei gol del Castello
+        brightGreen: '#0D8A34',         // Verde per Tipo Gara, 2026/27 e AMO
+        darkestGreen: '#041B0F',
+        white: '#FFFFFF',
+        warmWhite: '#F7F8F1',
+        secondaryGreen: '#004B20'
+      };
+
+      // Mappa dei preset di font condensati (default: Roboto Condensed, con terminali netti/squadrati ma curve naturali)
+      const FONT_PRESETS = {
+        roboto: '"CustomAvenirCondensed", "Avenir Next Condensed", "Roboto Condensed", "Fira Sans Condensed", sans-serif',
+        fira: '"CustomAvenirCondensed", "Avenir Next Condensed", "Fira Sans Condensed", "Roboto Condensed", sans-serif',
+        saira: '"CustomAvenirCondensed", "Saira Condensed", "Roboto Condensed", sans-serif',
+        asap: '"CustomAvenirCondensed", "Avenir Next Condensed", "Asap Condensed", sans-serif'
+      };
+
+      let TEAM_RESULT_FONT_STACK = FONT_PRESETS.roboto;
+      let CONDENSED_FONT_STACK = FONT_PRESETS.roboto;
+
+      // Riferimenti DOM
+      const bgImageInput = document.getElementById('bgImageInput');
+      const bgFileName = document.getElementById('bgFileName');
+
+      // Controlli unici di Zoom, Orizz. (X), Vert. (Y) e Reset sopra l'anteprima
+      const liveBgZoom = document.getElementById('liveBgZoom');
+      const liveBgPanX = document.getElementById('liveBgPanX');
+      const liveBgPanY = document.getElementById('liveBgPanY');
+      const liveZoomValLabel = document.getElementById('liveZoomValLabel');
+      const livePanXValLabel = document.getElementById('livePanXValLabel');
+      const livePanYValLabel = document.getElementById('livePanYValLabel');
+      const liveCenterPhotoBtn = document.getElementById('liveCenterPhotoBtn');
+
+      const categoriaInput = document.getElementById('categoriaInput');
+      const tipoGaraInput = document.getElementById('tipoGaraInput');
+      const ospiteInput = document.getElementById('ospiteInput');
+      const scoreCasaInput = document.getElementById('scoreCasaInput');
+      const scoreOspiteInput = document.getElementById('scoreOspiteInput');
+
+      const scorerSingleInput = document.getElementById('scorerSingleInput');
+      const addScorerBtn = document.getElementById('addScorerBtn');
+      const clearScorersBtn = document.getElementById('clearScorersBtn');
+      const scorersTagsContainer = document.getElementById('scorersTagsContainer');
+
+      const stagioneInput = document.getElementById('stagioneInput');
+      const hashtagInput = document.getElementById('hashtagInput');
+      const scoreStyleSelect = document.getElementById('scoreStyleSelect');
+      const gradientIntensityInput = document.getElementById('gradientIntensityInput');
+      const gradIntensityLabel = document.getElementById('gradIntensityLabel');
+
+      const logoInput = document.getElementById('logoInput');
+      const removeBlackBgCheckbox = document.getElementById('removeBlackBgCheckbox');
+      const embedLogoHtmlBtn = document.getElementById('embedLogoHtmlBtn');
+      const resetDefaultSvgLogoBtn = document.getElementById('resetDefaultSvgLogoBtn');
+      const logoBadgeStatus = document.getElementById('logoBadgeStatus');
+      const logoFallbackWarningBanner = document.getElementById('logoFallbackWarningBanner');
+      const dismissLogoWarningBtn = document.getElementById('dismissLogoWarningBtn');
+
+      const fontPresetSelect = document.getElementById('fontPresetSelect');
+      const fontFileInput = document.getElementById('fontFileInput');
+      const fontStatusLabel = document.getElementById('fontStatusLabel');
+
+      const btnCastelloCasa = document.getElementById('btnCastelloCasa');
+      const btnCastelloFuori = document.getElementById('btnCastelloFuori');
+      const resetAllBtn = document.getElementById('resetAllBtn');
+      const exportResolutionSelect = document.getElementById('exportResolutionSelect');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const statusFeedback = document.getElementById('statusFeedback');
+
+      // Stato interno dell'applicazione
+      const state = {
+        bgImage: null,
+        logoImage: null,
+        rawLogoSourceImg: null,
+        logoDataUrl: '',
+        isCustomLogo: false,
+        zoomPercent: 0,
+        panX: 0,
+        panY: 0,
+        gradientIntensity: 130,
+        castelloIsHome: true,
+        scorersList: [],
+        isDragging: false,
+        dragStartX: 0,
+        dragStartY: 0,
+        initialPanX: 0,
+        initialPanY: 0,
+        isPinching: false,
+        pinchStartDist: 0,
+        pinchStartZoom: 0,
+        pinchStartMidX: 0,
+        pinchStartMidY: 0,
+        pinchInitialPanX: 0,
+        pinchInitialPanY: 0
+      };
+
+      function syncTransformControlsUI() {
+        const z = Math.round(state.zoomPercent);
+        const px = Math.round(state.panX);
+        const py = Math.round(state.panY);
+        const zText = (z > 0 ? '+' : '') + z + '%';
+
+        liveBgZoom.value = z;
+        liveBgPanX.value = px;
+        liveBgPanY.value = py;
+        liveZoomValLabel.textContent = zText;
+        livePanXValLabel.textContent = px;
+        livePanYValLabel.textContent = py;
+      }
+
+      /**
+       * ==========================================================================
+       * GESTIONE LOGO: CARICAMENTO FILE ALL'AVVIO + AVVISO SE IN USO IL FALLBACK SVG
+       * ==========================================================================
+       */
+      function getDefaultSvgDataUrl() {
+        return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(DEFAULT_CASTELLO_SVG.trim());
+      }
+
+      function updateLogoUIStatus(sourceLabel, isCustom) {
+        state.isCustomLogo = Boolean(isCustom);
+        logoBadgeStatus.textContent = sourceLabel || '⚠️ SVG di fallback';
+        embedLogoHtmlBtn.disabled = false;
+
+        if (state.isCustomLogo) {
+          logoBadgeStatus.className = 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#25AE3F]/20 text-[#25AE3F] border border-[#25AE3F]/50';
+          resetDefaultSvgLogoBtn.classList.remove('hidden');
+          if (logoFallbackWarningBanner) logoFallbackWarningBanner.classList.add('hidden');
+        } else {
+          logoBadgeStatus.className = 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-400/50';
+          resetDefaultSvgLogoBtn.classList.add('hidden');
+          if (logoFallbackWarningBanner) logoFallbackWarningBanner.classList.remove('hidden');
+        }
+      }
+
+      function loadDefaultSvgLogo() {
+        const svgDataUrl = getDefaultSvgDataUrl();
+        const svgImg = new Image();
+        svgImg.onload = function () {
+          state.logoImage = svgImg;
+          state.logoDataUrl = svgDataUrl;
+          updateLogoUIStatus('⚠️ SVG di fallback (file non caricato)', false);
+          renderCanvas();
         };
-        if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-    });
+        svgImg.src = svgDataUrl;
+      }
 
-    function render() {
-        ctx.fillStyle = '#121212';
-        ctx.fillRect(0, 0, 1080, 1080);
-
-        if (baseImage) {
-            let scale = Math.max(1080 / baseImage.width, 1080 / baseImage.height);
-            let x = (1080 - baseImage.width * scale) / 2;
-            let y = (1080 - baseImage.height * scale) / 2;
-            ctx.drawImage(baseImage, x, y, baseImage.width * scale, baseImage.height * scale);
+      /**
+       * Tenta di caricare automaticamente il file immagine reale dalla stessa cartella
+       * (logo_castello.svg, logo_castello.png, logo_castello.jpg) verificando che sia esportabile su Canvas.
+       */
+      function tryLoadExternalLogoFiles(fileList, index) {
+        if (index >= fileList.length) {
+          // Nessun file esterno caricato correttamente: usa l'SVG di fallback e avvisa l'utente
+          loadDefaultSvgLogo();
+          return;
         }
 
-        // Header Layer
-        ctx.fillStyle = "rgba(10, 20, 15, 0.85)";
-        ctx.fillRect(0, 0, 1080, 100);
-        ctx.fillStyle = "#00b451";
-        ctx.fillRect(0, 95, 1080, 5);
+        const fileName = fileList[index];
+        const testImg = new Image();
+        testImg.crossOrigin = 'anonymous';
 
-        // Header Text
-        ctx.font = "italic bold 36px Helvetica, Arial, sans-serif";
-        ctx.fillStyle = "#ffffff";
-        ctx.textAlign = "left";
-        ctx.fillText(document.getElementById('cat').value.toUpperCase(), 50, 62);
+        testImg.onload = function () {
+          try {
+            // Verifica che il browser consenta di esportare il canvas con questo file locale (no Tainted Canvas)
+            const tCanvas = document.createElement('canvas');
+            tCanvas.width = testImg.naturalWidth || testImg.width || 100;
+            tCanvas.height = testImg.naturalHeight || testImg.height || 100;
+            const tCtx = tCanvas.getContext('2d');
+            tCtx.drawImage(testImg, 0, 0);
+            const dataUrl = tCanvas.toDataURL('image/png');
 
-        ctx.fillStyle = "#00b451";
-        ctx.textAlign = "right";
-        ctx.fillText(document.getElementById('fase').value.toUpperCase(), 1030, 62);
+            state.logoImage = testImg;
+            state.logoDataUrl = dataUrl;
+            updateLogoUIStatus(`✓ File "${fileName}" caricato`, true);
+            renderCanvas();
+          } catch (securityErr) {
+            // Il protocollo file:// del browser ha bloccato la lettura diretta dei pixel del file esterno
+            tryLoadExternalLogoFiles(fileList, index + 1);
+          }
+        };
 
-        // Footer Layer (Scoreboard)
-        ctx.fillStyle = "rgba(10, 20, 15, 0.90)";
-        ctx.fillRect(0, 760, 1080, 320);
+        testImg.onerror = function () {
+          tryLoadExternalLogoFiles(fileList, index + 1);
+        };
 
-        // Font Setup per Squadre
-        ctx.font = "italic bold 44px Impact, sans-serif";
-        
-        // Render Casa
-        ctx.fillStyle = "#ffffff";
-        ctx.textAlign = "left";
-        ctx.fillText(document.getElementById('teamC').value.toUpperCase(), 50, 870);
+        testImg.src = fileName;
+      }
 
-        // Score Engine
-        ctx.font = "italic bold 75px Impact, sans-serif";
-        ctx.textAlign = "right";
-        ctx.fillText(document.getElementById('golC').value, 460, 875);
-        
-        ctx.font = "300 55px Helvetica, sans-serif";
-        ctx.fillStyle = "#666";
-        ctx.fillText("|", 545, 870);
+      function initLogoOnStartup() {
+        // 1. Priorità massima: Logo incorporato direttamente nella costante EMBEDDED_LOGO_BASE64 del file HTML
+        if (typeof EMBEDDED_LOGO_BASE64 === 'string' && EMBEDDED_LOGO_BASE64.startsWith('data:image/')) {
+          const embeddedImg = new Image();
+          embeddedImg.onload = function () {
+            state.logoImage = embeddedImg;
+            state.logoDataUrl = EMBEDDED_LOGO_BASE64;
+            updateLogoUIStatus('✓ Logo originale incorporato', true);
+            renderCanvas();
+          };
+          embeddedImg.onerror = loadDefaultSvgLogo;
+          embeddedImg.src = EMBEDDED_LOGO_BASE64;
+          return;
+        }
 
-        ctx.font = "italic bold 75px Impact, sans-serif";
-        ctx.fillStyle = "#00b451";
-        ctx.textAlign = "left";
-        ctx.fillText(document.getElementById('golF').value, 600, 875);
+        // 2. Seconda priorità: Logo salvato nella memoria locale del browser (localStorage)
+        try {
+          const cachedLogo = localStorage.getItem('castello_official_logo_v2');
+          if (cachedLogo && cachedLogo.startsWith('data:image/')) {
+            const cachedImg = new Image();
+            cachedImg.onload = function () {
+              state.logoImage = cachedImg;
+              state.logoDataUrl = cachedLogo;
+              updateLogoUIStatus('✓ Logo originale (in memoria)', true);
+              renderCanvas();
+            };
+            cachedImg.onerror = loadDefaultSvgLogo;
+            cachedImg.src = cachedLogo;
+            return;
+          }
+        } catch (e) {}
 
-        // Render Ospiti
-        ctx.font = "italic bold 44px Impact, sans-serif";
-        ctx.fillText(document.getElementById('teamF').value.toUpperCase(), 680, 870);
+        // 3. Terza priorità: Cerca il file nella stessa cartella dell'HTML; se fallisce, attiva il fallback SVG con avviso
+        tryLoadExternalLogoFiles(['logo_castello.svg', 'logo_castello.png', 'logo_castello.jpg'], 0);
+      }
 
-        // Algoritmo Wrapping Marcatori (Metrica Dinamica)
-        ctx.font = "italic bold 22px Helvetica, sans-serif";
-        ctx.fillStyle = "#ffffff";
-        ctx.textAlign = "right";
-        
-        const rawMarkers = document.getElementById('markers').value.split(',');
-        let markerString = "";
-        rawMarkers.forEach(m => {
-            if(m.trim()) markerString += "⚽ " + m.trim().toUpperCase() + "   ";
+      if (dismissLogoWarningBtn) {
+        dismissLogoWarningBtn.addEventListener('click', function () {
+          logoFallbackWarningBanner.classList.add('hidden');
+        });
+      }
+
+      function processLogoImage(sourceImg, removeBlackCorners, callback) {
+        const tempCanvas = document.createElement('canvas');
+        const w = sourceImg.naturalWidth || sourceImg.width;
+        const h = sourceImg.naturalHeight || sourceImg.height;
+        tempCanvas.width = w;
+        tempCanvas.height = h;
+        const tCtx = tempCanvas.getContext('2d');
+        tCtx.drawImage(sourceImg, 0, 0);
+
+        if (removeBlackCorners) {
+          try {
+            const imgData = tCtx.getImageData(0, 0, w, h);
+            const data = imgData.data;
+            const cx = w / 2;
+            const cy = h / 2;
+            const rx = w * 0.495;
+            const ry = h * 0.495;
+
+            for (let y = 0; y < h; y++) {
+              for (let x = 0; x < w; x++) {
+                const idx = (y * w + x) * 4;
+                const r = data[idx];
+                const g = data[idx + 1];
+                const b = data[idx + 2];
+                const normDist = ((x - cx) * (x - cx)) / (rx * rx) + ((y - cy) * (y - cy)) / (ry * ry);
+
+                if (normDist > 1.02 || (r < 45 && g < 45 && b < 45 && normDist > 0.85)) {
+                  data[idx + 3] = 0;
+                }
+              }
+            }
+            tCtx.putImageData(imgData, 0, 0);
+          } catch (err) {}
+        }
+
+        const dataUrl = tempCanvas.toDataURL('image/png');
+        try {
+          localStorage.setItem('castello_official_logo_v2', dataUrl);
+        } catch (e) {}
+
+        const processedImg = new Image();
+        processedImg.onload = () => callback(processedImg, dataUrl);
+        processedImg.src = dataUrl;
+      }
+
+      /**
+       * ==========================================================================
+       * FUNZIONI DI DISEGNO PARAMETRIZZATE SUL CONTESTO (PER EXPORT FINO A 3240x3240)
+       * ==========================================================================
+       */
+      function drawDefaultStadiumBackground(targetCtx) {
+        targetCtx.fillStyle = COLORS.darkestGreen;
+        targetCtx.fillRect(0, 0, CW, CH);
+
+        const skyGrad = targetCtx.createLinearGradient(0, 88, 0, 460);
+        skyGrad.addColorStop(0, '#5694e8');
+        skyGrad.addColorStop(0.6, '#76aee8');
+        skyGrad.addColorStop(1, '#9ec5ed');
+        targetCtx.fillStyle = skyGrad;
+        targetCtx.fillRect(0, 88, CW, 380);
+
+        targetCtx.fillStyle = '#38574c';
+        targetCtx.beginPath();
+        targetCtx.moveTo(0, 290);
+        targetCtx.bezierCurveTo(180, 130, 390, 165, 580, 235);
+        targetCtx.bezierCurveTo(760, 150, 940, 125, 1080, 185);
+        targetCtx.lineTo(1080, 480);
+        targetCtx.lineTo(0, 480);
+        targetCtx.closePath();
+        targetCtx.fill();
+
+        targetCtx.fillStyle = '#1b3d26';
+        targetCtx.fillRect(0, 415, 780, 115);
+
+        targetCtx.fillStyle = '#374151';
+        targetCtx.fillRect(775, 320, 305, 205);
+        targetCtx.fillStyle = '#9ca3af';
+        targetCtx.fillRect(790, 355, 280, 160);
+
+        const pitchTop = 525;
+        const pitchGrad = targetCtx.createLinearGradient(0, pitchTop, 0, CH);
+        pitchGrad.addColorStop(0, '#366f34');
+        pitchGrad.addColorStop(0.45, '#2b5f2a');
+        pitchGrad.addColorStop(0.78, '#133b19');
+        pitchGrad.addColorStop(1, COLORS.darkestGreen);
+        targetCtx.fillStyle = pitchGrad;
+        targetCtx.fillRect(0, pitchTop, CW, CH - pitchTop);
+
+        targetCtx.save();
+        targetCtx.strokeStyle = 'rgba(247, 248, 241, 0.72)';
+        targetCtx.lineWidth = 3.5;
+        targetCtx.beginPath();
+        targetCtx.moveTo(0, 622);
+        targetCtx.lineTo(1080, 626);
+        targetCtx.moveTo(580, 580);
+        targetCtx.lineTo(0, 705);
+        targetCtx.stroke();
+        targetCtx.restore();
+      }
+
+      function drawBackgroundImageWithGreenMat(targetCtx, img) {
+        targetCtx.fillStyle = COLORS.darkestGreen;
+        targetCtx.fillRect(0, 0, CW, CH);
+
+        const imgW = img.naturalWidth || img.width;
+        const imgH = img.naturalHeight || img.height;
+        if (!imgW || !imgH) return;
+
+        const baseScale = Math.max(CW / imgW, CH / imgH);
+        const zoomFactor = Math.max(0.2, 1 + state.zoomPercent / 100);
+        const finalScale = baseScale * zoomFactor;
+
+        const drawW = imgW * finalScale;
+        const drawH = imgH * finalScale;
+
+        const panRangeX = Math.max(Math.abs(CW - drawW) / 2 + 260, 450);
+        const panRangeY = Math.max(Math.abs(CH - drawH) / 2 + 260, 450);
+
+        const dx = (CW - drawW) / 2 + (state.panX / 100) * panRangeX;
+        const dy = (CH - drawH) / 2 + (state.panY / 100) * panRangeY;
+
+        targetCtx.drawImage(img, dx, dy, drawW, drawH);
+
+        const photoBottomY = dy + drawH;
+        if (photoBottomY < CH && photoBottomY > 92) {
+          const featherH = 36;
+          const featherStart = Math.max(92, photoBottomY - featherH);
+          const seamGrad = targetCtx.createLinearGradient(0, featherStart, 0, photoBottomY + 2);
+          seamGrad.addColorStop(0, 'rgba(4, 27, 15, 0)');
+          seamGrad.addColorStop(0.65, 'rgba(4, 27, 15, 0.65)');
+          seamGrad.addColorStop(1, COLORS.darkestGreen);
+          targetCtx.fillStyle = seamGrad;
+          targetCtx.fillRect(0, featherStart, CW, photoBottomY - featherStart + 4);
+        }
+      }
+
+      function drawLogoPlaceholder(targetCtx) {
+        targetCtx.save();
+        const cx = 72;
+        const cy = 44;
+        const rx = 28;
+        const ry = 37;
+
+        targetCtx.beginPath();
+        targetCtx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+        targetCtx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+        targetCtx.fill();
+
+        targetCtx.lineWidth = 2.5;
+        targetCtx.setLineDash([6, 4]);
+        targetCtx.strokeStyle = COLORS.white;
+        targetCtx.stroke();
+        targetCtx.setLineDash([]);
+
+        targetCtx.font = `700 15px ${CONDENSED_FONT_STACK}`;
+        targetCtx.fillStyle = COLORS.white;
+        targetCtx.textAlign = 'center';
+        targetCtx.textBaseline = 'middle';
+        targetCtx.fillText('LOGO', cx, cy);
+        targetCtx.restore();
+      }
+
+      function drawHeader(targetCtx) {
+        targetCtx.save();
+
+        const headerH = 88;
+        targetCtx.fillStyle = COLORS.darkestGreen;
+        targetCtx.fillRect(0, 0, CW, headerH);
+
+        targetCtx.fillStyle = COLORS.primaryGreen;
+        targetCtx.fillRect(0, headerH, CW, 4);
+
+        if (state.logoImage) {
+          const maxBoxW = 76;
+          const maxBoxH = 82;
+          const boxX = 34;
+          const boxY = 3;
+
+          const lw = state.logoImage.naturalWidth || state.logoImage.width || 76;
+          const lh = state.logoImage.naturalHeight || state.logoImage.height || 82;
+          const ratio = Math.min(maxBoxW / lw, maxBoxH / lh);
+          const drawW = lw * ratio;
+          const drawH = lh * ratio;
+          const drawX = boxX + (maxBoxW - drawW) / 2;
+          const drawY = boxY + (maxBoxH - drawH) / 2;
+
+          targetCtx.drawImage(state.logoImage, drawX, drawY, drawW, drawH);
+        } else {
+          drawLogoPlaceholder(targetCtx);
+        }
+
+        const categoriaText = (categoriaInput.value || '').trim().toUpperCase();
+        if (categoriaText) {
+          targetCtx.font = `italic 800 39px ${CONDENSED_FONT_STACK}`;
+          targetCtx.fillStyle = COLORS.warmWhite;
+          targetCtx.textAlign = 'left';
+          targetCtx.textBaseline = 'middle';
+          targetCtx.fillText(categoriaText, 118, 46);
+        }
+
+        const tipoGaraText = (tipoGaraInput.value || 'CAMPIONATO').trim().toUpperCase();
+        targetCtx.font = `italic 700 35px ${CONDENSED_FONT_STACK}`;
+        targetCtx.fillStyle = COLORS.brightGreen;
+        targetCtx.textAlign = 'right';
+        targetCtx.textBaseline = 'middle';
+        targetCtx.fillText(tipoGaraText, CW - 42, 46);
+
+        targetCtx.restore();
+      }
+
+      function drawFooterGradientAndLabels(targetCtx) {
+        targetCtx.save();
+
+        const intensityFactor = state.gradientIntensity / 100;
+        if (intensityFactor > 0) {
+          const baseHeight = 265;
+          const gradHeight = Math.round(baseHeight * Math.min(1.45, Math.max(0.35, intensityFactor)));
+          const gradTopY = CH - gradHeight;
+          const alphaScale = Math.min(1.15, intensityFactor);
+
+          const bottomGrad = targetCtx.createLinearGradient(0, gradTopY, 0, CH);
+          bottomGrad.addColorStop(0, 'rgba(4, 27, 15, 0)');
+          bottomGrad.addColorStop(0.32, `rgba(4, 27, 15, ${(0.42 * alphaScale).toFixed(2)})`);
+          bottomGrad.addColorStop(0.64, `rgba(4, 27, 15, ${(0.80 * alphaScale).toFixed(2)})`);
+          bottomGrad.addColorStop(1, `rgba(4, 27, 15, ${Math.min(0.99, 0.97 * alphaScale).toFixed(2)})`);
+
+          targetCtx.fillStyle = bottomGrad;
+          targetCtx.fillRect(0, gradTopY, CW, gradHeight);
+        }
+
+        const bottomY = 1042;
+
+        const rawStagione = (stagioneInput.value || 'STAGIONE 2026/27').trim().toUpperCase();
+        targetCtx.font = `italic 600 24px ${CONDENSED_FONT_STACK}`;
+        targetCtx.textBaseline = 'alphabetic';
+        targetCtx.textAlign = 'left';
+
+        if (rawStagione.startsWith('STAGIONE ')) {
+          const prefix = 'STAGIONE ';
+          const yearPart = rawStagione.substring(prefix.length);
+          targetCtx.fillStyle = COLORS.warmWhite;
+          targetCtx.fillText(prefix, 56, bottomY);
+          const prefixW = targetCtx.measureText(prefix).width;
+          targetCtx.fillStyle = COLORS.brightGreen;
+          targetCtx.fillText(yearPart, 56 + prefixW, bottomY);
+        } else {
+          targetCtx.fillStyle = COLORS.brightGreen;
+          targetCtx.fillText(rawStagione, 56, bottomY);
+        }
+
+        const rawHashtag = (hashtagInput.value || '#siAMObiancoverdi').trim();
+        targetCtx.font = `italic 600 24px ${CONDENSED_FONT_STACK}`;
+
+        const amoIndex = rawHashtag.indexOf('AMO');
+        if (amoIndex !== -1) {
+          const part1 = rawHashtag.substring(0, amoIndex);
+          const part2 = 'AMO';
+          const part3 = rawHashtag.substring(amoIndex + 3);
+
+          const w1 = targetCtx.measureText(part1).width;
+          const w2 = targetCtx.measureText(part2).width;
+          const w3 = targetCtx.measureText(part3).width;
+          const startX = CW - 56 - (w1 + w2 + w3);
+
+          targetCtx.textAlign = 'left';
+          targetCtx.fillStyle = COLORS.warmWhite;
+          targetCtx.fillText(part1, startX, bottomY);
+
+          targetCtx.fillStyle = COLORS.brightGreen;
+          targetCtx.fillText(part2, startX + w1, bottomY);
+
+          targetCtx.fillStyle = COLORS.warmWhite;
+          targetCtx.fillText(part3, startX + w1 + w2, bottomY);
+        } else {
+          targetCtx.textAlign = 'right';
+          targetCtx.fillStyle = COLORS.warmWhite;
+          targetCtx.fillText(rawHashtag, CW - 56, bottomY);
+        }
+
+        targetCtx.restore();
+      }
+
+      function drawSlantedParallelogram(targetCtx, x, y, width, height, slant, fillColor, strokeColor) {
+        targetCtx.save();
+        targetCtx.beginPath();
+        targetCtx.moveTo(x + slant, y);
+        targetCtx.lineTo(x + width + slant, y);
+        targetCtx.lineTo(x + width, y + height);
+        targetCtx.lineTo(x, y + height);
+        targetCtx.closePath();
+
+        targetCtx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        targetCtx.shadowBlur = 12;
+        targetCtx.shadowOffsetY = 4;
+
+        targetCtx.fillStyle = fillColor;
+        targetCtx.fill();
+
+        if (strokeColor) {
+          targetCtx.lineWidth = 3;
+          targetCtx.strokeStyle = strokeColor;
+          targetCtx.stroke();
+        }
+        targetCtx.restore();
+      }
+
+      /**
+       * Calcola la dimensione ottimale del font per i nomi delle squadre
+       */
+      function fitTeamFontSize(targetCtx, text, initialSize, minSize, maxWidth) {
+        if (!text) return initialSize;
+        let size = initialSize;
+        while (size > minSize) {
+          targetCtx.font = `italic 800 ${size}px ${TEAM_RESULT_FONT_STACK}`;
+          if (targetCtx.measureText(text).width <= maxWidth) {
+            break;
+          }
+          size -= 1;
+        }
+        return size;
+      }
+
+      function drawSoccerBallIcon(targetCtx, cx, cy, radius) {
+        targetCtx.save();
+
+        targetCtx.beginPath();
+        targetCtx.arc(cx, cy, radius, 0, Math.PI * 2);
+        targetCtx.fillStyle = COLORS.warmWhite;
+        targetCtx.fill();
+        targetCtx.lineWidth = 1.6;
+        targetCtx.strokeStyle = COLORS.darkestGreen;
+        targetCtx.stroke();
+
+        const pentRadius = radius * 0.45;
+        targetCtx.beginPath();
+        for (let i = 0; i < 5; i++) {
+          const angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+          const px = cx + Math.cos(angle) * pentRadius;
+          const py = cy + Math.sin(angle) * pentRadius;
+          if (i === 0) targetCtx.moveTo(px, py);
+          else targetCtx.lineTo(px, py);
+        }
+        targetCtx.closePath();
+        targetCtx.fillStyle = COLORS.darkestGreen;
+        targetCtx.fill();
+
+        targetCtx.strokeStyle = COLORS.darkestGreen;
+        targetCtx.lineWidth = 1.5;
+        for (let i = 0; i < 5; i++) {
+          const angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+          targetCtx.beginPath();
+          targetCtx.moveTo(cx + Math.cos(angle) * pentRadius, cy + Math.sin(angle) * pentRadius);
+          targetCtx.lineTo(cx + Math.cos(angle) * (radius * 0.92), cy + Math.sin(angle) * (radius * 0.92));
+          targetCtx.stroke();
+        }
+
+        targetCtx.restore();
+      }
+
+      function drawResultsAndScorers(targetCtx) {
+        targetCtx.save();
+
+        const centerY = 816;
+        const centerX = CW / 2;
+
+        // Linea verticale di separazione bianca
+        targetCtx.beginPath();
+        targetCtx.moveTo(centerX, centerY - 46);
+        targetCtx.lineTo(centerX, centerY + 46);
+        targetCtx.strokeStyle = COLORS.warmWhite;
+        targetCtx.lineWidth = 2.6;
+        targetCtx.stroke();
+
+        const castelloName = 'ATLETICA CASTELLO';
+        const ospiteName = (ospiteInput.value || '').trim().toUpperCase();
+        const scoreCastello = String(scoreCasaInput.value !== '' ? scoreCasaInput.value : '1');
+        const scoreOspite = String(scoreOspiteInput.value !== '' ? scoreOspiteInput.value : '2');
+
+        const leftTeamName = state.castelloIsHome ? castelloName : ospiteName;
+        const rightTeamName = state.castelloIsHome ? ospiteName : castelloName;
+        const leftScore = state.castelloIsHome ? scoreCastello : scoreOspite;
+        const rightScore = state.castelloIsHome ? scoreOspite : scoreCastello;
+
+        const scoreStyle = scoreStyleSelect.value;
+
+        const boxW = 86;
+        const boxH = 88;
+        const slant = 16;
+        const gapFromCenter = 24;
+
+        const leftBoxX = centerX - gapFromCenter - boxW - slant / 2;
+        const rightBoxX = centerX + gapFromCenter - slant / 2;
+        const boxY = centerY - boxH / 2;
+
+        if (scoreStyle === 'outline') {
+          // Numeri sagomati con tagli netti e decisi
+          targetCtx.font = `italic 900 98px ${TEAM_RESULT_FONT_STACK}`;
+          targetCtx.textAlign = 'center';
+          targetCtx.textBaseline = 'middle';
+
+          const leftNumX = centerX - 78;
+          const rightNumX = centerX + 82;
+
+          if (state.castelloIsHome) {
+            targetCtx.lineWidth = 6.5;
+            targetCtx.strokeStyle = COLORS.white;
+            targetCtx.lineJoin = 'miter';
+            targetCtx.miterLimit = 3;
+            targetCtx.strokeText(leftScore, leftNumX, centerY + 4);
+            targetCtx.fillStyle = COLORS.castelloResultGreen;
+            targetCtx.fillText(leftScore, leftNumX, centerY + 4);
+          } else {
+            targetCtx.fillStyle = COLORS.white;
+            targetCtx.fillText(leftScore, leftNumX, centerY + 4);
+          }
+
+          if (!state.castelloIsHome) {
+            targetCtx.lineWidth = 6.5;
+            targetCtx.strokeStyle = COLORS.white;
+            targetCtx.lineJoin = 'miter';
+            targetCtx.miterLimit = 3;
+            targetCtx.strokeText(rightScore, rightNumX, centerY + 4);
+            targetCtx.fillStyle = COLORS.castelloResultGreen;
+            targetCtx.fillText(rightScore, rightNumX, centerY + 4);
+          } else {
+            targetCtx.fillStyle = COLORS.white;
+            targetCtx.fillText(rightScore, rightNumX, centerY + 4);
+          }
+        } else {
+          const leftBoxFill = state.castelloIsHome ? COLORS.castelloResultGreen : COLORS.white;
+          const leftTextFill = state.castelloIsHome ? COLORS.white : COLORS.darkestGreen;
+          const rightBoxFill = state.castelloIsHome ? COLORS.white : COLORS.castelloResultGreen;
+          const rightTextFill = state.castelloIsHome ? COLORS.darkestGreen : COLORS.white;
+
+          drawSlantedParallelogram(targetCtx, leftBoxX, boxY, boxW, boxH, slant, leftBoxFill, COLORS.white);
+          drawSlantedParallelogram(targetCtx, rightBoxX, boxY, boxW, boxH, slant, rightBoxFill, null);
+
+          targetCtx.font = `italic 900 68px ${TEAM_RESULT_FONT_STACK}`;
+          targetCtx.textAlign = 'center';
+          targetCtx.textBaseline = 'middle';
+
+          targetCtx.fillStyle = leftTextFill;
+          targetCtx.fillText(leftScore, leftBoxX + (boxW + slant) / 2 - 2, centerY + 3);
+
+          targetCtx.fillStyle = rightTextFill;
+          targetCtx.fillText(rightScore, rightBoxX + (boxW + slant) / 2 - 2, centerY + 3);
+        }
+
+        // Aree orizzontali per i nomi delle squadre
+        const leftAreaStart = 32;
+        const leftAreaEnd = 412;
+        const leftMaxWidth = leftAreaEnd - leftAreaStart;
+        const leftCenterX = leftAreaStart + leftMaxWidth / 2;
+
+        const rightAreaStart = 678;
+        const rightAreaEnd = CW - 32;
+        const rightMaxWidth = rightAreaEnd - rightAreaStart;
+        const rightCenterX = rightAreaStart + rightMaxWidth / 2;
+
+        // Squadra di Sinistra
+        if (leftTeamName) {
+          const leftFontSize = fitTeamFontSize(targetCtx, leftTeamName, 54, 24, leftMaxWidth);
+          targetCtx.font = `italic 900 ${leftFontSize}px ${TEAM_RESULT_FONT_STACK}`;
+          targetCtx.textAlign = 'center';
+          targetCtx.textBaseline = 'middle';
+
+          if (state.castelloIsHome) {
+            targetCtx.lineWidth = 5.5;
+            targetCtx.strokeStyle = COLORS.white;
+            targetCtx.lineJoin = 'miter';
+            targetCtx.miterLimit = 3;
+            targetCtx.strokeText(leftTeamName, leftCenterX, centerY + 3);
+            targetCtx.fillStyle = COLORS.castelloTeamGreen;
+            targetCtx.fillText(leftTeamName, leftCenterX, centerY + 3);
+          } else {
+            targetCtx.fillStyle = COLORS.white;
+            targetCtx.fillText(leftTeamName, leftCenterX, centerY + 3);
+          }
+        }
+
+        // Squadra di Destra
+        if (rightTeamName) {
+          const rightFontSize = fitTeamFontSize(targetCtx, rightTeamName, 56, 24, rightMaxWidth);
+          targetCtx.font = `italic 900 ${rightFontSize}px ${TEAM_RESULT_FONT_STACK}`;
+          targetCtx.textAlign = 'center';
+          targetCtx.textBaseline = 'middle';
+
+          if (!state.castelloIsHome) {
+            targetCtx.lineWidth = 5.5;
+            targetCtx.strokeStyle = COLORS.white;
+            targetCtx.lineJoin = 'miter';
+            targetCtx.miterLimit = 3;
+            targetCtx.strokeText(rightTeamName, rightCenterX, centerY + 3);
+            targetCtx.fillStyle = COLORS.castelloTeamGreen;
+            targetCtx.fillText(rightTeamName, rightCenterX, centerY + 3);
+          } else {
+            targetCtx.fillStyle = COLORS.white;
+            targetCtx.fillText(rightTeamName, rightCenterX, centerY + 3);
+          }
+        }
+
+        // Marcatori Atletica Castello con pallone separatore
+        const scorers = getEffectiveScorers();
+        if (scorers.length > 0 && parseInt(scoreCastello, 10) > 0) {
+          const castelloCenterX = state.castelloIsHome ? leftCenterX : rightCenterX;
+          const castelloMaxW = (state.castelloIsHome ? leftMaxWidth : rightMaxWidth) + 40;
+
+          const scorerFontSize = scorers.length > 3 ? 23 : 27;
+          targetCtx.font = `italic 700 ${scorerFontSize}px ${CONDENSED_FONT_STACK}`;
+
+          const ballRadius = scorerFontSize * 0.41;
+          const ballTextGap = 9;
+          const itemSeparatorGap = 20;
+
+          const rows = [];
+          let currentRow = [];
+          let currentRowWidth = 0;
+
+          scorers.forEach((scorerName) => {
+            const textW = targetCtx.measureText(scorerName).width;
+            const itemW = ballRadius * 2 + ballTextGap + textW;
+            const addedW = currentRow.length === 0 ? itemW : itemSeparatorGap + itemW;
+
+            if (currentRow.length > 0 && currentRowWidth + addedW > castelloMaxW) {
+              rows.push({ items: currentRow, totalWidth: currentRowWidth });
+              currentRow = [{ name: scorerName, textW, itemW }];
+              currentRowWidth = itemW;
+            } else {
+              currentRow.push({ name: scorerName, textW, itemW });
+              currentRowWidth += addedW;
+            }
+          });
+
+          if (currentRow.length > 0) {
+            rows.push({ items: currentRow, totalWidth: currentRowWidth });
+          }
+
+          const visibleRows = rows.slice(0, 3);
+          const startScorerY = 885;
+          const rowHeight = scorerFontSize + 9;
+
+          visibleRows.forEach((rowObj, rowIdx) => {
+            const rowY = startScorerY + rowIdx * rowHeight;
+            let cursorX = castelloCenterX - rowObj.totalWidth / 2;
+
+            rowObj.items.forEach((item) => {
+              drawSoccerBallIcon(targetCtx, cursorX + ballRadius, rowY - 1, ballRadius);
+              cursorX += ballRadius * 2 + ballTextGap;
+
+              targetCtx.textAlign = 'left';
+              targetCtx.textBaseline = 'middle';
+              targetCtx.fillStyle = COLORS.warmWhite;
+              targetCtx.fillText(item.name, cursorX, rowY);
+
+              cursorX += item.textW + itemSeparatorGap;
+            });
+          });
+        }
+
+        targetCtx.restore();
+      }
+
+      /**
+       * Renderizza l'intera grafica su qualsiasi contesto Canvas alla risoluzione `targetSize x targetSize`
+       */
+      function renderSceneOnContext(targetCtx, targetSize) {
+        const scaleFactor = targetSize / CW;
+        targetCtx.save();
+        targetCtx.clearRect(0, 0, targetSize, targetSize);
+        targetCtx.imageSmoothingEnabled = true;
+        targetCtx.imageSmoothingQuality = 'high';
+        targetCtx.scale(scaleFactor, scaleFactor);
+
+        if (state.bgImage) {
+          drawBackgroundImageWithGreenMat(targetCtx, state.bgImage);
+        } else {
+          drawDefaultStadiumBackground(targetCtx);
+        }
+
+        drawHeader(targetCtx);
+        drawFooterGradientAndLabels(targetCtx);
+        drawResultsAndScorers(targetCtx);
+
+        targetCtx.restore();
+      }
+
+      /**
+       * Renderizza l'anteprima live a schermo
+       */
+      function renderCanvas() {
+        renderSceneOnContext(ctx, CW);
+      }
+
+      /**
+       * ==========================================================================
+       * GESTIONE LISTA MARCATORI
+       * ==========================================================================
+       */
+      function getEffectiveScorers() {
+        const list = [...state.scorersList];
+        const pending = scorerSingleInput.value.trim();
+        if (pending) {
+          pending.split(',').forEach((part) => {
+            const clean = part.replace(/⚽/g, '').trim().toUpperCase();
+            if (clean) list.push(clean);
+          });
+        }
+        return list;
+      }
+
+      function renderScorerChips() {
+        scorersTagsContainer.innerHTML = '';
+        if (state.scorersList.length === 0) {
+          const emptyHint = document.createElement('span');
+          emptyHint.className = 'text-[11px] text-gray-500 italic';
+          emptyHint.textContent = 'Nessun marcatore inserito';
+          scorersTagsContainer.appendChild(emptyHint);
+          return;
+        }
+
+        state.scorersList.forEach((name, idx) => {
+          const pill = document.createElement('span');
+          pill.className = 'scorer-pill';
+          pill.innerHTML = `<span class="inline-flex items-center gap-1">⚽ <span>${name}</span></span>`;
+
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.className = 'ml-1 text-white/80 hover:text-white font-black text-xs leading-none';
+          removeBtn.textContent = '✕';
+          removeBtn.title = 'Rimuovi marcatore';
+          removeBtn.addEventListener('click', () => {
+            state.scorersList.splice(idx, 1);
+            renderScorerChips();
+            renderCanvas();
+          });
+
+          pill.appendChild(removeBtn);
+          scorersTagsContainer.appendChild(pill);
+        });
+      }
+
+      function addScorersFromText(rawText) {
+        if (!rawText) return;
+        const parts = rawText.split(',');
+        parts.forEach((p) => {
+          const clean = p.replace(/⚽/g, '').trim().toUpperCase();
+          if (clean) {
+            state.scorersList.push(clean);
+          }
+        });
+        scorerSingleInput.value = '';
+        renderScorerChips();
+        renderCanvas();
+      }
+
+      addScorerBtn.addEventListener('click', function () {
+        addScorersFromText(scorerSingleInput.value);
+      });
+
+      scorerSingleInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addScorersFromText(this.value);
+        }
+      });
+
+      scorerSingleInput.addEventListener('input', function () {
+        if (this.value.includes(',')) {
+          addScorersFromText(this.value);
+        } else {
+          renderCanvas();
+        }
+      });
+
+      clearScorersBtn.addEventListener('click', function () {
+        state.scorersList = [];
+        scorerSingleInput.value = '';
+        renderScorerChips();
+        renderCanvas();
+      });
+
+      /**
+       * ==========================================================================
+       * SUGGERIMENTI CLICCABILI PER CATEGORIA E TIPO GARA
+       * ==========================================================================
+       */
+      function setupQuickChips(containerId, targetInput) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const buttons = container.querySelectorAll('.quick-chip');
+
+        function syncActiveChip() {
+          const currentVal = targetInput.value.trim().toUpperCase();
+          buttons.forEach((btn) => {
+            if (btn.dataset.value.toUpperCase() === currentVal) {
+              btn.classList.add('active');
+            } else {
+              btn.classList.remove('active');
+            }
+          });
+        }
+
+        buttons.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            targetInput.value = btn.dataset.value;
+            syncActiveChip();
+            renderCanvas();
+          });
         });
 
-        // Configurazione limiti di wrapping
-        const maxWidth = 980; 
-        const startX = 1030;
-        let startY = 940;
-        const lineHeight = 32;
+        targetInput.addEventListener('input', syncActiveChip);
+      }
 
-        function wrapText(context, text, x, y, maxWidth, lineHeight) {
-            let words = text.split('   ');
-            let line = '';
-            for(let n = 0; n < words.length; n++) {
-                if(!words[n]. Gaza) continue;
-                let testLine = line + words[n] + '   ';
-                let metrics = context.measureText(testLine);
-                if (metrics.width > maxWidth && n > 0) {
-                    context.fillText(line, x, y);
-                    line = words[n] + '   ';
-                    y += lineHeight;
-                } else {
-                    line = testLine;
-                }
+      setupQuickChips('tipoGaraChips', tipoGaraInput);
+
+      // Gestione menu a tendina per le macro-categorie con impostazione automatica del placeholder/valore di Tipo Gara
+      const macroDropdowns = document.querySelectorAll('.macro-dropdown');
+      macroDropdowns.forEach((dropdown) => {
+        dropdown.addEventListener('change', function () {
+          const selectedValue = this.value;
+          const macroName = this.dataset.macro;
+
+          if (selectedValue) {
+            categoriaInput.value = selectedValue;
+            
+            // Imposta il tipo gara in base alla macro categoria scelta
+            if (macroName === 'PRIMA SQUADRA') {
+              tipoGaraInput.value = 'SECONDA CATEGORIA';
+            } else if (macroName === 'SETTORE GIOVANILE') {
+              tipoGaraInput.value = 'CAMPIONATO';
+            } else if (macroName === 'ESORDIENTI' || macroName === 'PULCINI e PRIMI CALCI') {
+              tipoGaraInput.value = 'RISULTATO FIGC';
             }
-            context.fillText(line, x, y);
+
+            // Sincronizza lo stato attivo dei chip di tipo gara se presenti
+            const tipoGaraButtons = document.querySelectorAll('#tipoGaraChips .quick-chip');
+            tipoGaraButtons.forEach((btn) => {
+              if (btn.dataset.value.toUpperCase() === tipoGaraInput.value.toUpperCase()) {
+                btn.classList.add('active');
+              } else {
+                btn.classList.remove('active');
+              }
+            });
+
+            // Resetta gli altri menu a tendina per lasciare attivo solo quello corrente
+            macroDropdowns.forEach((other) => {
+              if (other !== this) other.value = '';
+            });
+
+            renderCanvas();
+          }
+        });
+      });
+
+      categoriaInput.addEventListener('input', function () {
+        const val = this.value.trim().toUpperCase();
+        let matched = false;
+        macroDropdowns.forEach((dropdown) => {
+          const options = dropdown.querySelectorAll('option');
+          let foundInThis = false;
+          options.forEach((opt) => {
+            if (opt.value.toUpperCase() === val) {
+              dropdown.value = opt.value;
+              foundInThis = true;
+              matched = true;
+            }
+          });
+          if (!foundInThis && dropdown.value && dropdown !== document.activeElement) {
+            // non resettiamo se l'utente sta scrivendo liberamente
+          }
+        });
+        if (!matched) {
+          macroDropdowns.forEach((d) => d.value = '');
         }
-        wrapText(ctx, markerString, startX, startY, maxWidth, lineHeight);
+        renderCanvas();
+      });
 
-        // Metadata Fissa
-        ctx.font = "bold 18px Helvetica, sans-serif";
-        ctx.fillStyle = "#555";
-        ctx.textAlign = "left";
-        ctx.fillText("👤 STAGIONE 2026/27", 50, 1045);
-        ctx.textAlign = "right";
-        ctx.fillStyle = "#00b451";
-        ctx.fillText("#siAMObiancoverdi", 1030, 1045);
-    }
+      /**
+       * ==========================================================================
+       * EVENT LISTENERS: FOTO, LOGO, FONT, ZOOM/PAN UNIFICATI & DOWNLOAD ALTA QUALITÀ
+       * ==========================================================================
+       */
+      bgImageInput.addEventListener('change', function (e) {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
 
-    // Client-side Download Blob Handler
-    document.getElementById('download-btn').addEventListener('click', function() {
-        const dataUrl = canvas.toDataURL('image/png');
-        const link = document.createElement('a');
-        link.download = `risultato_${document.getElementById('teamC').value}_${document.getElementById('teamF').value}.png`.toLowerCase();
-        link.href = dataUrl;
-        link.click();
-    });
+        bgFileName.textContent = file.name;
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          const img = new Image();
+          img.onload = function () {
+            state.bgImage = img;
+            state.zoomPercent = 0;
+            state.panX = 0;
+            state.panY = 0;
+            syncTransformControlsUI();
+            renderCanvas();
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
 
-    // Primo Boot Run
-    window.onload = render;
-</script>
+      logoInput.addEventListener('change', function (e) {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          const rawImg = new Image();
+          rawImg.onload = function () {
+            state.rawLogoSourceImg = rawImg;
+            processLogoImage(rawImg, removeBlackBgCheckbox.checked, function (cleanedLogo, dataUrl) {
+              state.logoImage = cleanedLogo;
+              state.logoDataUrl = dataUrl;
+              updateLogoUIStatus('✓ Logo personalizzato attivo', true);
+              renderCanvas();
+            });
+          };
+          rawImg.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      removeBlackBgCheckbox.addEventListener('change', function () {
+        if (state.rawLogoSourceImg) {
+          processLogoImage(state.rawLogoSourceImg, this.checked, function (cleanedLogo, dataUrl) {
+            state.logoImage = cleanedLogo;
+            state.logoDataUrl = dataUrl;
+            renderCanvas();
+          });
+        }
+      });
+
+      resetDefaultSvgLogoBtn.addEventListener('click', function () {
+        state.rawLogoSourceImg = null;
+        logoInput.value = '';
+        try {
+          localStorage.removeItem('castello_official_logo_v2');
+          localStorage.removeItem('castello_custom_logo_v2');
+        } catch (e) {}
+        loadDefaultSvgLogo();
+      });
+
+      embedLogoHtmlBtn.addEventListener('click', function () {
+        if (!state.logoDataUrl) return;
+        const currentHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        const updatedHtml = currentHtml.replace(
+          /const EMBEDDED_LOGO_BASE64\s*=\s*"[^"]*";/,
+          `const EMBEDDED_LOGO_BASE64 = "${state.logoDataUrl}";`
+        );
+        const blob = new Blob([updatedHtml], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'generatore_atletica_castello_con_logo.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        statusFeedback.textContent = '✓ Scaricato "generatore_atletica_castello_con_logo.html" con il logo incorporato!';
+      });
+
+      gradientIntensityInput.addEventListener('input', function () {
+        state.gradientIntensity = parseInt(this.value, 10) || 0;
+        gradIntensityLabel.textContent = state.gradientIntensity + '%';
+        renderCanvas();
+      });
+
+      fontPresetSelect.addEventListener('change', function () {
+        const chosen = FONT_PRESETS[this.value] || FONT_PRESETS.roboto;
+        TEAM_RESULT_FONT_STACK = chosen;
+        CONDENSED_FONT_STACK = chosen;
+        fontStatusLabel.textContent = `Attivo: ${this.options[this.selectedIndex].text}`;
+        renderCanvas();
+      });
+
+      fontFileInput.addEventListener('change', async function (e) {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        try {
+          const buffer = await file.arrayBuffer();
+          const customFont = new FontFace('CustomAvenirCondensed', buffer);
+          await customFont.load();
+          document.fonts.add(customFont);
+          fontStatusLabel.textContent = `✓ Font caricato: ${file.name}`;
+          fontStatusLabel.className = 'text-[10px] text-[#25AE3F] font-bold';
+          renderCanvas();
+        } catch (err) {
+          fontStatusLabel.textContent = 'Formato non supportato dal browser.';
+          fontStatusLabel.className = 'text-[10px] text-amber-400';
+        }
+      });
+
+      // Controlli Zoom / Pan unificati sopra l'anteprima
+      liveBgZoom.addEventListener('input', function () {
+        state.zoomPercent = Math.max(-60, Math.min(200, parseFloat(this.value) || 0));
+        syncTransformControlsUI();
+        renderCanvas();
+      });
+
+      liveBgPanX.addEventListener('input', function () {
+        state.panX = Math.max(-100, Math.min(100, parseFloat(this.value) || 0));
+        syncTransformControlsUI();
+        renderCanvas();
+      });
+
+      liveBgPanY.addEventListener('input', function () {
+        state.panY = Math.max(-100, Math.min(100, parseFloat(this.value) || 0));
+        syncTransformControlsUI();
+        renderCanvas();
+      });
+
+      liveCenterPhotoBtn.addEventListener('click', function () {
+        state.zoomPercent = 0;
+        state.panX = 0;
+        state.panY = 0;
+        syncTransformControlsUI();
+        renderCanvas();
+      });
+
+      // Trascinamento diretto (1 dito / Mouse) + Pinch-to-Zoom (2 dita su Smartphone) sul Canvas
+      function handlePointerDown(clientX, clientY) {
+        if (!state.bgImage) return;
+        state.isDragging = true;
+        state.dragStartX = clientX;
+        state.dragStartY = clientY;
+        state.initialPanX = state.panX;
+        state.initialPanY = state.panY;
+      }
+
+      function handlePointerMove(clientX, clientY) {
+        if (!state.isDragging || !state.bgImage) return;
+        const rect = canvas.getBoundingClientRect();
+        const deltaX = ((clientX - state.dragStartX) / rect.width) * 140;
+        const deltaY = ((clientY - state.dragStartY) / rect.height) * 140;
+
+        state.panX = Math.max(-100, Math.min(100, Math.round(state.initialPanX + deltaX)));
+        state.panY = Math.max(-100, Math.min(100, Math.round(state.initialPanY + deltaY)));
+
+        syncTransformControlsUI();
+        renderCanvas();
+      }
+
+      function handlePointerUp() {
+        state.isDragging = false;
+        state.isPinching = false;
+      }
+
+      function getTouchDistance(t1, t2) {
+        return Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      }
+
+      function getTouchMidpoint(t1, t2) {
+        return {
+          x: (t1.clientX + t2.clientX) / 2,
+          y: (t1.clientY + t2.clientY) / 2
+        };
+      }
+
+      canvas.addEventListener('mousedown', (e) => handlePointerDown(e.clientX, e.clientY));
+      window.addEventListener('mousemove', (e) => handlePointerMove(e.clientX, e.clientY));
+      window.addEventListener('mouseup', handlePointerUp);
+
+      canvas.addEventListener('touchstart', (e) => {
+        if (!state.bgImage) return;
+
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          state.isDragging = false;
+          state.isPinching = true;
+          state.pinchStartDist = Math.max(10, getTouchDistance(e.touches[0], e.touches[1]));
+          state.pinchStartZoom = state.zoomPercent;
+          const mid = getTouchMidpoint(e.touches[0], e.touches[1]);
+          state.pinchStartMidX = mid.x;
+          state.pinchStartMidY = mid.y;
+          state.pinchInitialPanX = state.panX;
+          state.pinchInitialPanY = state.panY;
+        } else if (e.touches.length === 1) {
+          state.isPinching = false;
+          handlePointerDown(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
+
+      canvas.addEventListener('touchmove', (e) => {
+        if (!state.bgImage) return;
+
+        if (state.isPinching && e.touches.length === 2) {
+          e.preventDefault();
+          const currentDist = Math.max(10, getTouchDistance(e.touches[0], e.touches[1]));
+          const rect = canvas.getBoundingClientRect();
+
+          const distDelta = currentDist - state.pinchStartDist;
+          const zoomDelta = (distDelta / Math.max(180, rect.width * 0.55)) * 120;
+          state.zoomPercent = Math.max(-60, Math.min(200, Math.round(state.pinchStartZoom + zoomDelta)));
+
+          const mid = getTouchMidpoint(e.touches[0], e.touches[1]);
+          const deltaX = ((mid.x - state.pinchStartMidX) / rect.width) * 140;
+          const deltaY = ((mid.y - state.pinchStartMidY) / rect.height) * 140;
+          state.panX = Math.max(-100, Math.min(100, Math.round(state.pinchInitialPanX + deltaX)));
+          state.panY = Math.max(-100, Math.min(100, Math.round(state.pinchInitialPanY + deltaY)));
+
+          syncTransformControlsUI();
+          renderCanvas();
+        } else if (state.isDragging && e.touches.length === 1) {
+          e.preventDefault();
+          handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
+
+      window.addEventListener('touchend', (e) => {
+        if (!e.touches || e.touches.length === 0) {
+          handlePointerUp();
+        } else if (e.touches.length === 1) {
+          state.isPinching = false;
+          handlePointerDown(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      });
+
+      canvas.addEventListener('wheel', (e) => {
+        if (!state.bgImage) return;
+        e.preventDefault();
+        const step = e.deltaY < 0 ? 5 : -5;
+        state.zoomPercent = Math.max(-60, Math.min(200, Math.round(state.zoomPercent + step)));
+        syncTransformControlsUI();
+        renderCanvas();
+      }, { passive: false });
+
+      const textInputs = [
+        categoriaInput,
+        tipoGaraInput,
+        ospiteInput,
+        scoreCasaInput,
+        scoreOspiteInput,
+        stagioneInput,
+        hashtagInput,
+        scoreStyleSelect
+      ];
+
+      textInputs.forEach((inputEl) => {
+        inputEl.addEventListener('input', renderCanvas);
+        inputEl.addEventListener('change', renderCanvas);
+      });
+
+      btnCastelloCasa.addEventListener('click', function () {
+        state.castelloIsHome = true;
+        btnCastelloCasa.className = 'px-2.5 py-1 rounded-md text-xs font-extrabold bg-[#25AE3F] text-[#041B0F] transition';
+        btnCastelloFuori.className = 'px-2.5 py-1 rounded-md text-xs font-extrabold bg-black/50 text-gray-300 hover:text-white transition';
+        renderCanvas();
+      });
+
+      btnCastelloFuori.addEventListener('click', function () {
+        state.castelloIsHome = false;
+        btnCastelloFuori.className = 'px-2.5 py-1 rounded-md text-xs font-extrabold bg-[#25AE3F] text-[#041B0F] transition';
+        btnCastelloCasa.className = 'px-2.5 py-1 rounded-md text-xs font-extrabold bg-black/50 text-gray-300 hover:text-white transition';
+        renderCanvas();
+      });
+
+      resetAllBtn.addEventListener('click', function () {
+        categoriaInput.value = '';
+        macroDropdowns.forEach((d) => d.value = '');
+        tipoGaraInput.value = 'CAMPIONATO';
+        ospiteInput.value = '';
+        scoreCasaInput.value = '0';
+        scoreOspiteInput.value = '0';
+        state.scorersList = [];
+        scorerSingleInput.value = '';
+        renderScorerChips();
+        stagioneInput.value = 'STAGIONE 2026/27';
+        hashtagInput.value = '#siAMObiancoverdi';
+        scoreStyleSelect.value = 'outline';
+        state.gradientIntensity = 130;
+        gradientIntensityInput.value = 130;
+        gradIntensityLabel.textContent = '130%';
+        state.zoomPercent = 0;
+        state.panX = 0;
+        state.panY = 0;
+        syncTransformControlsUI();
+        categoriaInput.dispatchEvent(new Event('input'));
+        tipoGaraInput.dispatchEvent(new Event('input'));
+        btnCastelloCasa.click();
+        renderCanvas();
+      });
+
+      /**
+       * Esportazione PNG (1080x1080 Consigliato oppure HQ 2160x2160)
+       */
+      downloadBtn.addEventListener('click', function () {
+        const targetRes = parseInt(exportResolutionSelect.value, 10) || 1080;
+        renderCanvas();
+
+        try {
+          const exportCanvas = document.createElement('canvas');
+          exportCanvas.width = targetRes;
+          exportCanvas.height = targetRes;
+          const exportCtx = exportCanvas.getContext('2d');
+
+          renderSceneOnContext(exportCtx, targetRes);
+
+          const dataUrl = exportCanvas.toDataURL('image/png', 1.0);
+          const link = document.createElement('a');
+          link.download = 'post_partita.png';
+          link.href = dataUrl;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          statusFeedback.textContent = `✓ Scaricato "post_partita.png" in ${targetRes}×${targetRes}px!`;
+          setTimeout(() => {
+            statusFeedback.textContent = '';
+          }, 4000);
+        } catch (err) {
+          statusFeedback.textContent = 'Impossibile esportare il file PNG. Riprova.';
+        }
+      });
+
+      // Inizializzazione
+      renderScorerChips();
+      initLogoOnStartup();
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(renderCanvas);
+      } else {
+        window.addEventListener('load', renderCanvas);
+      }
+    })();
+  </script>
 </body>
 </html>
