@@ -2,804 +2,855 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <title>Atletica Castello — Generatore Post Partita</title>
-  <!-- Tailwind CSS CDN per utility di supporto -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Roboto Condensed, Fira Sans Condensed e Saira Condensed (tagli netti/squadrati ma curve armoniose) + Montserrat per UI -->
+  <!-- Google Fonts: Roboto Condensed, Fira Sans Condensed, Saira Condensed, Asap Condensed, Barlow Condensed & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Asap+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700;1,800;1,900&family=Fira+Sans+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Roboto+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700;1,800;1,900&family=Saira+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Asap+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700;1,800;1,900&family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;0,800;1,600;1,700;1,800&family=Fira+Sans+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Inter:wght@400;500;600;700&family=Roboto+Condensed:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=Saira+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --castello-primary: #0B8731;
-      --castello-bright: #25AE3F;
-      --castello-darkest: #041B0F;
-      --castello-secondary: #004B20;
-      --castello-warm-white: #F7F8F1;
+      --castello-green-main: #0B8731;
+      --castello-green-bright: #25AE3F;
+      --castello-green-darkest: #041B0F;
+      --castello-green-secondary: #004B20;
       --castello-white: #FFFFFF;
-      --panel-bg: #072013;
-      --panel-border: rgba(37, 174, 63, 0.28);
-      --input-bg: #04140B;
-    }
-
-    * {
-      box-sizing: border-box;
+      --castello-warm-white: #F7F8F1;
     }
 
     body {
-      margin: 0;
-      padding: 0;
-      background: radial-gradient(circle at 15% 15%, #004B20 0%, #041B0F 60%, #020d07 100%);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #021008;
+      background-image:
+        radial-gradient(circle at 12% 15%, rgba(11, 135, 49, 0.20) 0%, transparent 45%),
+        radial-gradient(circle at 88% 85%, rgba(37, 174, 63, 0.14) 0%, transparent 50%);
       color: var(--castello-warm-white);
-      font-family: 'Avenir Next Condensed', 'Roboto Condensed', 'Fira Sans Condensed', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
     }
 
-    /* Layout principale: 2 colonne su Desktop, 1 colonna impilata su Mobile (Controlli in alto, Anteprima e Scarica in basso) */
-    .app-layout {
-      display: grid;
-      grid-template-columns: 450px 1fr;
-      gap: 26px;
-      max-width: 1440px;
-      margin: 0 auto;
-      padding: 24px;
-      align-items: start;
+    /* Scrollbar personalizzata */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
     }
-
-    @media (max-width: 960px) {
-      .app-layout {
-        grid-template-columns: 1fr;
-        padding: 12px;
-        gap: 16px;
-      }
-    }
-
-    /* Card stile sportivo dark basata su #041B0F e #004B20 */
-    .glass-panel {
-      background: linear-gradient(180deg, rgba(7, 35, 20, 0.96) 0%, rgba(4, 27, 15, 0.99) 100%);
-      border: 1px solid var(--panel-border);
-      border-radius: 18px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(247, 248, 241, 0.04) inset;
-    }
-
-    /* Input personalizzati */
-    .sport-input {
-      width: 100%;
-      background-color: var(--input-bg);
-      border: 1.5px solid rgba(37, 174, 63, 0.35);
-      border-radius: 10px;
-      padding: 10px 14px;
-      color: var(--castello-warm-white);
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 0.92rem;
-      transition: all 0.2s ease;
-      outline: none;
-    }
-
-    .sport-input:focus {
-      border-color: var(--castello-bright);
-      box-shadow: 0 0 0 3px rgba(37, 174, 63, 0.22);
-      background-color: #061f11;
-    }
-
-    .sport-input::placeholder {
-      color: #6b7280;
-      font-weight: 500;
-    }
-
-    .field-label {
-      display: block;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #a7f3d0;
-      margin-bottom: 6px;
-    }
-
-    /* Chip di suggerimento rapido */
-    .quick-chip {
-      display: inline-flex;
-      align-items: center;
-      padding: 5px 10px;
-      border-radius: 9999px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.68rem;
-      font-weight: 800;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      background: rgba(11, 135, 49, 0.18);
-      border: 1px solid rgba(37, 174, 63, 0.4);
-      color: #F7F8F1;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      user-select: none;
-    }
-
-    .quick-chip:hover {
-      background: rgba(37, 174, 63, 0.35);
-      border-color: #25AE3F;
-      transform: translateY(-1px);
-    }
-
-    .quick-chip.active {
-      background: #25AE3F;
-      color: #041B0F;
-      border-color: #FFFFFF;
-      box-shadow: 0 2px 10px rgba(37, 174, 63, 0.4);
-    }
-
-    /* Struttura ad albero per Macro-Categorie */
-    .tree-macro-btn {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      border-radius: 10px;
-      background: rgba(11, 135, 49, 0.14);
-      border: 1px solid rgba(37, 174, 63, 0.35);
-      color: #F7F8F1;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.73rem;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.18s ease;
-    }
-
-    .tree-macro-btn:hover {
-      background: rgba(37, 174, 63, 0.25);
-      border-color: #25AE3F;
-    }
-
-    .tree-macro-btn.open {
-      background: rgba(37, 174, 63, 0.28);
-      border-color: #25AE3F;
-      color: #FFFFFF;
-    }
-
-    .tree-children {
-      display: none;
-      padding: 8px 6px 4px 14px;
-      margin-left: 10px;
-      border-left: 2px solid rgba(37, 174, 63, 0.45);
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .tree-children.open {
-      display: flex;
-    }
-
-    /* Tag marcatore aggiunto */
-    .scorer-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #0B8731;
-      color: #F7F8F1;
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    /* Contenitore Canvas Responsive */
-    .canvas-stage {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    @media (max-width: 960px) {
-      .canvas-stage {
-        padding: 14px;
-      }
-    }
-
-    .canvas-wrapper {
-      width: 100%;
-      max-width: 620px;
-      aspect-ratio: 1 / 1;
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(37, 174, 63, 0.45);
+    ::-webkit-scrollbar-track {
       background: #041B0F;
-      position: relative;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #004B20;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #25AE3F;
     }
 
-    /* Il Canvas mantiene proporzione 1:1 fluida su mobile */
+    /* Canvas fluido 1:1 con risoluzione interna 1080x1080 */
     #postCanvas {
-      display: block;
       width: 100%;
       height: auto;
       aspect-ratio: 1 / 1;
+      display: block;
+      border-radius: 12px;
+      box-shadow: 0 22px 50px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(37, 174, 63, 0.28);
       cursor: grab;
       touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      background-color: #041B0F;
     }
-
     #postCanvas:active {
       cursor: grabbing;
     }
 
+    /* Input sportivi */
+    .sport-input {
+      background: rgba(4, 27, 15, 0.9);
+      border: 1px solid rgba(37, 174, 63, 0.3);
+      color: #F7F8F1;
+      transition: all 0.18s ease;
+      border-radius: 0.65rem;
+      padding: 0.6rem 0.85rem;
+      width: 100%;
+      font-size: 0.92rem;
+    }
+    .sport-input:focus {
+      outline: none;
+      border-color: #25AE3F;
+      box-shadow: 0 0 0 3px rgba(37, 174, 63, 0.22);
+      background: rgba(4, 27, 15, 1);
+    }
+
+    .field-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #A7F3D0;
+      margin-bottom: 0.35rem;
+    }
+
+    /* Albero Categorie */
+    .macro-tree-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.42rem 0.72rem;
+      border-radius: 0.6rem;
+      background: rgba(0, 75, 32, 0.45);
+      border: 1px solid rgba(37, 174, 63, 0.38);
+      color: #F7F8F1;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+      letter-spacing: 0.03em;
+    }
+    .macro-tree-btn:hover {
+      background: rgba(11, 135, 49, 0.55);
+      border-color: #25AE3F;
+    }
+    .macro-tree-btn.open {
+      background: #0B8731;
+      border-color: #25AE3F;
+      color: #FFFFFF;
+      box-shadow: 0 0 12px rgba(37, 174, 63, 0.35);
+    }
+
+    /* Chip suggerimenti rapidi */
+    .preset-chip {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.32rem 0.62rem;
+      border-radius: 9999px;
+      background: rgba(0, 75, 32, 0.55);
+      border: 1px solid rgba(37, 174, 63, 0.35);
+      color: #E2F8EA;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .preset-chip:hover, .preset-chip:active {
+      background: #0B8731;
+      border-color: #25AE3F;
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+    .preset-chip.active {
+      background: #25AE3F;
+      border-color: #FFFFFF;
+      color: #041B0F;
+      font-weight: 800;
+    }
+
+    /* Tag marcatore */
+    .scorer-tag {
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.35rem;
+      background: rgba(11, 135, 49, 0.35);
+      border: 1px solid rgba(37, 174, 63, 0.55);
+      color: #F7F8F1;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+      line-height: 1.1;
+    }
+
     /* Pulsante Download principale */
     .btn-download {
-      width: 100%;
       background: linear-gradient(135deg, #25AE3F 0%, #0B8731 100%);
       color: #FFFFFF;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      font-style: italic;
-      font-size: 1.08rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 15px 22px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: 0 10px 25px rgba(11, 135, 49, 0.45);
-      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      box-shadow: 0 10px 25px -5px rgba(37, 174, 63, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
     .btn-download:hover {
+      background: linear-gradient(135deg, #2bc448 0%, #0e9f3a 100%);
       transform: translateY(-2px);
-      box-shadow: 0 14px 30px rgba(37, 174, 63, 0.55);
-      filter: brightness(1.06);
+      box-shadow: 0 16px 32px -5px rgba(37, 174, 63, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.4);
     }
-
     .btn-download:active {
       transform: translateY(0);
     }
 
-    /* Upload zona foto */
-    .upload-dropzone {
-      border: 2px dashed rgba(37, 174, 63, 0.55);
-      background: rgba(11, 135, 49, 0.08);
-      border-radius: 12px;
-      padding: 13px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .upload-dropzone:hover {
-      border-color: #25AE3F;
-      background: rgba(37, 174, 63, 0.16);
-    }
-
     /* Range slider custom */
     input[type="range"] {
-      accent-color: #25AE3F;
+      -webkit-appearance: none;
+      appearance: none;
+      background: rgba(0, 75, 32, 0.8);
+      height: 6px;
+      border-radius: 999px;
       width: 100%;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #25AE3F;
       cursor: pointer;
+      border: 2px solid #FFFFFF;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     }
   </style>
 </head>
-<body>
+<body class="antialiased selection:bg-[#25AE3F] selection:text-[#041B0F]">
 
-  <!-- Barra Superiore Brand -->
-  <header class="border-b border-[#0B8731]/40 bg-[#041B0F] backdrop-blur-md">
-    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+  <!-- TOP BAR -->
+  <header class="border-b border-[#25AE3F]/25 bg-[#041B0F]/95 backdrop-blur-md sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-[#0B8731]/25 border border-[#25AE3F] flex items-center justify-center font-black italic text-[#25AE3F] text-lg" style="font-family: 'Montserrat', sans-serif;">
-          AC
+        <div class="w-9 h-9 rounded-full bg-[#004B20] border border-[#25AE3F]/50 flex items-center justify-center shadow-inner overflow-hidden shrink-0">
+          <img id="headerMiniLogo" alt="Logo" class="w-7 h-7 object-contain" />
         </div>
-        <div style="font-family: 'Montserrat', sans-serif;">
-          <h1 class="text-sm sm:text-base font-black italic tracking-wider uppercase text-[#F7F8F1] leading-tight">
-            Atletica Castello <span class="text-[#25AE3F]">Social Studio</span>
-          </h1>
-          <p class="text-[11px] text-emerald-200/80 font-semibold">
-            Generatore Ufficiale Post-Partita
-          </p>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm sm:text-base font-extrabold tracking-tight text-white uppercase">
+              Atletica Castello
+            </h1>
+            <span class="hidden sm:inline-block text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#0B8731]/40 text-[#25AE3F] border border-[#25AE3F]/40">
+              Social Post Generator
+            </span>
+          </div>
+          <p class="text-[11px] text-gray-400">Formato Ufficiale Post-Partita • 1080×1080px & HQ 2160×2160px</p>
         </div>
       </div>
-      <div class="hidden sm:flex items-center gap-2 text-xs font-bold text-[#F7F8F1] bg-[#004B20]/70 border border-[#25AE3F]/50 px-3 py-1.5 rounded-full" style="font-family: 'Montserrat', sans-serif;">
-        <span class="w-2 h-2 rounded-full bg-[#25AE3F] animate-pulse"></span>
-        <span>#si<strong class="text-[#25AE3F]">AMO</strong>biancoverdi</span>
-      </div>
+
+      <button id="resetAllBtn" type="button" class="text-xs font-bold text-gray-300 hover:text-white bg-[#004B20]/50 hover:bg-[#004B20] border border-[#25AE3F]/30 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5 text-[#25AE3F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Ripristina
+      </button>
     </div>
   </header>
 
-  <!-- Contenitore Principale Responsive -->
-  <main class="app-layout" style="font-family: 'Montserrat', sans-serif;">
+  <!-- CONTENUTO PRINCIPALE -->
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 items-start">
 
-    <!-- ================= COLONNA SINISTRA (IN ALTO SU MOBILE): PANNELLO DI CONTROLLO ================= -->
-    <section class="glass-panel p-5 sm:p-6 flex flex-col gap-4">
-      <div class="flex items-center justify-between border-b border-emerald-900/60 pb-3">
-        <div>
-          <h2 class="text-sm font-black uppercase tracking-wider text-[#25AE3F]">
-            Pannello di Controllo
-          </h2>
-          <p class="text-[11px] text-gray-300">
-            Compila i campi per aggiornare il post in tempo reale
-          </p>
-        </div>
-        <button
-          id="resetAllBtn"
-          type="button"
-          class="text-[11px] font-bold text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 px-2.5 py-1.5 rounded-lg border border-white/15 transition"
-        >
-          Ripristina
-        </button>
-      </div>
+      <!-- COLONNA SINISTRA: PANNELLO COMANDI -->
+      <section class="lg:col-span-5 bg-[#041B0F]/90 border border-[#25AE3F]/25 rounded-2xl p-4 sm:p-5 shadow-2xl space-y-4">
 
-      <!-- 1. Foto della Partita -->
-      <div>
-        <label class="field-label">1. Foto della Partita (Sfondo)</label>
-        <label for="bgImageInput" class="upload-dropzone block">
-          <input type="file" id="bgImageInput" accept="image/*" class="hidden" />
-          <div class="flex flex-col items-center gap-1">
-            <svg class="w-6 h-6 text-[#25AE3F]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        <!-- 1. FOTO SFONDO -->
+        <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-xl p-3.5 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-[#25AE3F] flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              1. Foto della Partita
+            </span>
+            <span id="photoStatusBadge" class="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#004B20] text-emerald-300">
+              Demo Prato Attiva
+            </span>
+          </div>
+
+          <label for="bgImageInput" class="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl border-2 border-dashed border-[#25AE3F]/50 hover:border-[#25AE3F] bg-[#004B20]/30 hover:bg-[#004B20]/50 cursor-pointer transition text-center group">
+            <svg class="w-5 h-5 text-[#25AE3F] group-hover:scale-110 transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
-            <span class="text-xs font-extrabold text-[#F7F8F1]" id="bgFileName">
-              Tocca per caricare la foto della partita
-            </span>
-            <span class="text-[11px] text-gray-400">
-              Pizzica con 2 dita sulla foto per fare zoom o usa gli slider sopra l'anteprima
-            </span>
-          </div>
-        </label>
-      </div>
-
-      <!-- 2. Categoria + Albero Esplorabile per Macro-Categorie -->
-      <div>
-        <label for="categoriaInput" class="field-label">2. Categoria (In alto a sinistra)</label>
-        <input type="text" id="categoriaInput" class="sport-input" value="" placeholder="Scrivi categoria o esplora le macro-categorie sotto..." />
-        <div class="mt-2 space-y-1.5 bg-[#041B0F]/65 border border-[#0B8731]/35 rounded-xl p-2.5" id="categoriaTree">
-          <!-- Nodo Albero 1: PRIMA SQUADRA -->
-          <div class="tree-node">
-            <button type="button" class="tree-macro-btn" data-macro="PRIMA SQUADRA" data-gara="SECONDA CATEGORIA">
-              <span class="flex items-center gap-2">
-                <span class="tree-arrow text-[#25AE3F] text-xs transition-transform">▸</span>
-                <span>PRIMA SQUADRA</span>
-              </span>
-              <span class="text-[10px] font-bold text-emerald-300/70">1 cat.</span>
-            </button>
-            <div class="tree-children">
-              <button type="button" class="quick-chip cat-leaf" data-value="PRIMA SQUADRA" data-gara="SECONDA CATEGORIA">PRIMA SQUADRA</button>
-            </div>
-          </div>
-
-          <!-- Nodo Albero 2: SETTORE GIOVANILE -->
-          <div class="tree-node">
-            <button type="button" class="tree-macro-btn" data-macro="SETTORE GIOVANILE" data-gara="CAMPIONATO">
-              <span class="flex items-center gap-2">
-                <span class="tree-arrow text-[#25AE3F] text-xs transition-transform">▸</span>
-                <span>SETTORE GIOVANILE</span>
-              </span>
-              <span class="text-[10px] font-bold text-emerald-300/70">5 cat.</span>
-            </button>
-            <div class="tree-children">
-              <button type="button" class="quick-chip cat-leaf" data-value="JUNIORES" data-gara="CAMPIONATO">JUNIORES</button>
-              <button type="button" class="quick-chip cat-leaf" data-value="ALLIEVI A 2010" data-gara="CAMPIONATO">ALLIEVI A 2010</button>
-              <button type="button" class="quick-chip cat-leaf" data-value="ALLIEVI B 2011" data-gara="CAMPIONATO">ALLIEVI B 2011</button>
-              <button type="button" class="quick-chip cat-leaf" data-value="GIOVANISSIMI A 2012" data-gara="CAMPIONATO">GIOVANISSIMI A 2012</button>
-              <button type="button" class="quick-chip cat-leaf" data-value="GIOVANISSIMI B 2013" data-gara="CAMPIONATO">GIOVANISSIMI B 2013</button>
-            </div>
-          </div>
-
-          <!-- Nodo Albero 3: ESORDIENTI -->
-          <div class="tree-node">
-            <button type="button" class="tree-macro-btn" data-macro="ESORDIENTI" data-gara="RISULTATO FIGC">
-              <span class="flex items-center gap-2">
-                <span class="tree-arrow text-[#25AE3F] text-xs transition-transform">▸</span>
-                <span>ESORDIENTI</span>
-              </span>
-              <span class="text-[10px] font-bold text-emerald-300/70">3 cat.</span>
-            </button>
-            <div class="tree-children">
-              <button type="button" class="quick-chip cat-leaf" data-value="ESORDIENTI 2014" data-gara="RISULTATO FIGC">ESORDIENTI 2014</button>
-              <button type="button" class="quick-chip cat-leaf" data-value="ESORDIENTI MISTI 2014/15" data-gara="RISULTATO FIGC">ESORDIENTI MISTI 2014/15</button>
-              <button type="button" class="quick-chip cat-leaf" data-value="ESORDIENTI 2015" data-gara="RISULTATO FIGC">ESORDIENTI 2015</button>
-            </div>
-          </div>
-
-          <!-- Nodo Albero 4: PULCINI E PRIMI CALCI -->
-          <div class="tree-node">
-            <button type="button" class="tree-macro-btn" data-macro="PULCINI E PRIMI CALCI" data-gara="RISULTATO FIGC">
-              <span class="flex items-center gap-2">
-                <span class="tree-arrow text-[#25AE3F] text-xs transition-transform">▸</span>
-                <span>PULCINI E PRIMI CALCI</span>
-              </span>
-              <span class="text-[10px] font-bold text-emerald-300/70">6 cat.</span>
-            </button>
-            <div class="tree-children">
-              <button type="button" class="quick-chip cat-leaf" data-value="PULCINI 2016" data-gara="RISULTATO FIGC">PULCINI 2016</button>
-              <button type="button" class="quick-chip cat-leaf" data-value="PULCINI MISTI 2016/2017" data-gara="RISULTATO FIGC">PULCINI MISTI 2016/2017</button>
-              <button type="button" class="quick-chip cat-leaf" data-value="PULCINI 2017" data-gara="RISULTATO FIGC">PULCINI 2017</button>
-              <button type="button" class="quick-chip cat-leaf" data-value="PRIMI CALCI 2018" data-gara="RISULTATO FIGC">PRIMI CALCI 2018</button>
-              <button type="button" class="quick-chip cat-leaf" data-value="PRIMI CALCI MISTI 2018/19" data-gara="RISULTATO FIGC">PRIMI CALCI MISTI 2018/19</button>
-              <button type="button" class="quick-chip cat-leaf" data-value="PRIMI CALCI 2019" data-gara="RISULTATO FIGC">PRIMI CALCI 2019</button>
-            </div>
-          </div>
+            <span class="text-xs sm:text-sm font-bold text-white">Carica Foto dal Telefono / PC</span>
+            <input id="bgImageInput" type="file" accept="image/*" class="hidden" />
+          </label>
         </div>
-      </div>
 
-      <!-- 3. Tipo Gara + Suggerimenti Cliccabili -->
-      <div>
-        <label for="tipoGaraInput" class="field-label">3. Tipo Gara (In alto a destra)</label>
-        <input type="text" id="tipoGaraInput" class="sport-input !text-[#25AE3F]" value="" placeholder="CAMPIONATO" />
-        <div class="flex flex-wrap gap-1.5 mt-2" id="tipoGaraChips">
-          <button type="button" class="quick-chip" data-value="SECONDA CATEGORIA">SECONDA CATEGORIA</button>
-          <button type="button" class="quick-chip active" data-value="CAMPIONATO">CAMPIONATO</button>
-          <button type="button" class="quick-chip" data-value="RISULTATO FIGC">RISULTATO FIGC</button>
-        </div>
-      </div>
+        <!-- 2. FASCIA SUPERIORE: CATEGORIA (AD ALBERO) E TIPO GARA -->
+        <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-xl p-3.5 space-y-3">
+          <div class="text-xs font-extrabold uppercase tracking-wider text-[#25AE3F] flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            2. Intestazione (Fascia Verde Solida)
+          </div>
 
-      <!-- 4. Squadra Ospite & Punteggi -->
-      <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
-        <div class="sm:col-span-6">
-          <label for="ospiteInput" class="field-label">4. Squadra Avversaria</label>
-          <input type="text" id="ospiteInput" class="sport-input" value="" placeholder="Scrivi squadra avversaria..." />
-        </div>
-        <div class="grid grid-cols-2 gap-2.5 sm:col-span-6">
+          <!-- Categoria con struttura ad albero -->
           <div>
-            <label for="scoreCasaInput" class="field-label !text-[#25AE3F]">Gol Castello</label>
-            <input type="number" id="scoreCasaInput" class="sport-input text-center text-lg !text-[#25AE3F]" min="0" max="99" value="0" />
-          </div>
-          <div>
-            <label for="scoreOspiteInput" class="field-label !text-white">Gol Avversario</label>
-            <input type="number" id="scoreOspiteInput" class="sport-input text-center text-lg" min="0" max="99" value="0" />
-          </div>
-        </div>
-      </div>
+            <label for="categoriaInput" class="field-label">Categoria (Bianco)</label>
+            <input type="text" id="categoriaInput" value="" placeholder="" class="sport-input font-bold uppercase" />
 
-      <!-- Inverti Casa/Trasferta -->
-      <div class="flex items-center justify-between bg-[#041B0F] border border-[#0B8731]/40 rounded-xl px-3.5 py-2">
-        <span class="text-xs font-bold text-gray-200">Posizione Atletica Castello:</span>
-        <div class="flex gap-1.5">
-          <button type="button" id="btnCastelloCasa" class="px-2.5 py-1 rounded-md text-xs font-extrabold bg-[#25AE3F] text-[#041B0F] transition">
-            In Casa (Sinistra)
-          </button>
-          <button type="button" id="btnCastelloFuori" class="px-2.5 py-1 rounded-md text-xs font-extrabold bg-black/50 text-gray-300 hover:text-white transition">
-            Trasferta (Destra)
-          </button>
-        </div>
-      </div>
+            <div class="mt-2 space-y-2">
+              <span class="block text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                Tocca una macro-categoria per scegliere la squadra:
+              </span>
 
-      <!-- 5. Marcatori Atletica Castello -->
-      <div class="bg-[#041B0F]/70 border border-[#0B8731]/40 rounded-xl p-3.5">
-        <div class="flex items-center justify-between mb-1.5">
-          <label for="scorerSingleInput" class="field-label !mb-0">5. Marcatori Atletica Castello ⚽</label>
-          <button type="button" id="clearScorersBtn" class="text-[10px] font-bold text-emerald-300 hover:text-white underline">
-            Svuota lista
-          </button>
-        </div>
-
-        <div class="flex gap-2">
-          <input
-            type="text"
-            id="scorerSingleInput"
-            class="sport-input !py-2"
-            placeholder="Scrivi marcatore e premi INVIO (o virgola)..."
-          />
-          <button
-            type="button"
-            id="addScorerBtn"
-            class="px-3.5 py-2 rounded-lg font-extrabold text-xs uppercase bg-[#0B8731] hover:bg-[#25AE3F] text-white transition shrink-0"
-          >
-            + Aggiungi
-          </button>
-        </div>
-
-        <!-- Lista Tag dei marcatori inseriti -->
-        <div id="scorersTagsContainer" class="flex flex-wrap gap-1.5 mt-2.5"></div>
-      </div>
-
-      <!-- 6. Impostazioni Avanzate -->
-      <details class="bg-[#041B0F]/80 border border-[#0B8731]/40 rounded-xl p-3 group">
-        <summary class="text-xs font-extrabold uppercase tracking-wider text-[#25AE3F] cursor-pointer select-none flex items-center justify-between">
-          <span>Impostazioni Avanzate (Logo, Sfumatura, Font, Stile)</span>
-          <span class="text-[#25AE3F] group-open:rotate-180 transition-transform">▼</span>
-        </summary>
-        <div class="mt-3 pt-3 border-t border-emerald-900/50 flex flex-col gap-3">
-          <div class="grid grid-cols-2 gap-2.5">
-            <div>
-              <label for="stagioneInput" class="field-label">Testo Stagione</label>
-              <input type="text" id="stagioneInput" class="sport-input !py-2 !text-xs" value="STAGIONE 2026/27" />
-            </div>
-            <div>
-              <label for="hashtagInput" class="field-label">Hashtag</label>
-              <input type="text" id="hashtagInput" class="sport-input !py-2 !text-xs" value="#siAMObiancoverdi" />
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-center">
-            <div>
-              <label for="scoreStyleSelect" class="field-label">Stile Punteggio</label>
-              <select id="scoreStyleSelect" class="sport-input !py-2 !text-xs">
-                <option value="outline" selected>Numeri Sagomati (Default)</option>
-                <option value="parallelogram">Parallelogrammi Obliqui</option>
-              </select>
-            </div>
-            <div>
-              <div class="flex justify-between text-[10px] font-bold text-gray-300 mb-1">
-                <span>SFUMATURA FONDO</span>
-                <span id="gradIntensityLabel" class="text-[#25AE3F]">130%</span>
+              <!-- 4 Nodi Macro-Categoria -->
+              <div class="flex flex-wrap gap-1.5" id="macroCategoryTree">
+                <button type="button" class="macro-tree-btn" data-macro="PRIMA_SQUADRA" data-default-gara="SECONDA CATEGORIA">
+                  <span class="tree-arrow text-[#25AE3F]">▸</span> PRIMA SQUADRA
+                </button>
+                <button type="button" class="macro-tree-btn" data-macro="SETTORE_GIOVANILE" data-default-gara="CAMPIONATO">
+                  <span class="tree-arrow text-[#25AE3F]">▸</span> SETTORE GIOVANILE
+                </button>
+                <button type="button" class="macro-tree-btn" data-macro="ESORDIENTI" data-default-gara="RISULTATO FIGC">
+                  <span class="tree-arrow text-[#25AE3F]">▸</span> ESORDIENTI
+                </button>
+                <button type="button" class="macro-tree-btn" data-macro="PULCINI_PRIMI_CALCI" data-default-gara="RISULTATO FIGC">
+                  <span class="tree-arrow text-[#25AE3F]">▸</span> PULCINI E PRIMI CALCI
+                </button>
               </div>
-              <input type="range" id="gradientIntensityInput" min="0" max="150" value="130" step="5" />
+
+              <!-- Sotto-rami espandibili -->
+              <div id="subTree_PRIMA_SQUADRA" class="hidden p-2.5 rounded-xl bg-[#041B0F] border border-[#25AE3F]/40">
+                <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#25AE3F] mb-1.5">Prima Squadra:</div>
+                <div class="flex flex-wrap gap-1.5">
+                  <button type="button" class="preset-chip cat-preset" data-value="PRIMA SQUADRA" data-gara="SECONDA CATEGORIA">PRIMA SQUADRA</button>
+                </div>
+              </div>
+
+              <div id="subTree_SETTORE_GIOVANILE" class="hidden p-2.5 rounded-xl bg-[#041B0F] border border-[#25AE3F]/40">
+                <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#25AE3F] mb-1.5">Settore Giovanile (dal più grande):</div>
+                <div class="flex flex-wrap gap-1.5">
+                  <button type="button" class="preset-chip cat-preset" data-value="JUNIORES" data-gara="CAMPIONATO">JUNIORES</button>
+                  <button type="button" class="preset-chip cat-preset" data-value="ALLIEVI A 2010" data-gara="CAMPIONATO">ALLIEVI A 2010</button>
+                  <button type="button" class="preset-chip cat-preset" data-value="ALLIEVI B 2011" data-gara="CAMPIONATO">ALLIEVI B 2011</button>
+                  <button type="button" class="preset-chip cat-preset" data-value="GIOVANISSIMI A 2012" data-gara="CAMPIONATO">GIOVANISSIMI A 2012</button>
+                  <button type="button" class="preset-chip cat-preset" data-value="GIOVANISSIMI B 2013" data-gara="CAMPIONATO">GIOVANISSIMI B 2013</button>
+                </div>
+              </div>
+
+              <div id="subTree_ESORDIENTI" class="hidden p-2.5 rounded-xl bg-[#041B0F] border border-[#25AE3F]/40">
+                <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#25AE3F] mb-1.5">Esordienti (dal più grande):</div>
+                <div class="flex flex-wrap gap-1.5">
+                  <button type="button" class="preset-chip cat-preset" data-value="ESORDIENTI 2014" data-gara="RISULTATO FIGC">ESORDIENTI 2014</button>
+                  <button type="button" class="preset-chip cat-preset" data-value="ESORDIENTI MISTI 2014/15" data-gara="RISULTATO FIGC">ESORDIENTI MISTI 2014/15</button>
+                  <button type="button" class="preset-chip cat-preset" data-value="ESORDIENTI 2015" data-gara="RISULTATO FIGC">ESORDIENTI 2015</button>
+                </div>
+              </div>
+
+              <div id="subTree_PULCINI_PRIMI_CALCI" class="hidden p-2.5 rounded-xl bg-[#041B0F] border border-[#25AE3F]/40">
+                <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#25AE3F] mb-1.5">Pulcini e Primi Calci (dal più grande):</div>
+                <div class="flex flex-wrap gap-1.5">
+                  <button type="button" class="preset-chip cat-preset" data-value="PULCINI 2016" data-gara="RISULTATO FIGC">PULCINI 2016</button>
+                  <button type="button" class="preset-chip cat-preset" data-value="PULCINI MISTI 2016/2017" data-gara="RISULTATO FIGC">PULCINI MISTI 2016/2017</button>
+                  <button type="button" class="preset-chip cat-preset" data-value="PULCINI 2017" data-gara="RISULTATO FIGC">PULCINI 2017</button>
+                  <button type="button" class="preset-chip cat-preset" data-value="PRIMI CALCI 2018" data-gara="RISULTATO FIGC">PRIMI CALCI 2018</button>
+                  <button type="button" class="preset-chip cat-preset" data-value="PRIMI CALCI MISTI 2018/19" data-gara="RISULTATO FIGC">PRIMI CALCI MISTI 2018/19</button>
+                  <button type="button" class="preset-chip cat-preset" data-value="PRIMI CALCI 2019" data-gara="RISULTATO FIGC">PRIMI CALCI 2019</button>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-center pt-1">
-            <div>
-              <label for="fontPresetSelect" class="field-label">Carattere Grafica (Preset)</label>
-              <select id="fontPresetSelect" class="sport-input !py-2 !text-xs">
-                <option value="roboto" selected>Roboto Condensed (Bilanciato / Squadrato)</option>
-                <option value="fira">Fira Sans Condensed (Sportivo Deciso)</option>
-                <option value="saira">Saira Condensed (Più Squadrato)</option>
-                <option value="asap">Asap Condensed (Più Morbido)</option>
-              </select>
-            </div>
-            <div>
-              <label for="fontFileInput" class="field-label">Oppure Font Locale (.ttf/.otf/.ttc)</label>
-              <input type="file" id="fontFileInput" accept=".ttf,.otf,.ttc,.woff,.woff2" class="block w-full text-[11px] text-gray-300 file:mr-2 file:py-1.5 file:px-2.5 file:rounded-md file:border-0 file:text-[11px] file:font-bold file:bg-[#004B20] file:text-white hover:file:bg-[#0B8731] cursor-pointer" />
-              <span id="fontStatusLabel" class="text-[10px] text-gray-400">Attivo: Roboto Condensed (taglio netto)</span>
-            </div>
-          </div>
-
-          <!-- Gestione Logo Societario -->
-          <div class="pt-2 border-t border-emerald-900/50 flex flex-col gap-2">
-            <div class="flex items-center justify-between">
-              <label class="field-label !mb-0 flex items-center gap-1.5">
-                <span>Logo Societario</span>
-                <span id="logoBadgeStatus" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-400/50">
-                  ⚠️ SVG di fallback
-                </span>
-              </label>
-              <button type="button" id="resetDefaultSvgLogoBtn" class="text-[10px] font-bold text-emerald-300 hover:text-white underline hidden">
-                Usa SVG di fallback
-              </button>
-            </div>
-
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-              <label for="logoInput" class="flex-1 cursor-pointer bg-[#004B20]/70 hover:bg-[#0B8731] border border-[#25AE3F]/50 rounded-lg px-3 py-2 text-xs font-extrabold text-[#F7F8F1] text-center transition">
-                📂 Carica altro Logo (SVG/PNG/JPG)
-                <input type="file" id="logoInput" accept="image/*,.svg" class="hidden" />
-              </label>
-              <button
-                type="button"
-                id="embedLogoHtmlBtn"
-                class="px-3 py-2 rounded-lg text-xs font-extrabold bg-[#25AE3F]/20 hover:bg-[#25AE3F] text-[#25AE3F] hover:text-[#041B0F] border border-[#25AE3F] transition disabled:opacity-40 disabled:pointer-events-none"
-                title="Salva un nuovo file .html con il logo corrente incorporato nel codice"
-              >
-                💾 Salva HTML col Logo
-              </button>
-            </div>
-
-            <div class="flex items-center justify-between text-[11px] text-gray-300">
-              <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
-                <input type="checkbox" id="removeBlackBgCheckbox" class="accent-[#25AE3F] rounded" />
-                <span>Rimuovi bordi neri esterni (solo per JPG)</span>
-              </label>
+          <!-- Tipo Gara -->
+          <div>
+            <label for="tipoGaraInput" class="field-label">Tipo Gara (Verde)</label>
+            <input type="text" id="tipoGaraInput" value="CAMPIONATO" placeholder="CAMPIONATO" class="sport-input font-bold uppercase text-[#25AE3F]" />
+            <div class="flex flex-wrap gap-1.5 mt-1.5">
+              <button type="button" class="preset-chip gara-preset" data-value="SECONDA CATEGORIA">SECONDA CATEGORIA</button>
+              <button type="button" class="preset-chip gara-preset active" data-value="CAMPIONATO">CAMPIONATO</button>
+              <button type="button" class="preset-chip gara-preset" data-value="RISULTATO FIGC">RISULTATO FIGC</button>
             </div>
           </div>
         </div>
-      </details>
-    </section>
 
-    <!-- ================= COLONNA DESTRA (IN BASSO SU MOBILE): SLIDER UNIFICATI + ANTEPRIMA + SCARICA IN FONDO ================= -->
-    <section class="glass-panel canvas-stage">
-      <!-- Banner di avviso visibile se il file immagine del logo non è stato caricato e si sta usando l'SVG generato di fallback -->
-      <div id="logoFallbackWarningBanner" class="w-full max-w-[620px] bg-amber-950/90 border border-amber-400/60 rounded-xl px-3.5 py-2.5 mb-3 shadow-lg hidden">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div class="flex items-start sm:items-center gap-2 text-amber-200 text-xs">
-            <span class="text-base leading-none">⚠️</span>
-            <div>
-              <strong class="font-extrabold text-amber-100 block sm:inline">File immagine del logo non rilevato:</strong>
-              <span>è attualmente in uso il logo SVG di fallback.</span>
+        <!-- 3. SQUADRE E PUNTEGGIO -->
+        <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-xl p-3.5 space-y-3">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-[#25AE3F] flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              3. Risultato & Squadre
+            </span>
+
+            <!-- Selettore Casa / Trasferta -->
+            <div class="inline-flex rounded-lg p-0.5 bg-[#041B0F] border border-[#25AE3F]/30">
+              <button type="button" id="castelloHomeBtn" class="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md bg-[#0B8731] text-white transition">
+                Castello in Casa
+              </button>
+              <button type="button" id="castelloAwayBtn" class="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md text-gray-300 hover:text-white transition">
+                Castello in Trasferta
+              </button>
             </div>
           </div>
-          <div class="flex items-center gap-1.5 shrink-0">
-            <label for="logoInput" class="cursor-pointer px-2.5 py-1 rounded bg-amber-400 hover:bg-amber-300 text-[#041B0F] font-extrabold text-[11px] transition whitespace-nowrap">
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label class="field-label">Squadra Castello</label>
+              <input type="text" value="ATLETICA CASTELLO" disabled class="sport-input font-extrabold uppercase opacity-75 cursor-not-allowed !text-[#25AE3F] !border-[#25AE3F]/40" />
+            </div>
+            <div>
+              <label for="ospiteInput" class="field-label">Squadra Avversaria</label>
+              <input type="text" id="ospiteInput" value="" placeholder="Scrivi squadra avversaria..." class="sport-input font-bold uppercase" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 pt-0.5">
+            <div class="bg-[#041B0F] p-2.5 rounded-xl border border-[#0B8731]/60">
+              <label for="scoreCasaInput" id="scoreLeftLabel" class="field-label !text-[#25AE3F]">Gol Castello</label>
+              <div class="flex items-center gap-1.5">
+                <button type="button" data-score-target="scoreCasaInput" data-delta="-1" class="w-9 h-9 rounded-lg bg-[#004B20] hover:bg-[#0B8731] text-white font-bold text-lg flex items-center justify-center transition">−</button>
+                <input type="number" id="scoreCasaInput" value="0" min="0" max="99" class="sport-input text-center font-black text-xl !py-1" />
+                <button type="button" data-score-target="scoreCasaInput" data-delta="1" class="w-9 h-9 rounded-lg bg-[#004B20] hover:bg-[#0B8731] text-white font-bold text-lg flex items-center justify-center transition">+</button>
+              </div>
+            </div>
+
+            <div class="bg-[#041B0F] p-2.5 rounded-xl border border-white/20">
+              <label for="scoreOspiteInput" id="scoreRightLabel" class="field-label !text-white">Gol Avversario</label>
+              <div class="flex items-center gap-1.5">
+                <button type="button" data-score-target="scoreOspiteInput" data-delta="-1" class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-lg flex items-center justify-center transition">−</button>
+                <input type="number" id="scoreOspiteInput" value="0" min="0" max="99" class="sport-input text-center font-black text-xl !py-1" />
+                <button type="button" data-score-target="scoreOspiteInput" data-delta="1" class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-lg flex items-center justify-center transition">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. MARCATORI ATLETICA CASTELLO -->
+        <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-xl p-3.5 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-[#25AE3F] flex items-center gap-1.5">
+              <span>⚽</span> 4. Marcatori Atletica Castello
+            </span>
+            <button type="button" id="clearScorersBtn" class="text-[10px] font-bold text-gray-400 hover:text-red-400 transition">
+              Svuota lista
+            </button>
+          </div>
+
+          <div class="flex gap-2">
+            <input type="text" id="newScorerInput" placeholder="Scrivi marcatore e premi Invio (o virgola)..." class="sport-input uppercase font-semibold text-sm" />
+            <button type="button" id="addScorerBtn" class="px-3.5 rounded-xl bg-[#0B8731] hover:bg-[#25AE3F] text-white font-extrabold text-xs uppercase tracking-wider transition shrink-0">
+              + Aggiungi
+            </button>
+          </div>
+
+          <div id="scorersTagsContainer" class="flex flex-wrap gap-1.5 pt-1 min-h-[26px]"></div>
+        </div>
+
+        <!-- 5. IMPOSTAZIONI AVANZATE -->
+        <details id="advancedSettingsDetails" class="bg-[#021209]/75 border border-[#25AE3F]/30 rounded-xl p-3.5 group" open>
+          <summary class="text-xs font-extrabold uppercase tracking-wider text-[#25AE3F] cursor-pointer list-none flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-[#25AE3F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+              5. Impostazioni Avanzate (Stile Scritta, Footer & Logo)
+            </span>
+            <span class="text-[#25AE3F] group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+
+          <div class="mt-3 pt-3 border-t border-[#25AE3F]/20 space-y-3">
+            <!-- OPZIONI DI RISALTO E SPESSORE SCRITTA ATLETICA CASTELLO -->
+            <div class="bg-[#041B0F] border border-[#25AE3F]/40 rounded-xl p-2.5 space-y-2">
+              <div class="flex items-center justify-between">
+                <label for="castelloTextStyleSelect" class="field-label !mb-0 !text-[#25AE3F]">
+                  Spessore / Risalto "ATLETICA CASTELLO"
+                </label>
+                <span class="text-[10px] font-bold text-gray-400">Stesso colore & font</span>
+              </div>
+
+              <select id="castelloTextStyleSelect" class="sport-input !py-2 !text-xs !border-[#25AE3F]/60 font-bold">
+                <option value="massiccio" selected>Opzione 1 — Massiccio Nitido (Consigliato: corpo verde ispessito)</option>
+                <option value="extra_massiccio">Opzione 2 — Extra Massiccio (Corpo verde molto pieno e largo)</option>
+                <option value="bordo_forte">Opzione 3 — Massiccio + Bordo Bianco Marcato (Stile adesivo)</option>
+                <option value="stacco_3d">Opzione 4 — Massiccio + Ombra Scura Netta (Stacco 3D sul prato)</option>
+                <option value="doppio_bordo">Opzione 5 — Massiccio + Profilo Scuro Esterno (Alta leggibilità)</option>
+                <option value="leggero">Opzione 6 — Leggero (Versione precedente senza ispessimento)</option>
+              </select>
+
+              <!-- Pulsanti rapidi 1-6 per confronto immediato -->
+              <div class="flex flex-wrap items-center gap-1 pt-0.5">
+                <span class="text-[10px] font-bold text-gray-400 mr-1">Prova rapida:</span>
+                <button type="button" class="preset-chip castello-style-chip active" data-style="massiccio">1. Massiccio</button>
+                <button type="button" class="preset-chip castello-style-chip" data-style="extra_massiccio">2. Extra</button>
+                <button type="button" class="preset-chip castello-style-chip" data-style="bordo_forte">3. Bordo+</button>
+                <button type="button" class="preset-chip castello-style-chip" data-style="stacco_3d">4. Ombra 3D</button>
+                <button type="button" class="preset-chip castello-style-chip" data-style="doppio_bordo">5. Profilo Scuro</button>
+                <button type="button" class="preset-chip castello-style-chip" data-style="leggero">6. Leggero</button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div>
+                <label for="stagioneInput" class="field-label">Testo Basso Sinistra</label>
+                <input type="text" id="stagioneInput" value="STAGIONE 2026/27" class="sport-input text-xs font-bold uppercase" />
+              </div>
+              <div>
+                <label for="hashtagInput" class="field-label">Hashtag Basso Destra</label>
+                <input type="text" id="hashtagInput" value="#siAMObiancoverdi" class="sport-input text-xs font-bold" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-center">
+              <div>
+                <label for="scoreStyleSelect" class="field-label">Stile Punteggio</label>
+                <select id="scoreStyleSelect" class="sport-input !py-2 !text-xs">
+                  <option value="outline" selected>Numeri Sagomati (Default)</option>
+                  <option value="parallelogram">Parallelogrammi Obliqui</option>
+                </select>
+              </div>
+              <div>
+                <div class="flex justify-between text-[10px] font-bold text-gray-300 mb-1">
+                  <span>SFUMATURA FONDO</span>
+                  <span id="gradIntensityLabel" class="text-[#25AE3F]">130%</span>
+                </div>
+                <input type="range" id="gradientIntensityInput" min="0" max="150" value="130" step="5" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-center pt-1">
+              <div>
+                <label for="fontPresetSelect" class="field-label">Carattere Grafica (Preset)</label>
+                <select id="fontPresetSelect" class="sport-input !py-2 !text-xs">
+                  <option value="roboto" selected>Roboto Condensed (Squadrato Deciso)</option>
+                  <option value="fira">Fira Sans Condensed (Sportivo Nitido)</option>
+                  <option value="saira">Saira Condensed (Tecnico Squadrato)</option>
+                  <option value="asap">Asap Condensed (Morbido)</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label">Oppure carica file Font</label>
+                <label for="customFontInput" class="inline-flex items-center justify-center w-full gap-1.5 text-xs font-bold px-3 py-2 rounded-lg bg-[#004B20]/70 hover:bg-[#0B8731] text-white cursor-pointer transition">
+                  <span>🔤 Carica .ttf/.otf/.ttc</span>
+                  <input id="customFontInput" type="file" accept=".ttf,.otf,.ttc,.woff,.woff2" class="hidden" />
+                </label>
+                <div id="fontStatusText" class="text-[10px] text-gray-400 mt-0.5">Attivo: Roboto Condensed</div>
+              </div>
+            </div>
+
+            <!-- Gestione Logo in Impostazioni Avanzate -->
+            <div class="pt-2 border-t border-[#25AE3F]/15 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="field-label !mb-0">Logo Societario (Alto a Sinistra)</span>
+                <span id="logoCacheBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-[#0B8731]/40 text-emerald-300 border border-[#25AE3F]/40">
+                  Verifico logo...
+                </span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <label for="logoInput" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg border border-[#25AE3F]/40 hover:border-[#25AE3F] bg-[#004B20]/30 hover:bg-[#004B20]/60 cursor-pointer transition text-center text-xs font-bold text-white">
+                  <span>📂 Carica File Logo</span>
+                  <input id="logoInput" type="file" accept="image/*,.svg" class="hidden" />
+                </label>
+                <button type="button" id="embedLogoHtmlBtn" class="py-2 px-3 rounded-lg bg-[#0B8731]/40 hover:bg-[#0B8731] border border-[#25AE3F]/40 text-xs font-bold text-white transition">
+                  💾 Salva HTML col Logo
+                </button>
+                <button type="button" id="restoreDefaultSvgLogoBtn" class="py-2 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/15 text-xs font-semibold text-gray-300 transition">
+                  Usa SVG Integrato
+                </button>
+              </div>
+            </div>
+          </div>
+        </details>
+
+      </section>
+
+      <!-- COLONNA DESTRA: CONTROLLI ZOOM LIVE + ANTEPRIMA CANVAS + DOWNLOAD IN FONDO -->
+      <section class="lg:col-span-7 flex flex-col items-center">
+        <div class="w-full max-w-[620px] space-y-3">
+
+          <!-- BANNER DI AVVISO FALLBACK LOGO -->
+          <div id="logoFallbackWarning" class="hidden bg-amber-950/90 border border-amber-400/60 text-amber-100 rounded-xl px-3.5 py-2.5 text-xs flex items-center justify-between gap-3 shadow-lg">
+            <div class="flex items-center gap-2">
+              <span class="text-base leading-none">⚠️</span>
+              <div>
+                <p class="font-extrabold uppercase tracking-wide text-amber-300 text-[11px]">Avviso Logo: attivo SVG integrato di fallback</p>
+                <p class="text-[11px] text-amber-200/90">Il file immagine esterno non è stato trovato all'avvio. Stai usando il vettoriale SVG integrato.</p>
+              </div>
+            </div>
+            <label for="logoInput" class="shrink-0 px-2.5 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-[#041B0F] font-extrabold text-[11px] cursor-pointer transition">
               📂 Carica file Logo
             </label>
-            <button type="button" id="dismissLogoWarningBtn" class="px-2 py-1 rounded bg-black/40 hover:bg-black/60 text-amber-200 text-[11px] font-bold transition" title="Nascondi avviso">
-              ✕
-            </button>
           </div>
-        </div>
-      </div>
 
-      <!-- Barra UNICA e compatta di Zoom, Orizz. (X), Vert. (Y) e tasto "Reset" subito sopra la foto -->
-      <div class="w-full max-w-[620px] bg-[#041B0F]/95 border border-[#25AE3F]/40 rounded-xl px-3 py-2.5 mb-3 shadow-lg">
-        <div class="flex items-center justify-between gap-2 mb-1.5">
-          <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#F7F8F1] flex items-center gap-1.5">
-            <span class="inline-block w-2 h-2 rounded-full bg-[#25AE3F]"></span>
-            Inquadratura Foto
-          </span>
-          <button
-            type="button"
-            id="liveCenterPhotoBtn"
-            class="px-2.5 py-0.5 rounded bg-[#004B20] hover:bg-[#0B8731] text-[#25AE3F] hover:text-white border border-[#25AE3F]/40 text-[11px] font-extrabold transition"
-          >
-            Reset
-          </button>
-        </div>
-
-        <div class="grid grid-cols-3 gap-2.5 sm:gap-4 items-center">
-          <div>
-            <div class="flex justify-between items-center text-[10px] font-extrabold text-gray-300 mb-0.5">
-              <span>ZOOM</span>
-              <span id="liveZoomValLabel" class="text-[#25AE3F] font-mono">0%</span>
+          <!-- BARRA CONTROLLI INQUADRATURA E VALORI IN TEMPO REALE (UNICA, VICINO ALL'IMMAGINE) -->
+          <div class="bg-[#041B0F]/95 border border-[#25AE3F]/35 rounded-xl p-3 shadow-lg space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#25AE3F] animate-pulse"></span>
+                <span class="text-xs font-extrabold uppercase tracking-wider text-gray-200">
+                  Inquadratura Foto (Touch 1 o 2 dita)
+                </span>
+              </div>
+              <button type="button" id="resetCropBtn" class="text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded bg-[#004B20] hover:bg-[#0B8731] text-[#25AE3F] hover:text-white border border-[#25AE3F]/40 transition">
+                Reset
+              </button>
             </div>
-            <input type="range" id="liveBgZoom" min="-60" max="200" value="0" step="1" />
-          </div>
-          <div>
-            <div class="flex justify-between items-center text-[10px] font-extrabold text-gray-300 mb-0.5">
-              <span>ORIZZ. (X)</span>
-              <span id="livePanXValLabel" class="text-[#25AE3F] font-mono">0</span>
+
+            <!-- Sliders Zoom, Orizz. (X), Vert. (Y) -->
+            <div class="grid grid-cols-3 gap-2.5 pt-0.5">
+              <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-lg px-2.5 py-1.5">
+                <div class="flex justify-between text-[10px] font-bold text-gray-300 mb-1">
+                  <span>ZOOM</span>
+                  <span id="zoomValLabel" class="text-[#25AE3F] font-extrabold">100%</span>
+                </div>
+                <input type="range" id="zoomRangeInput" min="35" max="260" step="1" value="100" />
+              </div>
+
+              <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-lg px-2.5 py-1.5">
+                <div class="flex justify-between text-[10px] font-bold text-gray-300 mb-1">
+                  <span>ORIZZ. (X)</span>
+                  <span id="panXValLabel" class="text-[#25AE3F] font-extrabold">0</span>
+                </div>
+                <input type="range" id="panXInput" min="-650" max="650" step="1" value="0" />
+              </div>
+
+              <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-lg px-2.5 py-1.5">
+                <div class="flex justify-between text-[10px] font-bold text-gray-300 mb-1">
+                  <span>VERT. (Y)</span>
+                  <span id="panYValLabel" class="text-[#25AE3F] font-extrabold">0</span>
+                </div>
+                <input type="range" id="panYInput" min="-650" max="650" step="1" value="0" />
+              </div>
             </div>
-            <input type="range" id="liveBgPanX" min="-100" max="100" value="0" step="1" />
           </div>
-          <div>
-            <div class="flex justify-between items-center text-[10px] font-extrabold text-gray-300 mb-0.5">
-              <span>VERT. (Y)</span>
-              <span id="livePanYValLabel" class="text-[#25AE3F] font-mono">0</span>
+
+          <!-- CONTENITORE CANVAS -->
+          <div class="relative group">
+            <canvas id="postCanvas" width="1080" height="1080"></canvas>
+          </div>
+
+          <!-- SEZIONE DOWNLOAD IN FONDO ALLA PAGINA -->
+          <div class="bg-[#041B0F]/95 border border-[#25AE3F]/35 rounded-2xl p-4 shadow-2xl space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <label for="exportResolutionSelect" class="text-xs font-extrabold uppercase tracking-wider text-[#25AE3F] block">
+                  Qualità / Risoluzione Immagine
+                </label>
+                <p class="text-[11px] text-gray-400">Formato quadrato 1:1 ottimizzato per Instagram, Facebook e WhatsApp</p>
+              </div>
+
+              <select id="exportResolutionSelect" class="sport-input !w-auto !py-2 !px-3 font-bold text-xs sm:text-sm border-[#25AE3F]/60">
+                <option value="1080" selected>1080 × 1080 px (Consigliato)</option>
+                <option value="2160">HQ — 2160 × 2160 px (Risoluzione più alta)</option>
+              </select>
             </div>
-            <input type="range" id="liveBgPanY" min="-100" max="100" value="0" step="1" />
+
+            <div class="flex flex-col sm:flex-row gap-2.5">
+              <button type="button" id="downloadBtn" class="btn-download flex-1 py-4 px-5 rounded-xl text-base sm:text-lg flex items-center justify-center gap-2.5 uppercase cursor-pointer">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <span>SCARICA GRAFICA (PNG)</span>
+              </button>
+
+              <!-- Pulsante nativo iOS / Smartphone per Salva Immagine in Foto -->
+              <button type="button" id="shareIosBtn" class="hidden sm:inline-flex items-center justify-center gap-2 py-4 px-4 rounded-xl bg-[#004B20] hover:bg-[#0B8731] border border-[#25AE3F]/50 text-white font-extrabold text-sm uppercase transition cursor-pointer">
+                <span>📱 Salva in Foto / Condividi</span>
+              </button>
+            </div>
+
+            <!-- Box di salvataggio rapido per Safari iPhone -->
+            <div id="iosSaveModal" class="hidden bg-[#021209] border border-[#25AE3F] rounded-xl p-3 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-extrabold uppercase text-[#25AE3F]">
+                  📲 Su iPhone (Safari): tieni premuto sull'immagine qui sotto e scegli "Salva in Foto"
+                </span>
+                <button type="button" id="closeIosModalBtn" class="text-xs font-bold text-gray-300 hover:text-white px-2 py-0.5 rounded bg-white/10">
+                  Chiudi ✕
+                </button>
+              </div>
+              <img id="iosSavePreviewImg" alt="Post Partita generato" class="w-48 h-48 mx-auto rounded-lg border border-white/20 object-contain block" />
+            </div>
           </div>
+
         </div>
-      </div>
+      </section>
 
-      <!-- Contenitore fluido 1:1 per l'anteprima Canvas -->
-      <div class="canvas-wrapper">
-        <canvas id="postCanvas" width="1080" height="1080"></canvas>
-      </div>
-
-      <!-- SEZIONE ESPORTAZIONE E PULSANTE "SCARICA" IN FONDO ALLA PAGINA -->
-      <div class="w-full max-w-[620px] mt-4 bg-[#041B0F]/95 border border-[#25AE3F]/45 rounded-xl p-3.5 shadow-xl flex flex-col gap-3">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <label for="exportResolutionSelect" class="text-xs font-extrabold uppercase tracking-wider text-[#a7f3d0]">
-            Qualità / Risoluzione Immagine:
-          </label>
-          <select id="exportResolutionSelect" class="sport-input !w-auto !py-1.5 !px-3 !text-xs">
-            <option value="1080" selected>Standard — 1080 × 1080 px (Consigliato)</option>
-            <option value="2160">HQ — 2160 × 2160 px (Risoluzione più alta)</option>
-          </select>
-        </div>
-
-        <div class="flex flex-col sm:flex-row gap-2">
-          <button id="downloadBtn" type="button" class="btn-download flex-1">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            SCARICA GRAFICA (PNG)
-          </button>
-
-          <button
-            id="iosShareBtn"
-            type="button"
-            class="hidden px-4 py-3 rounded-xl font-extrabold text-xs uppercase bg-[#004B20] hover:bg-[#0B8731] text-white border border-[#25AE3F]/60 transition items-center justify-center gap-2 shrink-0"
-            title="Salva direttamente nel Rullino Foto di iPhone o condividi su WhatsApp/Instagram"
-          >
-            <span>📱 Salva in Foto / Condividi</span>
-          </button>
-        </div>
-
-        <p id="statusFeedback" class="text-center text-[11px] text-[#25AE3F] font-bold min-h-[16px] -mt-1"></p>
-
-        <!-- Box di salvataggio rapido per Safari iOS (compare se Safari blocca il download diretto) -->
-        <div id="safariPreviewFallbackBox" class="hidden bg-[#072013] border border-[#25AE3F] rounded-xl p-3 text-center">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-[11px] font-extrabold text-[#F7F8F1]">📲 Su iPhone/Safari: tieni premuto sull'immagine qui sotto e scegli "Salva su Foto"</span>
-            <button type="button" id="closeSafariPreviewBtn" class="text-xs font-black text-gray-300 hover:text-white px-2 py-0.5 rounded bg-black/40">✕</button>
-          </div>
-          <img id="safariFallbackImg" alt="Anteprima Post Partita" class="w-48 h-48 mx-auto rounded-lg border border-white/30 shadow-lg object-contain" />
-        </div>
-      </div>
-    </section>
-
+    </div>
   </main>
 
+  <!-- TOAST DI NOTIFICA -->
+  <div id="toastNotice" class="fixed bottom-5 right-5 z-50 pointer-events-none opacity-0 translate-y-3 transition-all duration-300 bg-[#041B0F] border border-[#25AE3F] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs sm:text-sm font-semibold">
+    <span class="w-2.5 h-2.5 rounded-full bg-[#25AE3F]"></span>
+    <span id="toastText">Operazione completata</span>
+  </div>
+
   <script>
-    /**
-     * ============================================================================
-     * ATLETICA CASTELLO — GENERATORE POST PARTITA (CON EXPORT MULTI-RISOLUZIONE)
-     * ============================================================================
-     */
-    const EMBEDDED_LOGO_BASE64 = "";
-
-    // Logo Ufficiale Vettoriale SVG ad altissima definizione (1536x2220 per export nitido fino a 3K)
-    const DEFAULT_CASTELLO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 1110" width="1536" height="2220">
-      <defs>
-        <path id="leftArc" d="M 102,690 A 315,455 0 0,1 225,180" />
-        <path id="rightArc" d="M 552,185 A 315,455 0 0,1 666,690" />
-      </defs>
-      <ellipse cx="384" cy="555" rx="376" ry="547" fill="#FFFFFF" stroke="#007D32" stroke-width="6.5" />
-      <ellipse cx="384" cy="535" rx="253" ry="389" fill="#FFFFFF" stroke="#007D32" stroke-width="24" />
-      <text fill="#007D32" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="66" letter-spacing="7">
-        <textPath href="#leftArc" startOffset="6%">ATLETICA</textPath>
-      </text>
-      <text fill="#007D32" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="66" letter-spacing="6">
-        <textPath href="#rightArc" startOffset="5%">CASTELLO</textPath>
-      </text>
-      <text x="384" y="1058" text-anchor="middle" fill="#007D32" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="68" letter-spacing="3">CALCIO</text>
-      <path d="M 369,238 C 396,212 454,228 506,255 C 540,273 561,286 558,320 C 555,349 532,374 532,396 C 522,379 524,354 541,335 C 508,320 434,308 369,346 Z"
-            fill="#FFFFFF" stroke="#007D32" stroke-width="11" stroke-linejoin="round" />
-      <text x="447" y="302" text-anchor="middle" fill="#007D32" font-family="'Arial Narrow', 'Barlow Condensed', sans-serif" font-weight="900" font-size="52" transform="scale(0.88, 1.15) translate(60, -34)">ATLETICA</text>
-      <line x1="369" y1="232" x2="369" y2="822" stroke="#007D32" stroke-width="9" />
-      <polygon points="306,384 369,366 369,465 306,478" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
-      <polygon points="369,366 438,392 438,475 369,465" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
-      <polygon points="176,514 252,505 252,566 222,570 227,656 252,663 252,762 197,738" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
-      <polygon points="252,478 288,473 288,780 276,774 276,685 266,681 266,770 252,762" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
-      <polygon points="265,568 276,567 276,640 265,638" fill="#FFFFFF" stroke="#007D32" stroke-width="8" stroke-linejoin="round" />
-      <polygon points="288,487 326,481 326,554 307,556 307,616 326,619 326,800 295,784 295,695 309,700 309,652 288,646" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
-      <polygon points="326,464 369,458 369,822 339,807 339,545 326,547" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
-      <polygon points="369,458 438,472 438,548 402,542 402,598 424,602 424,668 402,665 402,732 444,715 444,780 369,822" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
-      <polygon points="438,472 466,478 466,708 478,703 478,761 444,780" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
-      <polygon points="466,495 505,502 505,693 515,689 515,742 478,761" fill="#FFFFFF" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
-      <path d="M 505,496 L 579,512 L 568,718 L 505,746 Z M 526,562 L 521,646 L 547,650 L 552,569 Z" fill="#FFFFFF" fill-rule="evenodd" stroke="#007D32" stroke-width="9" stroke-linejoin="round" />
-      <text x="384" y="882" text-anchor="middle" fill="#007D32" font-family="'Brush Script MT', 'Comic Sans MS', cursive, sans-serif" font-style="italic" font-weight="700" font-size="64" letter-spacing="2">Firenze</text>
-    </svg>`;
-
     (function () {
-      const canvas = document.getElementById('postCanvas');
-      const ctx = canvas.getContext('2d');
+      'use strict';
 
-      // Spazio geometrico logico di riferimento (1080x1080)
+      // Costante per incorporamento definitivo del logo nel file HTML
+      const EMBEDDED_LOGO_BASE64 = "";
+
+      // ============================================================================
+      // LOGO SVG UFFICIALE ATLETICA CASTELLO FIRENZE CALCIO (Vettoriale Integrato)
+      // ============================================================================
+      const DEFAULT_CASTELLO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 1080" width="750" height="1080">
+        <ellipse cx="375" cy="540" rx="366" ry="530" fill="#FFFFFF" stroke="#007A33" stroke-width="10"/>
+        <ellipse cx="375" cy="512" rx="242" ry="378" fill="#FFFFFF" stroke="#007A33" stroke-width="22"/>
+        <defs>
+          <path id="arcLeft" d="M 96,650 A 295,435 0 0,1 225,155" />
+          <path id="arcRight" d="M 520,150 A 295,435 0 0,1 654,650" />
+        </defs>
+        <text fill="#007A33" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="68" letter-spacing="10">
+          <textPath href="#arcLeft" startOffset="6%">ATLETICA</textPath>
+        </text>
+        <text fill="#007A33" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="68" letter-spacing="8">
+          <textPath href="#arcRight" startOffset="4%">CASTELLO</textPath>
+        </text>
+        <g stroke="#007A33" stroke-width="9" stroke-linejoin="round" stroke-linecap="round" fill="#FFFFFF">
+          <path d="M 362,350 L 362,232 C 415,212 465,242 515,268 C 555,290 545,335 518,378 C 532,338 520,322 480,315 C 435,307 398,325 362,342 Z" />
+          <path d="M 362,232 L 362,795" stroke-width="11" />
+          <polygon points="300,378 362,350 362,438 300,455" />
+          <polygon points="362,350 430,378 430,445 362,428" />
+          <polygon points="173,478 242,468 255,672 195,650" />
+          <polygon points="242,468 312,455 316,718 255,688" />
+          <polygon points="312,455 362,428 362,795 316,765" />
+          <polygon points="362,428 416,445 416,765 362,795" />
+          <polygon points="416,445 452,448 450,745 416,765" />
+          <polygon points="452,448 500,462 496,720 450,745" />
+          <polygon points="500,462 565,476 548,662 496,688" />
+          <path d="M 240,522 L 195,528 L 202,608 L 242,618" fill="none" stroke-width="8"/>
+          <rect x="262" y="518" width="16" height="58" />
+          <rect x="258" y="605" width="22" height="90" />
+          <path d="M 312,512 L 288,516 L 288,582 L 314,582" fill="none" stroke-width="8"/>
+          <path d="M 362,508 L 414,515 M 362,592 L 402,595 M 362,675 L 414,668" fill="none" stroke-width="9"/>
+          <polygon points="512,518 538,525 534,608 508,602" />
+        </g>
+        <text x="368" y="299" fill="#007A33" font-family="'Arial Narrow', Impact, sans-serif" font-weight="900" font-size="52" text-anchor="middle" transform="scale(0.75, 1.15) translate(122, -32)">ATLETICA</text>
+        <text x="375" y="838" fill="#007A33" font-family="'Comic Sans MS', 'Bradley Hand', cursive, sans-serif" font-style="italic" font-weight="700" font-size="56" text-anchor="middle" letter-spacing="3">Firenze</text>
+        <text x="375" y="1028" fill="#007A33" font-family="Georgia, 'Times New Roman', serif" font-weight="900" font-size="64" text-anchor="middle" letter-spacing="2">CALCIO</text>
+      </svg>`;
+
+      // ============================================================================
+      // 1. COSTANTI DI STILE E PALETTE COLORI UFFICIALE ATLETICA CASTELLO
+      // ============================================================================
       const CW = 1080;
       const CH = 1080;
 
-      // Palette Ufficiale Atletica Castello (bilanciata: più chiara del #056323 ma più scura del #25AE3F)
       const COLORS = {
-        primaryGreen: '#0D8A34',
-        castelloTeamGreen: '#169E3B',   // Verde per ATLETICA CASTELLO: un po' più chiaro degli altri testi ma più scuro del vecchio #25AE3F
-        castelloResultGreen: '#0D8A34', // Verde per il numero dei gol del Castello
-        brightGreen: '#0D8A34',         // Verde per Tipo Gara, 2026/27 e AMO
-        darkestGreen: '#041B0F',
-        white: '#FFFFFF',
-        warmWhite: '#F7F8F1',
-        secondaryGreen: '#004B20'
+        greenMain: '#0B8731',          // Verde principale societario
+        greenBright: '#0D8A34',        // Verde per Tipo Gara, 2026/27, AMO e numero gol Castello
+        castelloTeamGreen: '#169E3B',  // Verde per la scritta ATLETICA CASTELLO
+        greenDarkest: '#041B0F',       // Verde scurissimo (header 0% trasparenza, tappetino e footer)
+        greenSecondary: '#004B20',     // Verde istituzionale secondario
+        white: '#FFFFFF',              // Bianco puro
+        warmWhite: '#F7F8F1'           // Bianco caldo per categoria, marcatori, footer
       };
 
-      // Mappa dei preset di font condensati (default: Roboto Condensed, con terminali netti/squadrati ma curve naturali)
       const FONT_PRESETS = {
-        roboto: '"CustomAvenirCondensed", "Avenir Next Condensed", "Roboto Condensed", "Fira Sans Condensed", sans-serif',
-        fira: '"CustomAvenirCondensed", "Avenir Next Condensed", "Fira Sans Condensed", "Roboto Condensed", sans-serif',
-        saira: '"CustomAvenirCondensed", "Saira Condensed", "Roboto Condensed", sans-serif',
-        asap: '"CustomAvenirCondensed", "Avenir Next Condensed", "Asap Condensed", sans-serif'
+        roboto: `"Avenir Next Condensed", "Roboto Condensed", "Fira Sans Condensed", "Barlow Condensed", sans-serif`,
+        fira: `"Avenir Next Condensed", "Fira Sans Condensed", "Roboto Condensed", sans-serif`,
+        saira: `"Avenir Next Condensed", "Saira Condensed", "Roboto Condensed", sans-serif`,
+        asap: `"Avenir Next Condensed", "Asap Condensed", "Roboto Condensed", sans-serif`
       };
 
       let TEAM_RESULT_FONT_STACK = FONT_PRESETS.roboto;
       let CONDENSED_FONT_STACK = FONT_PRESETS.roboto;
 
-      // Riferimenti DOM
-      const bgImageInput = document.getElementById('bgImageInput');
-      const bgFileName = document.getElementById('bgFileName');
+      // ============================================================================
+      // PRESET DI SPESSORE E RISALTO PER LA SCRITTA "ATLETICA CASTELLO"
+      // (Mantengono lo stesso colore #169E3B e lo stesso font, variando l'ispessimento
+      //  del corpo verde interno, il contorno bianco e lo stacco sul prato)
+      // ============================================================================
+      const CASTELLO_TEXT_PRESETS = {
+        massiccio: {
+          baseFontSize: 56,
+          scaleX: 1.04,
+          letterSpacing: '0.8px',
+          greenExpand: 2.4,     // Ispessisce il corpo verde interno delle lettere
+          whiteVisible: 3.2,    // Spessore visibile del bordo bianco attorno al verde espanso
+          outerDarkStroke: 0,
+          lineJoin: 'round',
+          shadowColor: 'rgba(0, 0, 0, 0.48)',
+          shadowBlur: 8,
+          shadowOffsetX: 0,
+          shadowOffsetY: 3
+        },
+        extra_massiccio: {
+          baseFontSize: 57,
+          scaleX: 1.06,
+          letterSpacing: '1.3px',
+          greenExpand: 3.6,     // Corpo verde ancora più massiccio e pieno
+          whiteVisible: 3.4,
+          outerDarkStroke: 0,
+          lineJoin: 'round',
+          shadowColor: 'rgba(0, 0, 0, 0.55)',
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowOffsetY: 3
+        },
+        bordo_forte: {
+          baseFontSize: 56,
+          scaleX: 1.03,
+          letterSpacing: '1.0px',
+          greenExpand: 2.2,
+          whiteVisible: 4.5,    // Contorno bianco esterno più marcato
+          outerDarkStroke: 0,
+          lineJoin: 'round',
+          shadowColor: 'rgba(0, 0, 0, 0.55)',
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowOffsetY: 3
+        },
+        stacco_3d: {
+          baseFontSize: 56,
+          scaleX: 1.04,
+          letterSpacing: '1.0px',
+          greenExpand: 2.6,
+          whiteVisible: 3.3,
+          outerDarkStroke: 0,
+          lineJoin: 'round',
+          shadowColor: 'rgba(2, 14, 8, 0.94)',
+          shadowBlur: 2,
+          shadowOffsetX: 3.5,
+          shadowOffsetY: 4.5
+        },
+        doppio_bordo: {
+          baseFontSize: 56,
+          scaleX: 1.04,
+          letterSpacing: '1.1px',
+          greenExpand: 2.4,
+          whiteVisible: 3.2,
+          outerDarkStroke: 2.2, // Filetto scuro esterno attorno al bianco per stacco totale
+          lineJoin: 'round',
+          shadowColor: 'rgba(0, 0, 0, 0.45)',
+          shadowBlur: 6,
+          shadowOffsetX: 0,
+          shadowOffsetY: 2
+        },
+        leggero: {
+          baseFontSize: 54,
+          scaleX: 1.0,
+          letterSpacing: '0px',
+          greenExpand: 0,
+          whiteVisible: 2.75,   // Equivalente al vecchio lineWidth 5.5
+          outerDarkStroke: 0,
+          lineJoin: 'miter',
+          shadowColor: 'transparent',
+          shadowBlur: 0,
+          shadowOffsetX: 0,
+          shadowOffsetY: 0
+        }
+      };
 
-      // Controlli unici di Zoom, Orizz. (X), Vert. (Y) e Reset sopra l'anteprima
-      const liveBgZoom = document.getElementById('liveBgZoom');
-      const liveBgPanX = document.getElementById('liveBgPanX');
-      const liveBgPanY = document.getElementById('liveBgPanY');
-      const liveZoomValLabel = document.getElementById('liveZoomValLabel');
-      const livePanXValLabel = document.getElementById('livePanXValLabel');
-      const livePanYValLabel = document.getElementById('livePanYValLabel');
-      const liveCenterPhotoBtn = document.getElementById('liveCenterPhotoBtn');
+      // Riferimenti DOM
+      const canvas = document.getElementById('postCanvas');
+      const ctx = canvas.getContext('2d');
+
+      const bgImageInput = document.getElementById('bgImageInput');
+      const photoStatusBadge = document.getElementById('photoStatusBadge');
+      const zoomRangeInput = document.getElementById('zoomRangeInput');
+      const panXInput = document.getElementById('panXInput');
+      const panYInput = document.getElementById('panYInput');
+      const zoomValLabel = document.getElementById('zoomValLabel');
+      const panXValLabel = document.getElementById('panXValLabel');
+      const panYValLabel = document.getElementById('panYValLabel');
+      const resetCropBtn = document.getElementById('resetCropBtn');
 
       const categoriaInput = document.getElementById('categoriaInput');
       const tipoGaraInput = document.getElementById('tipoGaraInput');
       const ospiteInput = document.getElementById('ospiteInput');
       const scoreCasaInput = document.getElementById('scoreCasaInput');
       const scoreOspiteInput = document.getElementById('scoreOspiteInput');
+      const scoreLeftLabel = document.getElementById('scoreLeftLabel');
+      const scoreRightLabel = document.getElementById('scoreRightLabel');
+      const castelloHomeBtn = document.getElementById('castelloHomeBtn');
+      const castelloAwayBtn = document.getElementById('castelloAwayBtn');
 
-      const scorerSingleInput = document.getElementById('scorerSingleInput');
+      const newScorerInput = document.getElementById('newScorerInput');
       const addScorerBtn = document.getElementById('addScorerBtn');
       const clearScorersBtn = document.getElementById('clearScorersBtn');
       const scorersTagsContainer = document.getElementById('scorersTagsContainer');
@@ -807,464 +858,780 @@
       const stagioneInput = document.getElementById('stagioneInput');
       const hashtagInput = document.getElementById('hashtagInput');
       const scoreStyleSelect = document.getElementById('scoreStyleSelect');
+      const castelloTextStyleSelect = document.getElementById('castelloTextStyleSelect');
+      const castelloStyleChips = document.querySelectorAll('.castello-style-chip');
       const gradientIntensityInput = document.getElementById('gradientIntensityInput');
       const gradIntensityLabel = document.getElementById('gradIntensityLabel');
 
       const logoInput = document.getElementById('logoInput');
-      const removeBlackBgCheckbox = document.getElementById('removeBlackBgCheckbox');
       const embedLogoHtmlBtn = document.getElementById('embedLogoHtmlBtn');
-      const resetDefaultSvgLogoBtn = document.getElementById('resetDefaultSvgLogoBtn');
-      const logoBadgeStatus = document.getElementById('logoBadgeStatus');
-      const logoFallbackWarningBanner = document.getElementById('logoFallbackWarningBanner');
-      const dismissLogoWarningBtn = document.getElementById('dismissLogoWarningBtn');
+      const restoreDefaultSvgLogoBtn = document.getElementById('restoreDefaultSvgLogoBtn');
+      const logoCacheBadge = document.getElementById('logoCacheBadge');
+      const logoFallbackWarning = document.getElementById('logoFallbackWarning');
+      const headerMiniLogo = document.getElementById('headerMiniLogo');
 
       const fontPresetSelect = document.getElementById('fontPresetSelect');
-      const fontFileInput = document.getElementById('fontFileInput');
-      const fontStatusLabel = document.getElementById('fontStatusLabel');
-
-      const btnCastelloCasa = document.getElementById('btnCastelloCasa');
-      const btnCastelloFuori = document.getElementById('btnCastelloFuori');
-      const resetAllBtn = document.getElementById('resetAllBtn');
+      const customFontInput = document.getElementById('customFontInput');
+      const fontStatusText = document.getElementById('fontStatusText');
       const exportResolutionSelect = document.getElementById('exportResolutionSelect');
       const downloadBtn = document.getElementById('downloadBtn');
-      const iosShareBtn = document.getElementById('iosShareBtn');
-      const safariPreviewFallbackBox = document.getElementById('safariPreviewFallbackBox');
-      const safariFallbackImg = document.getElementById('safariFallbackImg');
-      const closeSafariPreviewBtn = document.getElementById('closeSafariPreviewBtn');
-      const statusFeedback = document.getElementById('statusFeedback');
+      const shareIosBtn = document.getElementById('shareIosBtn');
+      const iosSaveModal = document.getElementById('iosSaveModal');
+      const iosSavePreviewImg = document.getElementById('iosSavePreviewImg');
+      const closeIosModalBtn = document.getElementById('closeIosModalBtn');
+      const resetAllBtn = document.getElementById('resetAllBtn');
+      const toastNotice = document.getElementById('toastNotice');
+      const toastText = document.getElementById('toastText');
 
-      // Stato interno dell'applicazione
+      // Stato applicazione
       const state = {
         bgImage: null,
         logoImage: null,
-        rawLogoSourceImg: null,
-        logoDataUrl: '',
-        isCustomLogo: false,
-        zoomPercent: 0,
+        logoDataUrl: null,
+        isDefaultSvgLogo: true,
+        zoom: 1.0,
         panX: 0,
         panY: 0,
-        gradientIntensity: 130,
         castelloIsHome: true,
-        scorersList: [],
-        isDragging: false,
-        dragStartX: 0,
-        dragStartY: 0,
-        initialPanX: 0,
-        initialPanY: 0,
-        isPinching: false,
-        pinchStartDist: 0,
-        pinchStartZoom: 0,
-        pinchStartMidX: 0,
-        pinchStartMidY: 0,
-        pinchInitialPanX: 0,
-        pinchInitialPanY: 0
+        scorers: [],
+        gradientIntensity: 130,
+        activePointers: new Map(),
+        initialPinchDist: null,
+        initialPinchZoom: 1.0,
+        lastPanCenter: null
       };
 
-      function syncTransformControlsUI() {
-        const z = Math.round(state.zoomPercent);
-        const px = Math.round(state.panX);
-        const py = Math.round(state.panY);
-        const zText = (z > 0 ? '+' : '') + z + '%';
+      const LOGO_STORAGE_KEY = 'atletica_castello_official_logo_v4';
 
-        liveBgZoom.value = z;
-        liveBgPanX.value = px;
-        liveBgPanY.value = py;
-        liveZoomValLabel.textContent = zText;
-        livePanXValLabel.textContent = px;
-        livePanYValLabel.textContent = py;
+      function showToast(message) {
+        toastText.textContent = message;
+        toastNotice.classList.remove('opacity-0', 'translate-y-3');
+        toastNotice.classList.add('opacity-100', 'translate-y-0');
+        clearTimeout(showToast._timer);
+        showToast._timer = setTimeout(() => {
+          toastNotice.classList.add('opacity-0', 'translate-y-3');
+          toastNotice.classList.remove('opacity-100', 'translate-y-0');
+        }, 2800);
       }
 
-      /**
-       * ==========================================================================
-       * GESTIONE LOGO: CARICAMENTO FILE ALL'AVVIO + AVVISO SE IN USO IL FALLBACK SVG
-       * ==========================================================================
-       */
-      function getDefaultSvgDataUrl() {
-        return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(DEFAULT_CASTELLO_SVG.trim());
+      // Rilevamento iOS / Web Share con File
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      if (isIOS || (navigator.canShare && navigator.share)) {
+        shareIosBtn.classList.remove('hidden');
+        shareIosBtn.classList.add('inline-flex');
       }
 
-      function updateLogoUIStatus(sourceLabel, isCustom) {
-        state.isCustomLogo = Boolean(isCustom);
-        logoBadgeStatus.textContent = sourceLabel || '⚠️ SVG di fallback';
-        embedLogoHtmlBtn.disabled = false;
+      // ============================================================================
+      // 2. GESTIONE LOGO (RICERCA AUTOMATICA ESTERNA + AVVISO FALLBACK SVG)
+      // ============================================================================
+      function removeBlackCornersFromLogo(imgElement) {
+        const off = document.createElement('canvas');
+        const w = imgElement.naturalWidth || imgElement.width || 600;
+        const h = imgElement.naturalHeight || imgElement.height || 850;
+        off.width = w;
+        off.height = h;
+        const octx = off.getContext('2d');
+        octx.drawImage(imgElement, 0, 0, w, h);
 
-        if (state.isCustomLogo) {
-          logoBadgeStatus.className = 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#25AE3F]/20 text-[#25AE3F] border border-[#25AE3F]/50';
-          resetDefaultSvgLogoBtn.classList.remove('hidden');
-          if (logoFallbackWarningBanner) logoFallbackWarningBanner.classList.add('hidden');
-        } else {
-          logoBadgeStatus.className = 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-400/50';
-          resetDefaultSvgLogoBtn.classList.add('hidden');
-          if (logoFallbackWarningBanner) logoFallbackWarningBanner.classList.remove('hidden');
-        }
-      }
+        try {
+          const imgData = octx.getImageData(0, 0, w, h);
+          const data = imgData.data;
+          const cx = w / 2;
+          const cy = h / 2;
+          const rx = w * 0.475;
+          const ry = h * 0.475;
 
-      function loadDefaultSvgLogo() {
-        const svgDataUrl = getDefaultSvgDataUrl();
-        const svgImg = new Image();
-        svgImg.onload = function () {
-          // Rasterizza subito l'SVG in un PNG offscreen per evitare bug di WebKit/Safari durante toDataURL/toBlob
-          try {
-            const offCanvas = document.createElement('canvas');
-            offCanvas.width = 768;
-            offCanvas.height = 1110;
-            const offCtx = offCanvas.getContext('2d');
-            offCtx.drawImage(svgImg, 0, 0, 768, 1110);
-            const rasterPngUrl = offCanvas.toDataURL('image/png');
-            const rasterImg = new Image();
-            rasterImg.onload = function () {
-              state.logoImage = rasterImg;
-              state.logoDataUrl = rasterPngUrl;
-              updateLogoUIStatus('⚠️ SVG di fallback (file non caricato)', false);
-              renderCanvas();
-            };
-            rasterImg.src = rasterPngUrl;
-          } catch (e) {
-            state.logoImage = svgImg;
-            state.logoDataUrl = svgDataUrl;
-            updateLogoUIStatus('⚠️ SVG di fallback (file non caricato)', false);
-            renderCanvas();
+          for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+              const idx = (y * w + x) * 4;
+              const r = data[idx];
+              const g = data[idx + 1];
+              const b = data[idx + 2];
+              const normDist = ((x - cx) * (x - cx)) / (rx * rx) + ((y - cy) * (y - cy)) / (ry * ry);
+              if (normDist > 0.94 && r < 48 && g < 48 && b < 48) {
+                data[idx + 3] = 0;
+              }
+            }
           }
-        };
-        svgImg.src = svgDataUrl;
+          octx.putImageData(imgData, 0, 0);
+        } catch (err) {
+          // Canvas cross-origin protetto
+        }
+        return off.toDataURL('image/png');
       }
 
-      /**
-       * Tenta di caricare automaticamente il file immagine reale dalla stessa cartella
-       * (logo_castello.svg, logo_castello.png, logo_castello.jpg) verificando che sia esportabile su Canvas.
-       */
-      function tryLoadExternalLogoFiles(fileList, index) {
-        if (index >= fileList.length) {
-          // Nessun file esterno caricato correttamente: usa l'SVG di fallback e avvisa l'utente
-          loadDefaultSvgLogo();
-          return;
-        }
+      function applyLogoDataUrl(dataUrl, labelText, isFallbackSvg) {
+        const img = new Image();
+        img.onload = () => {
+          // Rasterizziamo sempre il logo su un canvas PNG pulito per evitare blocchi Safari su SVG blob
+          const rasterCanvas = document.createElement('canvas');
+          rasterCanvas.width = 300;
+          rasterCanvas.height = 432;
+          const rctx = rasterCanvas.getContext('2d');
+          rctx.drawImage(img, 0, 0, 300, 432);
 
-        const fileName = fileList[index];
-        const testImg = new Image();
-        testImg.crossOrigin = 'anonymous';
-
-        testImg.onload = function () {
-          try {
-            // Verifica che il browser consenta di esportare il canvas con questo file locale (no Tainted Canvas)
-            const tCanvas = document.createElement('canvas');
-            tCanvas.width = testImg.naturalWidth || testImg.width || 100;
-            tCanvas.height = testImg.naturalHeight || testImg.height || 100;
-            const tCtx = tCanvas.getContext('2d');
-            tCtx.drawImage(testImg, 0, 0);
-            const dataUrl = tCanvas.toDataURL('image/png');
-
-            state.logoImage = testImg;
+          const safeImg = new Image();
+          safeImg.onload = () => {
+            state.logoImage = safeImg;
             state.logoDataUrl = dataUrl;
-            updateLogoUIStatus(`✓ File "${fileName}" caricato`, true);
-            renderCanvas();
-          } catch (securityErr) {
-            // Il protocollo file:// del browser ha bloccato la lettura diretta dei pixel del file esterno
-            tryLoadExternalLogoFiles(fileList, index + 1);
-          }
-        };
+            state.isDefaultSvgLogo = Boolean(isFallbackSvg);
+            headerMiniLogo.src = dataUrl;
+            logoCacheBadge.textContent = labelText || 'Logo Attivo';
 
-        testImg.onerror = function () {
-          tryLoadExternalLogoFiles(fileList, index + 1);
-        };
-
-        testImg.src = fileName;
-      }
-
-      function initLogoOnStartup() {
-        // 1. Priorità massima: Logo incorporato direttamente nella costante EMBEDDED_LOGO_BASE64 del file HTML
-        if (typeof EMBEDDED_LOGO_BASE64 === 'string' && EMBEDDED_LOGO_BASE64.startsWith('data:image/')) {
-          const embeddedImg = new Image();
-          embeddedImg.onload = function () {
-            state.logoImage = embeddedImg;
-            state.logoDataUrl = EMBEDDED_LOGO_BASE64;
-            updateLogoUIStatus('✓ Logo originale incorporato', true);
+            if (isFallbackSvg) {
+              logoFallbackWarning.classList.remove('hidden');
+            } else {
+              logoFallbackWarning.classList.add('hidden');
+            }
             renderCanvas();
           };
-          embeddedImg.onerror = loadDefaultSvgLogo;
-          embeddedImg.src = EMBEDDED_LOGO_BASE64;
+          safeImg.src = rasterCanvas.toDataURL('image/png');
+        };
+        img.src = dataUrl;
+      }
+
+      function loadDefaultSvgLogoWithWarning(showWarnBanner) {
+        const svgBase64 = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(DEFAULT_CASTELLO_SVG);
+        applyLogoDataUrl(svgBase64, 'SVG Fallback', showWarnBanner);
+      }
+
+      function tryAutoLoadExternalLogoFiles() {
+        const candidates = [
+          'logo_castello.svg',
+          'logo_castello.png',
+          'logo_castello.jpg',
+          './logo_castello.svg',
+          './logo_castello.png',
+          './logo_castello.jpg'
+        ];
+        let index = 0;
+
+        function tryNext() {
+          if (index >= candidates.length) {
+            loadDefaultSvgLogoWithWarning(true);
+            return;
+          }
+          const fileUrl = candidates[index++];
+          const testImg = new Image();
+          testImg.crossOrigin = 'anonymous';
+          testImg.onload = () => {
+            try {
+              const cleanDataUrl = removeBlackCornersFromLogo(testImg);
+              applyLogoDataUrl(cleanDataUrl, 'File Logo (' + fileUrl.replace('./', '') + ')', false);
+            } catch (err) {
+              loadDefaultSvgLogoWithWarning(true);
+            }
+          };
+          testImg.onerror = () => {
+            tryNext();
+          };
+          testImg.src = fileUrl;
+        }
+
+        tryNext();
+      }
+
+      function initLogo() {
+        if (EMBEDDED_LOGO_BASE64 && EMBEDDED_LOGO_BASE64.startsWith('data:image')) {
+          applyLogoDataUrl(EMBEDDED_LOGO_BASE64, 'Logo Incorporato', false);
+          return;
+        }
+        try {
+          const cached = localStorage.getItem(LOGO_STORAGE_KEY);
+          if (cached && cached.startsWith('data:image')) {
+            applyLogoDataUrl(cached, 'Logo Caricato (Cache)', false);
+            return;
+          }
+        } catch (e) {
+          // Ignora blocchi storage
+        }
+        tryAutoLoadExternalLogoFiles();
+      }
+
+      // ============================================================================
+      // 3. MARCATORI CON PALLONE SEPARATORE
+      // ============================================================================
+      function renderScorersTags() {
+        scorersTagsContainer.innerHTML = '';
+        if (state.scorers.length === 0) {
+          const emptyHint = document.createElement('span');
+          emptyHint.className = 'text-[11px] text-gray-400 italic';
+          emptyHint.textContent = 'Nessun marcatore inserito (es. 0 gol Castello)';
+          scorersTagsContainer.appendChild(emptyHint);
           return;
         }
 
-        // 2. Seconda priorità: Logo salvato nella memoria locale del browser (localStorage)
-        try {
-          const cachedLogo = localStorage.getItem('castello_official_logo_v2');
-          if (cachedLogo && cachedLogo.startsWith('data:image/')) {
-            const cachedImg = new Image();
-            cachedImg.onload = function () {
-              state.logoImage = cachedImg;
-              state.logoDataUrl = cachedLogo;
-              updateLogoUIStatus('✓ Logo originale (in memoria)', true);
-              renderCanvas();
-            };
-            cachedImg.onerror = loadDefaultSvgLogo;
-            cachedImg.src = cachedLogo;
-            return;
-          }
-        } catch (e) {}
-
-        // 3. Terza priorità: Cerca il file nella stessa cartella dell'HTML; se fallisce, attiva il fallback SVG con avviso
-        tryLoadExternalLogoFiles(['logo_castello.svg', 'logo_castello.png', 'logo_castello.jpg'], 0);
-      }
-
-      if (dismissLogoWarningBtn) {
-        dismissLogoWarningBtn.addEventListener('click', function () {
-          logoFallbackWarningBanner.classList.add('hidden');
+        state.scorers.forEach((name, idx) => {
+          const tag = document.createElement('span');
+          tag.className = 'scorer-tag';
+          tag.innerHTML = `
+            <span class="leading-none">⚽</span>
+            <span class="leading-none">${name}</span>
+            <button type="button" data-remove-idx="${idx}" class="ml-0.5 text-emerald-200 hover:text-white font-black leading-none" title="Rimuovi">✕</button>
+          `;
+          scorersTagsContainer.appendChild(tag);
         });
       }
 
-      function processLogoImage(sourceImg, removeBlackCorners, callback) {
-        const tempCanvas = document.createElement('canvas');
-        const w = sourceImg.naturalWidth || sourceImg.width;
-        const h = sourceImg.naturalHeight || sourceImg.height;
-        tempCanvas.width = w;
-        tempCanvas.height = h;
-        const tCtx = tempCanvas.getContext('2d');
-        tCtx.drawImage(sourceImg, 0, 0);
+      function addScorersFromString(rawStr) {
+        if (!rawStr) return;
+        const parts = rawStr
+          .split(',')
+          .map(s => s.trim().toUpperCase())
+          .filter(Boolean);
 
-        if (removeBlackCorners) {
-          try {
-            const imgData = tCtx.getImageData(0, 0, w, h);
-            const data = imgData.data;
-            const cx = w / 2;
-            const cy = h / 2;
-            const rx = w * 0.495;
-            const ry = h * 0.495;
-
-            for (let y = 0; y < h; y++) {
-              for (let x = 0; x < w; x++) {
-                const idx = (y * w + x) * 4;
-                const r = data[idx];
-                const g = data[idx + 1];
-                const b = data[idx + 2];
-                const normDist = ((x - cx) * (x - cx)) / (rx * rx) + ((y - cy) * (y - cy)) / (ry * ry);
-
-                if (normDist > 1.02 || (r < 45 && g < 45 && b < 45 && normDist > 0.85)) {
-                  data[idx + 3] = 0;
-                }
-              }
-            }
-            tCtx.putImageData(imgData, 0, 0);
-          } catch (err) {}
-        }
-
-        const dataUrl = tempCanvas.toDataURL('image/png');
-        try {
-          localStorage.setItem('castello_official_logo_v2', dataUrl);
-        } catch (e) {}
-
-        const processedImg = new Image();
-        processedImg.onload = () => callback(processedImg, dataUrl);
-        processedImg.src = dataUrl;
+        if (parts.length === 0) return;
+        parts.forEach(p => state.scorers.push(p));
+        newScorerInput.value = '';
+        renderScorersTags();
+        renderCanvas();
       }
 
-      /**
-       * ==========================================================================
-       * FUNZIONI DI DISEGNO PARAMETRIZZATE SUL CONTESTO (PER EXPORT FINO A 3240x3240)
-       * ==========================================================================
-       */
-      function drawDefaultStadiumBackground(targetCtx) {
-        targetCtx.fillStyle = COLORS.darkestGreen;
-        targetCtx.fillRect(0, 0, CW, CH);
-
-        const skyGrad = targetCtx.createLinearGradient(0, 88, 0, 460);
-        skyGrad.addColorStop(0, '#5694e8');
-        skyGrad.addColorStop(0.6, '#76aee8');
-        skyGrad.addColorStop(1, '#9ec5ed');
+      // ============================================================================
+      // 4. SFONDO DEMO CALCISTICO
+      // ============================================================================
+      function drawFallbackStadiumField(targetCtx) {
+        const skyGrad = targetCtx.createLinearGradient(0, 0, 0, 560);
+        skyGrad.addColorStop(0, '#3b73b9');
+        skyGrad.addColorStop(0.55, '#6ba3e0');
+        skyGrad.addColorStop(1, '#9ec5eb');
         targetCtx.fillStyle = skyGrad;
-        targetCtx.fillRect(0, 88, CW, 380);
+        targetCtx.fillRect(0, 0, CW, 560);
 
-        targetCtx.fillStyle = '#38574c';
+        targetCtx.fillStyle = '#29483b';
         targetCtx.beginPath();
-        targetCtx.moveTo(0, 290);
-        targetCtx.bezierCurveTo(180, 130, 390, 165, 580, 235);
-        targetCtx.bezierCurveTo(760, 150, 940, 125, 1080, 185);
-        targetCtx.lineTo(1080, 480);
-        targetCtx.lineTo(0, 480);
+        targetCtx.moveTo(0, 430);
+        targetCtx.quadraticCurveTo(220, 190, 540, 290);
+        targetCtx.quadraticCurveTo(830, 175, 1080, 250);
+        targetCtx.lineTo(1080, 560);
+        targetCtx.lineTo(0, 560);
         targetCtx.closePath();
         targetCtx.fill();
 
-        targetCtx.fillStyle = '#1b3d26';
-        targetCtx.fillRect(0, 415, 780, 115);
+        const grassGrad = targetCtx.createLinearGradient(0, 520, 0, CH);
+        grassGrad.addColorStop(0, '#3a7a36');
+        grassGrad.addColorStop(0.5, '#2b6329');
+        grassGrad.addColorStop(1, '#123615');
+        targetCtx.fillStyle = grassGrad;
+        targetCtx.fillRect(0, 520, CW, CH - 520);
 
-        targetCtx.fillStyle = '#374151';
-        targetCtx.fillRect(775, 320, 305, 205);
-        targetCtx.fillStyle = '#9ca3af';
-        targetCtx.fillRect(790, 355, 280, 160);
+        for (let i = 0; i < 9; i++) {
+          if (i % 2 === 0) {
+            targetCtx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+            targetCtx.fillRect(0, 520 + i * 62, CW, 31);
+          }
+        }
 
-        const pitchTop = 525;
-        const pitchGrad = targetCtx.createLinearGradient(0, pitchTop, 0, CH);
-        pitchGrad.addColorStop(0, '#366f34');
-        pitchGrad.addColorStop(0.45, '#2b5f2a');
-        pitchGrad.addColorStop(0.78, '#133b19');
-        pitchGrad.addColorStop(1, COLORS.darkestGreen);
-        targetCtx.fillStyle = pitchGrad;
-        targetCtx.fillRect(0, pitchTop, CW, CH - pitchTop);
+        targetCtx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
+        targetCtx.lineWidth = 3;
+        targetCtx.beginPath();
+        targetCtx.moveTo(0, 650);
+        targetCtx.lineTo(CW, 620);
+        targetCtx.moveTo(0, 940);
+        targetCtx.lineTo(680, 635);
+        targetCtx.stroke();
+      }
+
+      // ============================================================================
+      // 5. DISEGNO FOTO CON SUPPORTO ZOOM OUT ("TAPPETINO VERDE")
+      // ============================================================================
+      function drawPhotoWithZoomAndPan(targetCtx, img) {
+        const iw = img.naturalWidth || img.width;
+        const ih = img.naturalHeight || img.height;
+        if (!iw || !ih) return;
+
+        const baseScale = Math.max(CW / iw, CH / ih);
+        const finalScale = baseScale * state.zoom;
+
+        const drawW = iw * finalScale;
+        const drawH = ih * finalScale;
+
+        const dx = (CW - drawW) / 2 + state.panX;
+        const dy = (CH - drawH) / 2 + state.panY;
 
         targetCtx.save();
-        targetCtx.strokeStyle = 'rgba(247, 248, 241, 0.72)';
-        targetCtx.lineWidth = 3.5;
-        targetCtx.beginPath();
-        targetCtx.moveTo(0, 622);
-        targetCtx.lineTo(1080, 626);
-        targetCtx.moveTo(580, 580);
-        targetCtx.lineTo(0, 705);
-        targetCtx.stroke();
+        targetCtx.imageSmoothingEnabled = true;
+        targetCtx.imageSmoothingQuality = 'high';
+        targetCtx.drawImage(img, dx, dy, drawW, drawH);
         targetCtx.restore();
       }
 
-      function drawBackgroundImageWithGreenMat(targetCtx, img) {
-        targetCtx.fillStyle = COLORS.darkestGreen;
-        targetCtx.fillRect(0, 0, CW, CH);
-
-        const imgW = img.naturalWidth || img.width;
-        const imgH = img.naturalHeight || img.height;
-        if (!imgW || !imgH) return;
-
-        const baseScale = Math.max(CW / imgW, CH / imgH);
-        const zoomFactor = Math.max(0.2, 1 + state.zoomPercent / 100);
-        const finalScale = baseScale * zoomFactor;
-
-        const drawW = imgW * finalScale;
-        const drawH = imgH * finalScale;
-
-        const panRangeX = Math.max(Math.abs(CW - drawW) / 2 + 260, 450);
-        const panRangeY = Math.max(Math.abs(CH - drawH) / 2 + 260, 450);
-
-        const dx = (CW - drawW) / 2 + (state.panX / 100) * panRangeX;
-        const dy = (CH - drawH) / 2 + (state.panY / 100) * panRangeY;
-
-        targetCtx.drawImage(img, dx, dy, drawW, drawH);
-
-        const photoBottomY = dy + drawH;
-        if (photoBottomY < CH && photoBottomY > 92) {
-          const featherH = 36;
-          const featherStart = Math.max(92, photoBottomY - featherH);
-          const seamGrad = targetCtx.createLinearGradient(0, featherStart, 0, photoBottomY + 2);
-          seamGrad.addColorStop(0, 'rgba(4, 27, 15, 0)');
-          seamGrad.addColorStop(0.65, 'rgba(4, 27, 15, 0.65)');
-          seamGrad.addColorStop(1, COLORS.darkestGreen);
-          targetCtx.fillStyle = seamGrad;
-          targetCtx.fillRect(0, featherStart, CW, photoBottomY - featherStart + 4);
+      // ============================================================================
+      // 6. HELPER GRAFICI E MISURAZIONE FONT
+      // ============================================================================
+      function fitCondensedFontSize(targetCtx, text, weight, style, initialSize, minSize, maxWidth) {
+        if (!text) return initialSize;
+        let size = initialSize;
+        while (size > minSize) {
+          targetCtx.font = `${style} ${weight} ${size}px ${CONDENSED_FONT_STACK}`;
+          if (targetCtx.measureText(text).width <= maxWidth) {
+            break;
+          }
+          size -= 1;
         }
+        return size;
       }
 
-      function drawLogoPlaceholder(targetCtx) {
+      function fitTeamFontSize(targetCtx, text, initialSize, minSize, maxWidth) {
+        if (!text) return initialSize;
+        let size = initialSize;
+        while (size > minSize) {
+          targetCtx.font = `italic 900 ${size}px ${TEAM_RESULT_FONT_STACK}`;
+          if (targetCtx.measureText(text).width <= maxWidth) {
+            break;
+          }
+          size -= 1;
+        }
+        return size;
+      }
+
+      /**
+       * Disegna la scritta "ATLETICA CASTELLO" applicando l'ispessimento vettoriale
+       * del corpo verde interno (greenExpand) e il contorno bianco esterno (whiteVisible)
+       * secondo l'opzione selezionata.
+       */
+      function drawCastelloTeamText(targetCtx, text, centerX, centerY, maxWidth) {
+        const presetKey = (castelloTextStyleSelect && castelloTextStyleSelect.value) || 'massiccio';
+        const preset = CASTELLO_TEXT_PRESETS[presetKey] || CASTELLO_TEXT_PRESETS.massiccio;
+
         targetCtx.save();
-        const cx = 72;
-        const cy = 44;
-        const rx = 28;
-        const ry = 37;
+        if ('letterSpacing' in targetCtx) {
+          targetCtx.letterSpacing = preset.letterSpacing || '0px';
+        }
 
-        targetCtx.beginPath();
-        targetCtx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-        targetCtx.fillStyle = 'rgba(255, 255, 255, 0.08)';
-        targetCtx.fill();
-
-        targetCtx.lineWidth = 2.5;
-        targetCtx.setLineDash([6, 4]);
-        targetCtx.strokeStyle = COLORS.white;
-        targetCtx.stroke();
-        targetCtx.setLineDash([]);
-
-        targetCtx.font = `700 15px ${CONDENSED_FONT_STACK}`;
-        targetCtx.fillStyle = COLORS.white;
+        const effectiveMaxW = maxWidth / (preset.scaleX || 1);
+        const fontSize = fitTeamFontSize(targetCtx, text, preset.baseFontSize, 24, effectiveMaxW);
+        targetCtx.font = `italic 900 ${fontSize}px ${TEAM_RESULT_FONT_STACK}`;
         targetCtx.textAlign = 'center';
         targetCtx.textBaseline = 'middle';
-        targetCtx.fillText('LOGO', cx, cy);
+
+        targetCtx.translate(centerX, centerY);
+        if (preset.scaleX && preset.scaleX !== 1) {
+          targetCtx.scale(preset.scaleX, 1);
+        }
+
+        const totalWhiteWidth = preset.greenExpand + preset.whiteVisible * 2;
+
+        // 0. Eventuale profilo scuro esterno (Opzione 5: Doppio Bordo)
+        if (preset.outerDarkStroke && preset.outerDarkStroke > 0) {
+          targetCtx.lineJoin = 'round';
+          targetCtx.lineCap = 'round';
+          targetCtx.lineWidth = totalWhiteWidth + preset.outerDarkStroke * 2;
+          targetCtx.strokeStyle = COLORS.greenDarkest;
+          if (preset.shadowColor && preset.shadowColor !== 'transparent') {
+            targetCtx.shadowColor = preset.shadowColor;
+            targetCtx.shadowBlur = preset.shadowBlur || 0;
+            targetCtx.shadowOffsetX = preset.shadowOffsetX || 0;
+            targetCtx.shadowOffsetY = preset.shadowOffsetY || 0;
+          }
+          targetCtx.strokeText(text, 0, 0);
+
+          targetCtx.shadowColor = 'transparent';
+          targetCtx.shadowBlur = 0;
+          targetCtx.shadowOffsetX = 0;
+          targetCtx.shadowOffsetY = 0;
+        }
+
+        // 1. Traccia esterna bianca
+        targetCtx.lineJoin = preset.lineJoin || 'round';
+        targetCtx.lineCap = 'round';
+        targetCtx.miterLimit = 3;
+        targetCtx.lineWidth = totalWhiteWidth;
+        targetCtx.strokeStyle = COLORS.white;
+
+        if (!preset.outerDarkStroke && preset.shadowColor && preset.shadowColor !== 'transparent') {
+          targetCtx.shadowColor = preset.shadowColor;
+          targetCtx.shadowBlur = preset.shadowBlur || 0;
+          targetCtx.shadowOffsetX = preset.shadowOffsetX || 0;
+          targetCtx.shadowOffsetY = preset.shadowOffsetY || 0;
+        }
+
+        targetCtx.strokeText(text, 0, 0);
+
+        // Disattiva l'ombra per i livelli interni
+        targetCtx.shadowColor = 'transparent';
+        targetCtx.shadowBlur = 0;
+        targetCtx.shadowOffsetX = 0;
+        targetCtx.shadowOffsetY = 0;
+
+        // 2. Ispessimento del corpo verde interno (rende le lettere più "massicce" e piene)
+        if (preset.greenExpand > 0) {
+          targetCtx.lineJoin = 'round';
+          targetCtx.lineCap = 'round';
+          targetCtx.lineWidth = preset.greenExpand;
+          targetCtx.strokeStyle = COLORS.castelloTeamGreen;
+          targetCtx.strokeText(text, 0, 0);
+        }
+
+        // 3. Riempimento verde centrale
+        targetCtx.fillStyle = COLORS.castelloTeamGreen;
+        targetCtx.fillText(text, 0, 0);
+
         targetCtx.restore();
       }
 
-      function drawHeader(targetCtx) {
+      function drawSoccerBallIcon(targetCtx, cx, cy, radius) {
         targetCtx.save();
 
-        const headerH = 88;
-        targetCtx.fillStyle = COLORS.darkestGreen;
-        targetCtx.fillRect(0, 0, CW, headerH);
+        targetCtx.beginPath();
+        targetCtx.arc(cx, cy, radius, 0, Math.PI * 2);
+        targetCtx.fillStyle = COLORS.warmWhite;
+        targetCtx.fill();
+        targetCtx.lineWidth = 1.6;
+        targetCtx.strokeStyle = COLORS.greenDarkest;
+        targetCtx.stroke();
 
-        targetCtx.fillStyle = COLORS.primaryGreen;
-        targetCtx.fillRect(0, headerH, CW, 4);
+        const rInner = radius * 0.42;
+        targetCtx.beginPath();
+        for (let i = 0; i < 5; i++) {
+          const angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+          const px = cx + Math.cos(angle) * rInner;
+          const py = cy + Math.sin(angle) * rInner;
+          if (i === 0) targetCtx.moveTo(px, py);
+          else targetCtx.lineTo(px, py);
+        }
+        targetCtx.closePath();
+        targetCtx.fillStyle = COLORS.greenDarkest;
+        targetCtx.fill();
 
-        if (state.logoImage) {
-          const maxBoxW = 76;
-          const maxBoxH = 82;
-          const boxX = 34;
-          const boxY = 3;
+        targetCtx.strokeStyle = COLORS.greenDarkest;
+        targetCtx.lineWidth = 1.5;
+        for (let i = 0; i < 5; i++) {
+          const angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
+          const x1 = cx + Math.cos(angle) * rInner;
+          const y1 = cy + Math.sin(angle) * rInner;
+          const x2 = cx + Math.cos(angle) * (radius * 0.88);
+          const y2 = cy + Math.sin(angle) * (radius * 0.88);
+          targetCtx.beginPath();
+          targetCtx.moveTo(x1, y1);
+          targetCtx.lineTo(x2, y2);
+          targetCtx.stroke();
 
-          const lw = state.logoImage.naturalWidth || state.logoImage.width || 76;
-          const lh = state.logoImage.naturalHeight || state.logoImage.height || 82;
-          const ratio = Math.min(maxBoxW / lw, maxBoxH / lh);
-          const drawW = lw * ratio;
-          const drawH = lh * ratio;
-          const drawX = boxX + (maxBoxW - drawW) / 2;
-          const drawY = boxY + (maxBoxH - drawH) / 2;
-
-          targetCtx.drawImage(state.logoImage, drawX, drawY, drawW, drawH);
-        } else {
-          drawLogoPlaceholder(targetCtx);
+          targetCtx.beginPath();
+          targetCtx.arc(cx, cy, radius * 0.96, angle - 0.24, angle + 0.24);
+          targetCtx.lineWidth = 3.2;
+          targetCtx.stroke();
+          targetCtx.lineWidth = 1.5;
         }
 
-        const categoriaText = (categoriaInput.value || '').trim().toUpperCase();
+        targetCtx.restore();
+      }
+
+      function drawSlantedParallelogram(targetCtx, xCenter, yCenter, width, height, slantOffset, fillColor, strokeColor) {
+        const halfW = width / 2;
+        const halfH = height / 2;
+
+        targetCtx.save();
+        targetCtx.beginPath();
+        targetCtx.moveTo(xCenter - halfW + slantOffset, yCenter - halfH);
+        targetCtx.lineTo(xCenter + halfW + slantOffset, yCenter - halfH);
+        targetCtx.lineTo(xCenter + halfW - slantOffset, yCenter + halfH);
+        targetCtx.lineTo(xCenter - halfW - slantOffset, yCenter + halfH);
+        targetCtx.closePath();
+
+        targetCtx.fillStyle = fillColor;
+        targetCtx.fill();
+
+        if (strokeColor) {
+          targetCtx.lineWidth = 3.5;
+          targetCtx.strokeStyle = strokeColor;
+          targetCtx.stroke();
+        }
+        targetCtx.restore();
+      }
+
+      // ============================================================================
+      // 7. MOTORE DI RENDERING PRINCIPALE (SUPPORTA SCALING PER HQ 2160x2160)
+      // ============================================================================
+      function renderSceneToContext(targetCtx, scaleFactor) {
+        targetCtx.save();
+        targetCtx.scale(scaleFactor, scaleFactor);
+
+        // 0. TAPPETINO VERDE SCURO DI FONDO
+        targetCtx.fillStyle = COLORS.greenDarkest;
+        targetCtx.fillRect(0, 0, CW, CH);
+
+        // 1. IMMAGINE DI SFONDO
+        if (state.bgImage) {
+          drawPhotoWithZoomAndPan(targetCtx, state.bgImage);
+        } else {
+          drawFallbackStadiumField(targetCtx);
+        }
+
+        // 2. FASCIA SUPERIORE SOLIDA (ZERO TRASPARENZA)
+        const headerBarHeight = 90;
+        targetCtx.fillStyle = COLORS.greenDarkest;
+        targetCtx.fillRect(0, 0, CW, headerBarHeight);
+
+        targetCtx.fillStyle = COLORS.greenBright;
+        targetCtx.fillRect(0, headerBarHeight - 3, CW, 3);
+
+        // Logo Atletica Castello in alto a sinistra
+        const logoBoxX = 36;
+        const logoBoxY = 4;
+        const logoBoxW = 68;
+        const logoBoxH = 82;
+
+        if (state.logoImage) {
+          const lw = state.logoImage.naturalWidth || state.logoImage.width || 68;
+          const lh = state.logoImage.naturalHeight || state.logoImage.height || 82;
+          const ratio = Math.min(logoBoxW / lw, logoBoxH / lh);
+          const drawW = lw * ratio;
+          const drawH = lh * ratio;
+          const drawX = logoBoxX + (logoBoxW - drawW) / 2;
+          const drawY = logoBoxY + (logoBoxH - drawH) / 2;
+
+          targetCtx.save();
+          targetCtx.imageSmoothingEnabled = true;
+          targetCtx.imageSmoothingQuality = 'high';
+          targetCtx.drawImage(state.logoImage, drawX, drawY, drawW, drawH);
+          targetCtx.restore();
+        }
+
+        // Testo CATEGORIA avvicinato al logo (X=118)
+        const categoriaText = categoriaInput.value.trim().toUpperCase();
         if (categoriaText) {
-          targetCtx.font = `italic 800 39px ${CONDENSED_FONT_STACK}`;
+          targetCtx.save();
+          const catFontSize = fitCondensedFontSize(targetCtx, categoriaText, 800, 'italic', 42, 24, 520);
+          targetCtx.font = `italic 800 ${catFontSize}px ${CONDENSED_FONT_STACK}`;
           targetCtx.fillStyle = COLORS.warmWhite;
           targetCtx.textAlign = 'left';
           targetCtx.textBaseline = 'middle';
           targetCtx.fillText(categoriaText, 118, 46);
+          targetCtx.restore();
         }
 
-        const effectiveTipoGara = (tipoGaraInput.value || tipoGaraInput.placeholder || 'CAMPIONATO').trim().toUpperCase();
-        targetCtx.font = `italic 700 35px ${CONDENSED_FONT_STACK}`;
-        targetCtx.fillStyle = COLORS.brightGreen;
+        // Testo TIPO GARA in alto a destra
+        const tipoGaraText = (tipoGaraInput.value.trim() || tipoGaraInput.placeholder || 'CAMPIONATO').toUpperCase();
+        targetCtx.save();
+        const garaFontSize = fitCondensedFontSize(targetCtx, tipoGaraText, 700, 'italic', 35, 20, 380);
+        targetCtx.font = `italic 700 ${garaFontSize}px ${CONDENSED_FONT_STACK}`;
+        targetCtx.fillStyle = COLORS.greenBright;
         targetCtx.textAlign = 'right';
         targetCtx.textBaseline = 'middle';
-        targetCtx.fillText(effectiveTipoGara, CW - 42, 46);
-
+        targetCtx.fillText(tipoGaraText, CW - 44, 47);
         targetCtx.restore();
-      }
 
-      function drawFooterGradientAndLabels(targetCtx) {
-        targetCtx.save();
-
-        const intensityFactor = state.gradientIntensity / 100;
-        if (intensityFactor > 0) {
-          const baseHeight = 265;
-          const gradHeight = Math.round(baseHeight * Math.min(1.45, Math.max(0.35, intensityFactor)));
-          const gradTopY = CH - gradHeight;
-          const alphaScale = Math.min(1.15, intensityFactor);
-
-          const bottomGrad = targetCtx.createLinearGradient(0, gradTopY, 0, CH);
-          bottomGrad.addColorStop(0, 'rgba(4, 27, 15, 0)');
-          bottomGrad.addColorStop(0.32, `rgba(4, 27, 15, ${(0.42 * alphaScale).toFixed(2)})`);
-          bottomGrad.addColorStop(0.64, `rgba(4, 27, 15, ${(0.80 * alphaScale).toFixed(2)})`);
-          bottomGrad.addColorStop(1, `rgba(4, 27, 15, ${Math.min(0.99, 0.97 * alphaScale).toFixed(2)})`);
-
-          targetCtx.fillStyle = bottomGrad;
-          targetCtx.fillRect(0, gradTopY, CW, gradHeight);
+        // 3. FASCIA INFERIORE (SFUMATURA COMPATTA PER RISULTATO E FOOTER)
+        const gradScale = state.gradientIntensity / 100;
+        if (gradScale > 0) {
+          const startY = Math.max(720, Math.round(815 - (gradScale - 1) * 95));
+          const footerGrad = targetCtx.createLinearGradient(0, startY, 0, CH);
+          footerGrad.addColorStop(0, 'rgba(4, 27, 15, 0)');
+          footerGrad.addColorStop(0.28, `rgba(4, 27, 15, ${Math.min(1, 0.35 * gradScale)})`);
+          footerGrad.addColorStop(0.62, `rgba(4, 27, 15, ${Math.min(1, 0.82 * gradScale)})`);
+          footerGrad.addColorStop(0.88, `rgba(4, 27, 15, ${Math.min(1, 0.97 * gradScale)})`);
+          footerGrad.addColorStop(1, COLORS.greenDarkest);
+          targetCtx.fillStyle = footerGrad;
+          targetCtx.fillRect(0, startY, CW, CH - startY);
         }
 
-        const bottomY = 1042;
+        // 4. DISPOSIZIONE RISULTATI E SQUADRE
+        const centerY = 875;
+        const centerX = CW / 2;
 
-        const rawStagione = (stagioneInput.value || 'STAGIONE 2026/27').trim().toUpperCase();
+        // Linea verticale bianca centrale
+        targetCtx.save();
+        targetCtx.strokeStyle = 'rgba(247, 248, 241, 0.92)';
+        targetCtx.lineWidth = 2.8;
+        targetCtx.beginPath();
+        targetCtx.moveTo(centerX, centerY - 48);
+        targetCtx.lineTo(centerX, centerY + 46);
+        targetCtx.stroke();
+        targetCtx.restore();
+
+        const ospiteName = ospiteInput.value.trim().toUpperCase();
+        const rawScoreCasa = scoreCasaInput.value !== '' ? scoreCasaInput.value : '0';
+        const rawScoreOspite = scoreOspiteInput.value !== '' ? scoreOspiteInput.value : '0';
+
+        const leftTeamName = state.castelloIsHome ? 'ATLETICA CASTELLO' : ospiteName;
+        const rightTeamName = state.castelloIsHome ? ospiteName : 'ATLETICA CASTELLO';
+        const leftScore = state.castelloIsHome ? rawScoreCasa : rawScoreOspite;
+        const rightScore = state.castelloIsHome ? rawScoreOspite : rawScoreCasa;
+
+        const scoreMode = scoreStyleSelect.value;
+        const leftScoreX = 463;
+        const rightScoreX = 621;
+
+        if (scoreMode === 'parallelogram') {
+          const leftBoxColor = state.castelloIsHome ? COLORS.greenMain : COLORS.white;
+          const leftTextColor = state.castelloIsHome ? COLORS.white : COLORS.greenDarkest;
+          const leftStroke = state.castelloIsHome ? COLORS.white : null;
+
+          const rightBoxColor = !state.castelloIsHome ? COLORS.greenMain : COLORS.white;
+          const rightTextColor = !state.castelloIsHome ? COLORS.white : COLORS.greenDarkest;
+          const rightStroke = !state.castelloIsHome ? COLORS.white : null;
+
+          drawSlantedParallelogram(targetCtx, leftScoreX, centerY - 2, 92, 96, 13, leftBoxColor, leftStroke);
+          drawSlantedParallelogram(targetCtx, rightScoreX, centerY - 2, 92, 96, 13, rightBoxColor, rightStroke);
+
+          targetCtx.save();
+          targetCtx.font = `italic 900 84px ${TEAM_RESULT_FONT_STACK}`;
+          targetCtx.textAlign = 'center';
+          targetCtx.textBaseline = 'middle';
+
+          targetCtx.fillStyle = leftTextColor;
+          targetCtx.fillText(leftScore, leftScoreX - 2, centerY + 3);
+
+          targetCtx.fillStyle = rightTextColor;
+          targetCtx.fillText(rightScore, rightScoreX - 2, centerY + 3);
+          targetCtx.restore();
+        } else {
+          // Stile predefinito: Numeri sagomati (Outline)
+          targetCtx.save();
+          targetCtx.font = `italic 900 124px ${TEAM_RESULT_FONT_STACK}`;
+          targetCtx.textAlign = 'center';
+          targetCtx.textBaseline = 'middle';
+          targetCtx.lineJoin = 'miter';
+          targetCtx.miterLimit = 3;
+          targetCtx.lineCap = 'butt';
+
+          // Punteggio Sinistro
+          if (state.castelloIsHome) {
+            targetCtx.lineWidth = 6.5;
+            targetCtx.strokeStyle = COLORS.white;
+            targetCtx.strokeText(leftScore, leftScoreX, centerY + 4);
+            targetCtx.fillStyle = COLORS.greenBright;
+            targetCtx.fillText(leftScore, leftScoreX, centerY + 4);
+          } else {
+            targetCtx.fillStyle = COLORS.white;
+            targetCtx.fillText(leftScore, leftScoreX, centerY + 4);
+          }
+
+          // Punteggio Destro
+          if (!state.castelloIsHome) {
+            targetCtx.lineWidth = 6.5;
+            targetCtx.strokeStyle = COLORS.white;
+            targetCtx.strokeText(rightScore, rightScoreX, centerY + 4);
+            targetCtx.fillStyle = COLORS.greenBright;
+            targetCtx.fillText(rightScore, rightScoreX, centerY + 4);
+          } else {
+            targetCtx.fillStyle = COLORS.white;
+            targetCtx.fillText(rightScore, rightScoreX, centerY + 4);
+          }
+          targetCtx.restore();
+        }
+
+        // Aree orizzontali per i nomi delle squadre
+        const leftAreaStart = 30;
+        const leftAreaEnd = 416;
+        const leftMaxWidth = leftAreaEnd - leftAreaStart;
+        const leftCenterX = leftAreaStart + leftMaxWidth / 2;
+
+        const rightAreaStart = 678;
+        const rightAreaEnd = CW - 32;
+        const rightMaxWidth = rightAreaEnd - rightAreaStart;
+        const rightCenterX = rightAreaStart + rightMaxWidth / 2;
+
+        // Squadra di Sinistra
+        if (leftTeamName) {
+          if (state.castelloIsHome) {
+            drawCastelloTeamText(targetCtx, leftTeamName, leftCenterX, centerY + 3, leftMaxWidth);
+          } else {
+            const leftFontSize = fitTeamFontSize(targetCtx, leftTeamName, 56, 24, leftMaxWidth);
+            targetCtx.font = `italic 900 ${leftFontSize}px ${TEAM_RESULT_FONT_STACK}`;
+            targetCtx.textAlign = 'center';
+            targetCtx.textBaseline = 'middle';
+            targetCtx.fillStyle = COLORS.white;
+            targetCtx.fillText(leftTeamName, leftCenterX, centerY + 3);
+          }
+        }
+
+        // Squadra di Destra
+        if (rightTeamName) {
+          if (!state.castelloIsHome) {
+            drawCastelloTeamText(targetCtx, rightTeamName, rightCenterX, centerY + 3, rightMaxWidth);
+          } else {
+            const rightFontSize = fitTeamFontSize(targetCtx, rightTeamName, 56, 24, rightMaxWidth);
+            targetCtx.font = `italic 900 ${rightFontSize}px ${TEAM_RESULT_FONT_STACK}`;
+            targetCtx.textAlign = 'center';
+            targetCtx.textBaseline = 'middle';
+            targetCtx.fillStyle = COLORS.white;
+            targetCtx.fillText(rightTeamName, rightCenterX, centerY + 3);
+          }
+        }
+
+        // 5. MARCATORI ATLETICA CASTELLO CON PALLONE SEPARATORE
+        if (state.scorers.length > 0) {
+          const castelloCenterX = state.castelloIsHome ? leftCenterX : rightCenterX;
+          const scorersAreaMaxW = 420;
+          const scorerY = 934;
+
+          let scorerFontSize = 26;
+          const ballRadius = 9.5;
+          const ballGapLeft = 14;
+          const ballGapRight = 8;
+
+          while (scorerFontSize > 15) {
+            targetCtx.font = `italic 600 ${scorerFontSize}px ${CONDENSED_FONT_STACK}`;
+            let totalWidth = 0;
+            state.scorers.forEach((name, idx) => {
+              const iconSpace = (idx === 0 ? 0 : ballGapLeft) + ballRadius * 2 + ballGapRight;
+              totalWidth += iconSpace + targetCtx.measureText(name).width;
+            });
+            if (totalWidth <= scorersAreaMaxW) break;
+            scorerFontSize -= 1;
+          }
+
+          targetCtx.save();
+          targetCtx.font = `italic 600 ${scorerFontSize}px ${CONDENSED_FONT_STACK}`;
+          targetCtx.textBaseline = 'middle';
+          targetCtx.textAlign = 'left';
+
+          let totalRowWidth = 0;
+          const segments = state.scorers.map((name, idx) => {
+            const textW = targetCtx.measureText(name).width;
+            const leadGap = idx === 0 ? 0 : ballGapLeft;
+            const segW = leadGap + ballRadius * 2 + ballGapRight + textW;
+            totalRowWidth += segW;
+            return { name, textW, leadGap };
+          });
+
+          let cursorX = castelloCenterX - totalRowWidth / 2;
+          segments.forEach((seg) => {
+            cursorX += seg.leadGap;
+            drawSoccerBallIcon(targetCtx, cursorX + ballRadius, scorerY - 1, ballRadius);
+            cursorX += ballRadius * 2 + ballGapRight;
+            targetCtx.fillStyle = COLORS.warmWhite;
+            targetCtx.fillText(seg.name, cursorX, scorerY);
+            cursorX += seg.textW;
+          });
+
+          targetCtx.restore();
+        }
+
+        // 6. FOOTER: STAGIONE E HASHTAG
+        const footerY = 1034;
+        const rawStagione = (stagioneInput.value.trim() || 'STAGIONE 2026/27').toUpperCase();
+        const rawHashtag = hashtagInput.value.trim() || '#siAMObiancoverdi';
+
+        targetCtx.save();
         targetCtx.font = `italic 600 24px ${CONDENSED_FONT_STACK}`;
-        targetCtx.textBaseline = 'alphabetic';
+        targetCtx.textBaseline = 'middle';
         targetCtx.textAlign = 'left';
 
-        if (rawStagione.startsWith('STAGIONE ')) {
-          const prefix = 'STAGIONE ';
-          const yearPart = rawStagione.substring(prefix.length);
-          targetCtx.fillStyle = COLORS.warmWhite;
-          targetCtx.fillText(prefix, 56, bottomY);
-          const prefixW = targetCtx.measureText(prefix).width;
-          targetCtx.fillStyle = COLORS.brightGreen;
-          targetCtx.fillText(yearPart, 56 + prefixW, bottomY);
-        } else {
-          targetCtx.fillStyle = COLORS.brightGreen;
-          targetCtx.fillText(rawStagione, 56, bottomY);
-        }
+        const seasonParts = rawStagione.split(' ');
+        if (seasonParts.length >= 2) {
+          const firstPart = seasonParts.slice(0, -1).join(' ') + ' ';
+          const lastPart = seasonParts[seasonParts.length - 1];
 
-        const rawHashtag = (hashtagInput.value || '#siAMObiancoverdi').trim();
+          targetCtx.fillStyle = COLORS.warmWhite;
+          targetCtx.fillText(firstPart, 56, footerY);
+          const firstW = targetCtx.measureText(firstPart).width;
+
+          targetCtx.fillStyle = COLORS.greenBright;
+          targetCtx.fillText(lastPart, 56 + firstW, footerY);
+        } else {
+          targetCtx.fillStyle = COLORS.warmWhite;
+          targetCtx.fillText(rawStagione, 56, footerY);
+        }
+        targetCtx.restore();
+
+        targetCtx.save();
         targetCtx.font = `italic 600 24px ${CONDENSED_FONT_STACK}`;
+        targetCtx.textBaseline = 'middle';
+        targetCtx.textAlign = 'left';
 
         const amoIndex = rawHashtag.indexOf('AMO');
         if (amoIndex !== -1) {
@@ -1277,511 +1644,424 @@
           const w3 = targetCtx.measureText(part3).width;
           const startX = CW - 56 - (w1 + w2 + w3);
 
-          targetCtx.textAlign = 'left';
           targetCtx.fillStyle = COLORS.warmWhite;
-          targetCtx.fillText(part1, startX, bottomY);
+          targetCtx.fillText(part1, startX, footerY);
 
-          targetCtx.fillStyle = COLORS.brightGreen;
-          targetCtx.fillText(part2, startX + w1, bottomY);
+          targetCtx.fillStyle = COLORS.greenBright;
+          targetCtx.fillText(part2, startX + w1, footerY);
 
           targetCtx.fillStyle = COLORS.warmWhite;
-          targetCtx.fillText(part3, startX + w1 + w2, bottomY);
+          targetCtx.fillText(part3, startX + w1 + w2, footerY);
         } else {
           targetCtx.textAlign = 'right';
           targetCtx.fillStyle = COLORS.warmWhite;
-          targetCtx.fillText(rawHashtag, CW - 56, bottomY);
+          targetCtx.fillText(rawHashtag, CW - 56, footerY);
         }
+        targetCtx.restore();
 
         targetCtx.restore();
       }
 
-      function drawSlantedParallelogram(targetCtx, x, y, width, height, slant, fillColor, strokeColor) {
-        targetCtx.save();
-        targetCtx.beginPath();
-        targetCtx.moveTo(x + slant, y);
-        targetCtx.lineTo(x + width + slant, y);
-        targetCtx.lineTo(x + width, y + height);
-        targetCtx.lineTo(x, y + height);
-        targetCtx.closePath();
-
-        targetCtx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-        targetCtx.shadowBlur = 12;
-        targetCtx.shadowOffsetY = 4;
-
-        targetCtx.fillStyle = fillColor;
-        targetCtx.fill();
-
-        if (strokeColor) {
-          targetCtx.lineWidth = 3;
-          targetCtx.strokeStyle = strokeColor;
-          targetCtx.stroke();
-        }
-        targetCtx.restore();
-      }
-
-      /**
-       * Calcola la dimensione ottimale del font per i nomi delle squadre
-       */
-      function fitTeamFontSize(targetCtx, text, initialSize, minSize, maxWidth) {
-        if (!text) return initialSize;
-        let size = initialSize;
-        while (size > minSize) {
-          targetCtx.font = `italic 800 ${size}px ${TEAM_RESULT_FONT_STACK}`;
-          if (targetCtx.measureText(text).width <= maxWidth) {
-            break;
-          }
-          size -= 1;
-        }
-        return size;
-      }
-
-      function drawSoccerBallIcon(targetCtx, cx, cy, radius) {
-        targetCtx.save();
-
-        targetCtx.beginPath();
-        targetCtx.arc(cx, cy, radius, 0, Math.PI * 2);
-        targetCtx.fillStyle = COLORS.warmWhite;
-        targetCtx.fill();
-        targetCtx.lineWidth = 1.6;
-        targetCtx.strokeStyle = COLORS.darkestGreen;
-        targetCtx.stroke();
-
-        const pentRadius = radius * 0.45;
-        targetCtx.beginPath();
-        for (let i = 0; i < 5; i++) {
-          const angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
-          const px = cx + Math.cos(angle) * pentRadius;
-          const py = cy + Math.sin(angle) * pentRadius;
-          if (i === 0) targetCtx.moveTo(px, py);
-          else targetCtx.lineTo(px, py);
-        }
-        targetCtx.closePath();
-        targetCtx.fillStyle = COLORS.darkestGreen;
-        targetCtx.fill();
-
-        targetCtx.strokeStyle = COLORS.darkestGreen;
-        targetCtx.lineWidth = 1.5;
-        for (let i = 0; i < 5; i++) {
-          const angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
-          targetCtx.beginPath();
-          targetCtx.moveTo(cx + Math.cos(angle) * pentRadius, cy + Math.sin(angle) * pentRadius);
-          targetCtx.lineTo(cx + Math.cos(angle) * (radius * 0.92), cy + Math.sin(angle) * (radius * 0.92));
-          targetCtx.stroke();
-        }
-
-        targetCtx.restore();
-      }
-
-      function drawResultsAndScorers(targetCtx) {
-        targetCtx.save();
-
-        const centerY = 816;
-        const centerX = CW / 2;
-
-        // Linea verticale di separazione bianca
-        targetCtx.beginPath();
-        targetCtx.moveTo(centerX, centerY - 46);
-        targetCtx.lineTo(centerX, centerY + 46);
-        targetCtx.strokeStyle = COLORS.warmWhite;
-        targetCtx.lineWidth = 2.6;
-        targetCtx.stroke();
-
-        const castelloName = 'ATLETICA CASTELLO';
-        const ospiteName = (ospiteInput.value || '').trim().toUpperCase();
-        const scoreCastello = String(scoreCasaInput.value !== '' ? scoreCasaInput.value : '1');
-        const scoreOspite = String(scoreOspiteInput.value !== '' ? scoreOspiteInput.value : '2');
-
-        const leftTeamName = state.castelloIsHome ? castelloName : ospiteName;
-        const rightTeamName = state.castelloIsHome ? ospiteName : castelloName;
-        const leftScore = state.castelloIsHome ? scoreCastello : scoreOspite;
-        const rightScore = state.castelloIsHome ? scoreOspite : scoreCastello;
-
-        const scoreStyle = scoreStyleSelect.value;
-
-        const boxW = 86;
-        const boxH = 88;
-        const slant = 16;
-        const gapFromCenter = 24;
-
-        const leftBoxX = centerX - gapFromCenter - boxW - slant / 2;
-        const rightBoxX = centerX + gapFromCenter - slant / 2;
-        const boxY = centerY - boxH / 2;
-
-        if (scoreStyle === 'outline') {
-          // Numeri sagomati con tagli netti e decisi
-          targetCtx.font = `italic 900 98px ${TEAM_RESULT_FONT_STACK}`;
-          targetCtx.textAlign = 'center';
-          targetCtx.textBaseline = 'middle';
-
-          const leftNumX = centerX - 78;
-          const rightNumX = centerX + 82;
-
-          if (state.castelloIsHome) {
-            targetCtx.lineWidth = 6.5;
-            targetCtx.strokeStyle = COLORS.white;
-            targetCtx.lineJoin = 'miter';
-            targetCtx.miterLimit = 3;
-            targetCtx.strokeText(leftScore, leftNumX, centerY + 4);
-            targetCtx.fillStyle = COLORS.castelloResultGreen;
-            targetCtx.fillText(leftScore, leftNumX, centerY + 4);
-          } else {
-            targetCtx.fillStyle = COLORS.white;
-            targetCtx.fillText(leftScore, leftNumX, centerY + 4);
-          }
-
-          if (!state.castelloIsHome) {
-            targetCtx.lineWidth = 6.5;
-            targetCtx.strokeStyle = COLORS.white;
-            targetCtx.lineJoin = 'miter';
-            targetCtx.miterLimit = 3;
-            targetCtx.strokeText(rightScore, rightNumX, centerY + 4);
-            targetCtx.fillStyle = COLORS.castelloResultGreen;
-            targetCtx.fillText(rightScore, rightNumX, centerY + 4);
-          } else {
-            targetCtx.fillStyle = COLORS.white;
-            targetCtx.fillText(rightScore, rightNumX, centerY + 4);
-          }
-        } else {
-          const leftBoxFill = state.castelloIsHome ? COLORS.castelloResultGreen : COLORS.white;
-          const leftTextFill = state.castelloIsHome ? COLORS.white : COLORS.darkestGreen;
-          const rightBoxFill = state.castelloIsHome ? COLORS.white : COLORS.castelloResultGreen;
-          const rightTextFill = state.castelloIsHome ? COLORS.darkestGreen : COLORS.white;
-
-          drawSlantedParallelogram(targetCtx, leftBoxX, boxY, boxW, boxH, slant, leftBoxFill, COLORS.white);
-          drawSlantedParallelogram(targetCtx, rightBoxX, boxY, boxW, boxH, slant, rightBoxFill, null);
-
-          targetCtx.font = `italic 900 68px ${TEAM_RESULT_FONT_STACK}`;
-          targetCtx.textAlign = 'center';
-          targetCtx.textBaseline = 'middle';
-
-          targetCtx.fillStyle = leftTextFill;
-          targetCtx.fillText(leftScore, leftBoxX + (boxW + slant) / 2 - 2, centerY + 3);
-
-          targetCtx.fillStyle = rightTextFill;
-          targetCtx.fillText(rightScore, rightBoxX + (boxW + slant) / 2 - 2, centerY + 3);
-        }
-
-        // Aree orizzontali per i nomi delle squadre
-        const leftAreaStart = 32;
-        const leftAreaEnd = 412;
-        const leftMaxWidth = leftAreaEnd - leftAreaStart;
-        const leftCenterX = leftAreaStart + leftMaxWidth / 2;
-
-        const rightAreaStart = 678;
-        const rightAreaEnd = CW - 32;
-        const rightMaxWidth = rightAreaEnd - rightAreaStart;
-        const rightCenterX = rightAreaStart + rightMaxWidth / 2;
-
-        // Squadra di Sinistra
-        if (leftTeamName) {
-          const leftFontSize = fitTeamFontSize(targetCtx, leftTeamName, 54, 24, leftMaxWidth);
-          targetCtx.font = `italic 900 ${leftFontSize}px ${TEAM_RESULT_FONT_STACK}`;
-          targetCtx.textAlign = 'center';
-          targetCtx.textBaseline = 'middle';
-
-          if (state.castelloIsHome) {
-            targetCtx.lineWidth = 5.5;
-            targetCtx.strokeStyle = COLORS.white;
-            targetCtx.lineJoin = 'miter';
-            targetCtx.miterLimit = 3;
-            targetCtx.strokeText(leftTeamName, leftCenterX, centerY + 3);
-            targetCtx.fillStyle = COLORS.castelloTeamGreen;
-            targetCtx.fillText(leftTeamName, leftCenterX, centerY + 3);
-          } else {
-            targetCtx.fillStyle = COLORS.white;
-            targetCtx.fillText(leftTeamName, leftCenterX, centerY + 3);
-          }
-        }
-
-        // Squadra di Destra
-        if (rightTeamName) {
-          const rightFontSize = fitTeamFontSize(targetCtx, rightTeamName, 56, 24, rightMaxWidth);
-          targetCtx.font = `italic 900 ${rightFontSize}px ${TEAM_RESULT_FONT_STACK}`;
-          targetCtx.textAlign = 'center';
-          targetCtx.textBaseline = 'middle';
-
-          if (!state.castelloIsHome) {
-            targetCtx.lineWidth = 5.5;
-            targetCtx.strokeStyle = COLORS.white;
-            targetCtx.lineJoin = 'miter';
-            targetCtx.miterLimit = 3;
-            targetCtx.strokeText(rightTeamName, rightCenterX, centerY + 3);
-            targetCtx.fillStyle = COLORS.castelloTeamGreen;
-            targetCtx.fillText(rightTeamName, rightCenterX, centerY + 3);
-          } else {
-            targetCtx.fillStyle = COLORS.white;
-            targetCtx.fillText(rightTeamName, rightCenterX, centerY + 3);
-          }
-        }
-
-        // Marcatori Atletica Castello con pallone separatore
-        const scorers = getEffectiveScorers();
-        if (scorers.length > 0 && parseInt(scoreCastello, 10) > 0) {
-          const castelloCenterX = state.castelloIsHome ? leftCenterX : rightCenterX;
-          const castelloMaxW = (state.castelloIsHome ? leftMaxWidth : rightMaxWidth) + 40;
-
-          const scorerFontSize = scorers.length > 3 ? 23 : 27;
-          targetCtx.font = `italic 700 ${scorerFontSize}px ${CONDENSED_FONT_STACK}`;
-
-          const ballRadius = scorerFontSize * 0.41;
-          const ballTextGap = 9;
-          const itemSeparatorGap = 20;
-
-          const rows = [];
-          let currentRow = [];
-          let currentRowWidth = 0;
-
-          scorers.forEach((scorerName) => {
-            const textW = targetCtx.measureText(scorerName).width;
-            const itemW = ballRadius * 2 + ballTextGap + textW;
-            const addedW = currentRow.length === 0 ? itemW : itemSeparatorGap + itemW;
-
-            if (currentRow.length > 0 && currentRowWidth + addedW > castelloMaxW) {
-              rows.push({ items: currentRow, totalWidth: currentRowWidth });
-              currentRow = [{ name: scorerName, textW, itemW }];
-              currentRowWidth = itemW;
-            } else {
-              currentRow.push({ name: scorerName, textW, itemW });
-              currentRowWidth += addedW;
-            }
-          });
-
-          if (currentRow.length > 0) {
-            rows.push({ items: currentRow, totalWidth: currentRowWidth });
-          }
-
-          const visibleRows = rows.slice(0, 3);
-          const startScorerY = 885;
-          const rowHeight = scorerFontSize + 9;
-
-          visibleRows.forEach((rowObj, rowIdx) => {
-            const rowY = startScorerY + rowIdx * rowHeight;
-            let cursorX = castelloCenterX - rowObj.totalWidth / 2;
-
-            rowObj.items.forEach((item) => {
-              drawSoccerBallIcon(targetCtx, cursorX + ballRadius, rowY - 1, ballRadius);
-              cursorX += ballRadius * 2 + ballTextGap;
-
-              targetCtx.textAlign = 'left';
-              targetCtx.textBaseline = 'middle';
-              targetCtx.fillStyle = COLORS.warmWhite;
-              targetCtx.fillText(item.name, cursorX, rowY);
-
-              cursorX += item.textW + itemSeparatorGap;
-            });
-          });
-        }
-
-        targetCtx.restore();
-      }
-
-      /**
-       * Renderizza l'intera grafica su qualsiasi contesto Canvas alla risoluzione `targetSize x targetSize`
-       */
-      function renderSceneOnContext(targetCtx, targetSize) {
-        const scaleFactor = targetSize / CW;
-        targetCtx.save();
-        targetCtx.clearRect(0, 0, targetSize, targetSize);
-        targetCtx.imageSmoothingEnabled = true;
-        targetCtx.imageSmoothingQuality = 'high';
-        targetCtx.scale(scaleFactor, scaleFactor);
-
-        if (state.bgImage) {
-          drawBackgroundImageWithGreenMat(targetCtx, state.bgImage);
-        } else {
-          drawDefaultStadiumBackground(targetCtx);
-        }
-
-        drawHeader(targetCtx);
-        drawFooterGradientAndLabels(targetCtx);
-        drawResultsAndScorers(targetCtx);
-
-        targetCtx.restore();
-      }
-
-      /**
-       * Renderizza l'anteprima live a schermo
-       */
       function renderCanvas() {
-        renderSceneOnContext(ctx, CW);
+        ctx.clearRect(0, 0, CW, CH);
+        renderSceneToContext(ctx, 1);
       }
 
-      /**
-       * ==========================================================================
-       * SUGGERIMENTI CLICCABILI PER TIPO GARA & ALBERO ESPLORABILE CATEGORIE
-       * ==========================================================================
-       */
-      function syncTipoGaraChipsUI() {
-        const container = document.getElementById('tipoGaraChips');
-        if (!container) return;
-        const buttons = container.querySelectorAll('.quick-chip');
-        const effectiveVal = (tipoGaraInput.value.trim() || tipoGaraInput.placeholder || '').toUpperCase();
-        buttons.forEach((btn) => {
-          if (btn.dataset.value.toUpperCase() === effectiveVal) {
-            btn.classList.add('active');
-          } else {
-            btn.classList.remove('active');
-          }
-        });
+      // ============================================================================
+      // 8. SINCRONIZZAZIONE SLIDER ZOOM / X / Y
+      // ============================================================================
+      function syncCropInputsAndLabels() {
+        const zPct = Math.round(state.zoom * 100);
+        const px = Math.round(state.panX);
+        const py = Math.round(state.panY);
+
+        zoomRangeInput.value = zPct;
+        panXInput.value = px;
+        panYInput.value = py;
+
+        zoomValLabel.textContent = `${zPct}%`;
+        panXValLabel.textContent = `${px}`;
+        panYValLabel.textContent = `${py}`;
       }
 
-      function setupQuickChips(containerId, targetInput) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-        const buttons = container.querySelectorAll('.quick-chip');
-
-        buttons.forEach((btn) => {
-          btn.addEventListener('click', () => {
-            targetInput.value = btn.dataset.value;
-            syncTipoGaraChipsUI();
-            renderCanvas();
-          });
-        });
-
-        targetInput.addEventListener('input', syncTipoGaraChipsUI);
-      }
-
-      setupQuickChips('tipoGaraChips', tipoGaraInput);
-
-      // Gestione Albero Macro-Categorie (esplorabile cliccando sulle macro-categorie)
-      const macroButtons = document.querySelectorAll('.tree-macro-btn');
-      const catLeafButtons = document.querySelectorAll('.cat-leaf');
-
-      function syncCategoryLeavesActiveUI() {
-        const currentCat = categoriaInput.value.trim().toUpperCase();
-        catLeafButtons.forEach((leaf) => {
-          if (leaf.dataset.value.toUpperCase() === currentCat) {
-            leaf.classList.add('active');
-          } else {
-            leaf.classList.remove('active');
-          }
-        });
-      }
-
-      macroButtons.forEach((macroBtn) => {
-        macroBtn.addEventListener('click', function () {
-          const parentNode = this.closest('.tree-node');
-          const childrenContainer = parentNode.querySelector('.tree-children');
-          const arrow = this.querySelector('.tree-arrow');
-          const isOpen = childrenContainer.classList.contains('open');
-
-          // Chiude gli altri rami per mantenere l'interfaccia compatta e ordinata
-          document.querySelectorAll('.tree-node').forEach((node) => {
-            const c = node.querySelector('.tree-children');
-            const b = node.querySelector('.tree-macro-btn');
-            const a = node.querySelector('.tree-arrow');
-            if (c) c.classList.remove('open');
-            if (b) b.classList.remove('open');
-            if (a) a.textContent = '▸';
-          });
-
-          if (!isOpen) {
-            childrenContainer.classList.add('open');
-            this.classList.add('open');
-            if (arrow) arrow.textContent = '▾';
-          }
-
-          // Imposta subito il placeholder del Tipo Gara in base alla macro-categoria cliccata
-          const targetGaraPlaceholder = this.dataset.gara;
-          if (targetGaraPlaceholder) {
-            tipoGaraInput.placeholder = targetGaraPlaceholder;
-            syncTipoGaraChipsUI();
-            renderCanvas();
-          }
-        });
-      });
-
-      catLeafButtons.forEach((leafBtn) => {
-        leafBtn.addEventListener('click', function () {
-          categoriaInput.value = this.dataset.value;
-          if (this.dataset.gara) {
-            tipoGaraInput.placeholder = this.dataset.gara;
-          }
-          syncCategoryLeavesActiveUI();
-          syncTipoGaraChipsUI();
-          renderCanvas();
-        });
-      });
-
-      categoriaInput.addEventListener('input', function () {
-        syncCategoryLeavesActiveUI();
-        renderCanvas();
-      });
-
-      /**
-       * ==========================================================================
-       * EVENT LISTENERS: FOTO, LOGO, FONT, ZOOM/PAN UNIFICATI & DOWNLOAD ALTA QUALITÀ
-       * ==========================================================================
-       */
-      bgImageInput.addEventListener('change', function (e) {
+      // ============================================================================
+      // 9. EVENT LISTENERS E TOUCH / PINCH-TO-ZOOM
+      // ============================================================================
+      bgImageInput.addEventListener('change', (e) => {
         const file = e.target.files && e.target.files[0];
         if (!file) return;
 
-        bgFileName.textContent = file.name;
         const reader = new FileReader();
-        reader.onload = function (event) {
+        reader.onload = (ev) => {
           const img = new Image();
-          img.onload = function () {
+          img.onload = () => {
             state.bgImage = img;
-            state.zoomPercent = 0;
+            state.zoom = 1.0;
             state.panX = 0;
             state.panY = 0;
-            syncTransformControlsUI();
+            syncCropInputsAndLabels();
+
+            photoStatusBadge.textContent = 'Foto Caricata';
+            photoStatusBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-[#25AE3F] text-[#041B0F]';
             renderCanvas();
+            showToast('Foto della partita caricata!');
           };
-          img.src = event.target.result;
+          img.src = ev.target.result;
         };
         reader.readAsDataURL(file);
       });
 
-      logoInput.addEventListener('change', function (e) {
+      zoomRangeInput.addEventListener('input', () => {
+        state.zoom = parseFloat(zoomRangeInput.value) / 100;
+        syncCropInputsAndLabels();
+        renderCanvas();
+      });
+
+      panXInput.addEventListener('input', () => {
+        state.panX = parseFloat(panXInput.value);
+        syncCropInputsAndLabels();
+        renderCanvas();
+      });
+
+      panYInput.addEventListener('input', () => {
+        state.panY = parseFloat(panYInput.value);
+        syncCropInputsAndLabels();
+        renderCanvas();
+      });
+
+      resetCropBtn.addEventListener('click', () => {
+        state.zoom = 1.0;
+        state.panX = 0;
+        state.panY = 0;
+        syncCropInputsAndLabels();
+        renderCanvas();
+      });
+
+      function getDistance(p1, p2) {
+        const dx = p1.clientX - p2.clientX;
+        const dy = p1.clientY - p2.clientY;
+        return Math.hypot(dx, dy);
+      }
+
+      function getMidpoint(p1, p2) {
+        return {
+          clientX: (p1.clientX + p2.clientX) / 2,
+          clientY: (p1.clientY + p2.clientY) / 2
+        };
+      }
+
+      canvas.addEventListener('pointerdown', (e) => {
+        canvas.setPointerCapture(e.pointerId);
+        state.activePointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+
+        if (state.activePointers.size === 1) {
+          state.lastPanCenter = { clientX: e.clientX, clientY: e.clientY };
+        } else if (state.activePointers.size === 2) {
+          const pts = Array.from(state.activePointers.values());
+          state.initialPinchDist = getDistance(pts[0], pts[1]);
+          state.initialPinchZoom = state.zoom;
+          state.lastPanCenter = getMidpoint(pts[0], pts[1]);
+        }
+      });
+
+      canvas.addEventListener('pointermove', (e) => {
+        if (!state.activePointers.has(e.pointerId)) return;
+        state.activePointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+
+        const rect = canvas.getBoundingClientRect();
+        const scaleRatio = CW / rect.width;
+
+        if (state.activePointers.size === 1 && state.lastPanCenter) {
+          const dx = (e.clientX - state.lastPanCenter.clientX) * scaleRatio;
+          const dy = (e.clientY - state.lastPanCenter.clientY) * scaleRatio;
+          state.panX = Math.max(-650, Math.min(650, state.panX + dx));
+          state.panY = Math.max(-650, Math.min(650, state.panY + dy));
+          state.lastPanCenter = { clientX: e.clientX, clientY: e.clientY };
+          syncCropInputsAndLabels();
+          renderCanvas();
+        } else if (state.activePointers.size === 2) {
+          const pts = Array.from(state.activePointers.values());
+          const dist = getDistance(pts[0], pts[1]);
+          const mid = getMidpoint(pts[0], pts[1]);
+
+          if (state.initialPinchDist && state.initialPinchDist > 10) {
+            const pinchRatio = dist / state.initialPinchDist;
+            const nextZoom = Math.max(0.35, Math.min(2.6, state.initialPinchZoom * pinchRatio));
+            state.zoom = nextZoom;
+          }
+
+          if (state.lastPanCenter) {
+            const dx = (mid.clientX - state.lastPanCenter.clientX) * scaleRatio;
+            const dy = (mid.clientY - state.lastPanCenter.clientY) * scaleRatio;
+            state.panX = Math.max(-650, Math.min(650, state.panX + dx));
+            state.panY = Math.max(-650, Math.min(650, state.panY + dy));
+          }
+          state.lastPanCenter = mid;
+          syncCropInputsAndLabels();
+          renderCanvas();
+        }
+      });
+
+      function handlePointerUpOrCancel(e) {
+        state.activePointers.delete(e.pointerId);
+        if (state.activePointers.size === 1) {
+          const remaining = Array.from(state.activePointers.values())[0];
+          state.lastPanCenter = { clientX: remaining.clientX, clientY: remaining.clientY };
+          state.initialPinchDist = null;
+        } else if (state.activePointers.size === 0) {
+          state.lastPanCenter = null;
+          state.initialPinchDist = null;
+        }
+      }
+
+      canvas.addEventListener('pointerup', handlePointerUpOrCancel);
+      canvas.addEventListener('pointercancel', handlePointerUpOrCancel);
+
+      // Zoom con rotellina mouse su PC
+      canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.05 : -0.05;
+        state.zoom = Math.max(0.35, Math.min(2.6, state.zoom + delta));
+        syncCropInputsAndLabels();
+        renderCanvas();
+      }, { passive: false });
+
+      // ============================================================================
+      // 10. ALBERO CATEGORIE E SUGGERIMENTI TIPO GARA
+      // ============================================================================
+      function updateTipoGaraFromMacro(defaultGara) {
+        if (!defaultGara) return;
+        tipoGaraInput.placeholder = defaultGara;
+        tipoGaraInput.value = defaultGara;
+        document.querySelectorAll('.gara-preset').forEach(b => {
+          b.classList.toggle('active', b.getAttribute('data-value') === defaultGara);
+        });
+      }
+
+      const macroButtons = document.querySelectorAll('.macro-tree-btn');
+      const subTreePanels = {
+        PRIMA_SQUADRA: document.getElementById('subTree_PRIMA_SQUADRA'),
+        SETTORE_GIOVANILE: document.getElementById('subTree_SETTORE_GIOVANILE'),
+        ESORDIENTI: document.getElementById('subTree_ESORDIENTI'),
+        PULCINI_PRIMI_CALCI: document.getElementById('subTree_PULCINI_PRIMI_CALCI')
+      };
+
+      macroButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const macroKey = btn.getAttribute('data-macro');
+          const defaultGara = btn.getAttribute('data-default-gara');
+          const targetPanel = subTreePanels[macroKey];
+          const isAlreadyOpen = !targetPanel.classList.contains('hidden');
+
+          Object.values(subTreePanels).forEach(p => p.classList.add('hidden'));
+          macroButtons.forEach(b => {
+            b.classList.remove('open');
+            const arrow = b.querySelector('.tree-arrow');
+            if (arrow) arrow.textContent = '▸';
+          });
+
+          if (!isAlreadyOpen) {
+            targetPanel.classList.remove('hidden');
+            btn.classList.add('open');
+            const arrow = btn.querySelector('.tree-arrow');
+            if (arrow) arrow.textContent = '▾';
+          }
+
+          if (macroKey === 'PRIMA_SQUADRA') {
+            categoriaInput.value = 'PRIMA SQUADRA';
+            document.querySelectorAll('.cat-preset').forEach(b => {
+              b.classList.toggle('active', b.getAttribute('data-value') === 'PRIMA SQUADRA');
+            });
+          }
+
+          updateTipoGaraFromMacro(defaultGara);
+          renderCanvas();
+        });
+      });
+
+      document.querySelectorAll('.cat-preset').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.cat-preset').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          categoriaInput.value = btn.getAttribute('data-value');
+
+          const garaDefault = btn.getAttribute('data-gara');
+          if (garaDefault) {
+            updateTipoGaraFromMacro(garaDefault);
+          }
+          renderCanvas();
+        });
+      });
+
+      document.querySelectorAll('.gara-preset').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.gara-preset').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          tipoGaraInput.value = btn.getAttribute('data-value');
+          renderCanvas();
+        });
+      });
+
+      // Casa / Trasferta
+      function updateHomeAwayUI() {
+        if (state.castelloIsHome) {
+          castelloHomeBtn.className = 'text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md bg-[#0B8731] text-white transition';
+          castelloAwayBtn.className = 'text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md text-gray-300 hover:text-white transition';
+          scoreLeftLabel.textContent = 'Gol Castello (Casa)';
+          scoreRightLabel.textContent = 'Gol Avversario';
+        } else {
+          castelloAwayBtn.className = 'text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md bg-[#0B8731] text-white transition';
+          castelloHomeBtn.className = 'text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md text-gray-300 hover:text-white transition';
+          scoreLeftLabel.textContent = 'Gol Squadra Casa';
+          scoreRightLabel.textContent = 'Gol Castello (Ospite)';
+        }
+        renderCanvas();
+      }
+
+      castelloHomeBtn.addEventListener('click', () => {
+        state.castelloIsHome = true;
+        updateHomeAwayUI();
+      });
+
+      castelloAwayBtn.addEventListener('click', () => {
+        state.castelloIsHome = false;
+        updateHomeAwayUI();
+      });
+
+      // Bottoni +/- punteggio
+      document.querySelectorAll('[data-score-target]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.getAttribute('data-score-target');
+          const delta = parseInt(btn.getAttribute('data-delta'), 10);
+          const inputEl = document.getElementById(targetId);
+          const currentVal = parseInt(inputEl.value || '0', 10);
+          inputEl.value = Math.max(0, Math.min(99, currentVal + delta));
+          renderCanvas();
+        });
+      });
+
+      // Gestione Marcatori
+      addScorerBtn.addEventListener('click', () => {
+        addScorersFromString(newScorerInput.value);
+      });
+
+      newScorerInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ',') {
+          e.preventDefault();
+          addScorersFromString(newScorerInput.value);
+        }
+      });
+
+      newScorerInput.addEventListener('input', () => {
+        if (newScorerInput.value.includes(',')) {
+          addScorersFromString(newScorerInput.value);
+        }
+      });
+
+      scorersTagsContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-remove-idx]');
+        if (!btn) return;
+        const idx = parseInt(btn.getAttribute('data-remove-idx'), 10);
+        state.scorers.splice(idx, 1);
+        renderScorersTags();
+        renderCanvas();
+      });
+
+      clearScorersBtn.addEventListener('click', () => {
+        state.scorers = [];
+        renderScorersTags();
+        renderCanvas();
+      });
+
+      // Sincronizzazione selettore e chip dello stile scritta "ATLETICA CASTELLO"
+      function syncCastelloStyleChips(selectedValue) {
+        castelloStyleChips.forEach((chip) => {
+          chip.classList.toggle('active', chip.getAttribute('data-style') === selectedValue);
+        });
+      }
+
+      castelloTextStyleSelect.addEventListener('change', () => {
+        syncCastelloStyleChips(castelloTextStyleSelect.value);
+        renderCanvas();
+      });
+
+      castelloStyleChips.forEach((chip) => {
+        chip.addEventListener('click', () => {
+          const styleKey = chip.getAttribute('data-style');
+          castelloTextStyleSelect.value = styleKey;
+          syncCastelloStyleChips(styleKey);
+          renderCanvas();
+        });
+      });
+
+      // Input testuali in tempo reale
+      const textInputs = [
+        categoriaInput,
+        tipoGaraInput,
+        ospiteInput,
+        scoreCasaInput,
+        scoreOspiteInput,
+        stagioneInput,
+        hashtagInput,
+        scoreStyleSelect,
+        castelloTextStyleSelect
+      ];
+
+      textInputs.forEach((inputEl) => {
+        inputEl.addEventListener('input', renderCanvas);
+        inputEl.addEventListener('change', renderCanvas);
+      });
+
+      gradientIntensityInput.addEventListener('input', () => {
+        state.gradientIntensity = parseInt(gradientIntensityInput.value, 10);
+        gradIntensityLabel.textContent = `${state.gradientIntensity}%`;
+        renderCanvas();
+      });
+
+      // Gestione Logo in Impostazioni Avanzate
+      logoInput.addEventListener('change', (e) => {
         const file = e.target.files && e.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = function (ev) {
+        reader.onload = (ev) => {
           const rawImg = new Image();
-          rawImg.onload = function () {
-            state.rawLogoSourceImg = rawImg;
-            processLogoImage(rawImg, removeBlackBgCheckbox.checked, function (cleanedLogo, dataUrl) {
-              state.logoImage = cleanedLogo;
-              state.logoDataUrl = dataUrl;
-              updateLogoUIStatus('✓ Logo personalizzato attivo', true);
-              renderCanvas();
-            });
+          rawImg.onload = () => {
+            const isSvg = file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg');
+            const finalDataUrl = isSvg ? ev.target.result : removeBlackCornersFromLogo(rawImg);
+
+            try {
+              localStorage.setItem(LOGO_STORAGE_KEY, finalDataUrl);
+            } catch (err) {
+              // Ignora errori quota
+            }
+            applyLogoDataUrl(finalDataUrl, 'Logo Personalizzato', false);
+            showToast('Logo societario aggiornato!');
           };
           rawImg.src = ev.target.result;
         };
         reader.readAsDataURL(file);
       });
 
-      removeBlackBgCheckbox.addEventListener('change', function () {
-        if (state.rawLogoSourceImg) {
-          processLogoImage(state.rawLogoSourceImg, this.checked, function (cleanedLogo, dataUrl) {
-            state.logoImage = cleanedLogo;
-            state.logoDataUrl = dataUrl;
-            renderCanvas();
-          });
-        }
-      });
-
-      resetDefaultSvgLogoBtn.addEventListener('click', function () {
-        state.rawLogoSourceImg = null;
-        logoInput.value = '';
+      restoreDefaultSvgLogoBtn.addEventListener('click', () => {
         try {
-          localStorage.removeItem('castello_official_logo_v2');
-          localStorage.removeItem('castello_custom_logo_v2');
+          localStorage.removeItem(LOGO_STORAGE_KEY);
         } catch (e) {}
-        loadDefaultSvgLogo();
+        loadDefaultSvgLogoWithWarning(true);
+        showToast('Ripristinato logo SVG integrato');
       });
 
-      embedLogoHtmlBtn.addEventListener('click', function () {
-        if (!state.logoDataUrl) return;
-        const currentHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-        const updatedHtml = currentHtml.replace(
-          /const EMBEDDED_LOGO_BASE64\s*=\s*"[^"]*";/,
+      embedLogoHtmlBtn.addEventListener('click', () => {
+        if (!state.logoDataUrl) {
+          showToast('Nessun logo attivo da incorporare.');
+          return;
+        }
+        const currentDocHtml = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        const updatedHtml = currentDocHtml.replace(
+          /const EMBEDDED_LOGO_BASE64 = "[^"]*";/,
           `const EMBEDDED_LOGO_BASE64 = "${state.logoDataUrl}";`
         );
+
         const blob = new Blob([updatedHtml], { type: 'text/html;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -1791,441 +2071,185 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        statusFeedback.textContent = '✓ Scaricato "generatore_atletica_castello_con_logo.html" con il logo incorporato!';
+        showToast('File HTML con logo incorporato scaricato!');
       });
 
-      gradientIntensityInput.addEventListener('input', function () {
-        state.gradientIntensity = parseInt(this.value, 10) || 0;
-        gradIntensityLabel.textContent = state.gradientIntensity + '%';
+      // Selettore Preset Carattere
+      fontPresetSelect.addEventListener('change', () => {
+        const selectedKey = fontPresetSelect.value;
+        const stack = FONT_PRESETS[selectedKey] || FONT_PRESETS.roboto;
+        TEAM_RESULT_FONT_STACK = stack;
+        CONDENSED_FONT_STACK = stack;
+        const labelName = fontPresetSelect.options[fontPresetSelect.selectedIndex].text.split(' (')[0];
+        fontStatusText.textContent = `Attivo: ${labelName}`;
         renderCanvas();
       });
 
-      fontPresetSelect.addEventListener('change', function () {
-        const chosen = FONT_PRESETS[this.value] || FONT_PRESETS.roboto;
-        TEAM_RESULT_FONT_STACK = chosen;
-        CONDENSED_FONT_STACK = chosen;
-        fontStatusLabel.textContent = `Attivo: ${this.options[this.selectedIndex].text}`;
-        renderCanvas();
-      });
-
-      fontFileInput.addEventListener('change', async function (e) {
+      customFontInput.addEventListener('change', async (e) => {
         const file = e.target.files && e.target.files[0];
         if (!file) return;
         try {
           const buffer = await file.arrayBuffer();
-          const customFont = new FontFace('CustomAvenirCondensed', buffer);
+          const customFont = new FontFace('CastelloCustomFont', buffer);
           await customFont.load();
           document.fonts.add(customFont);
-          fontStatusLabel.textContent = `✓ Font caricato: ${file.name}`;
-          fontStatusLabel.className = 'text-[10px] text-[#25AE3F] font-bold';
+          CONDENSED_FONT_STACK = `"CastelloCustomFont", ${FONT_PRESETS.roboto}`;
+          TEAM_RESULT_FONT_STACK = `"CastelloCustomFont", ${FONT_PRESETS.roboto}`;
+          fontStatusText.textContent = `Attivo: ${file.name}`;
+          fontStatusText.className = 'text-[10px] text-[#25AE3F] font-bold mt-0.5';
           renderCanvas();
+          showToast(`Font "${file.name}" applicato!`);
         } catch (err) {
-          fontStatusLabel.textContent = 'Formato non supportato dal browser.';
-          fontStatusLabel.className = 'text-[10px] text-amber-400';
+          showToast('Impossibile leggere questo file font.');
         }
       });
 
-      // Controlli Zoom / Pan unificati sopra l'anteprima
-      liveBgZoom.addEventListener('input', function () {
-        state.zoomPercent = Math.max(-60, Math.min(200, parseFloat(this.value) || 0));
-        syncTransformControlsUI();
-        renderCanvas();
-      });
-
-      liveBgPanX.addEventListener('input', function () {
-        state.panX = Math.max(-100, Math.min(100, parseFloat(this.value) || 0));
-        syncTransformControlsUI();
-        renderCanvas();
-      });
-
-      liveBgPanY.addEventListener('input', function () {
-        state.panY = Math.max(-100, Math.min(100, parseFloat(this.value) || 0));
-        syncTransformControlsUI();
-        renderCanvas();
-      });
-
-      liveCenterPhotoBtn.addEventListener('click', function () {
-        state.zoomPercent = 0;
+      // Ripristina tutto
+      resetAllBtn.addEventListener('click', () => {
+        state.bgImage = null;
+        state.zoom = 1.0;
         state.panX = 0;
         state.panY = 0;
-        syncTransformControlsUI();
-        renderCanvas();
-      });
-
-      // Trascinamento diretto (1 dito / Mouse) + Pinch-to-Zoom (2 dita su Smartphone) sul Canvas
-      function handlePointerDown(clientX, clientY) {
-        if (!state.bgImage) return;
-        state.isDragging = true;
-        state.dragStartX = clientX;
-        state.dragStartY = clientY;
-        state.initialPanX = state.panX;
-        state.initialPanY = state.panY;
-      }
-
-      function handlePointerMove(clientX, clientY) {
-        if (!state.isDragging || !state.bgImage) return;
-        const rect = canvas.getBoundingClientRect();
-        const deltaX = ((clientX - state.dragStartX) / rect.width) * 140;
-        const deltaY = ((clientY - state.dragStartY) / rect.height) * 140;
-
-        state.panX = Math.max(-100, Math.min(100, Math.round(state.initialPanX + deltaX)));
-        state.panY = Math.max(-100, Math.min(100, Math.round(state.initialPanY + deltaY)));
-
-        syncTransformControlsUI();
-        renderCanvas();
-      }
-
-      function handlePointerUp() {
-        state.isDragging = false;
-        state.isPinching = false;
-      }
-
-      function getTouchDistance(t1, t2) {
-        return Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
-      }
-
-      function getTouchMidpoint(t1, t2) {
-        return {
-          x: (t1.clientX + t2.clientX) / 2,
-          y: (t1.clientY + t2.clientY) / 2
-        };
-      }
-
-      canvas.addEventListener('mousedown', (e) => handlePointerDown(e.clientX, e.clientY));
-      window.addEventListener('mousemove', (e) => handlePointerMove(e.clientX, e.clientY));
-      window.addEventListener('mouseup', handlePointerUp);
-
-      canvas.addEventListener('touchstart', (e) => {
-        if (!state.bgImage) return;
-
-        if (e.touches.length === 2) {
-          e.preventDefault();
-          state.isDragging = false;
-          state.isPinching = true;
-          state.pinchStartDist = Math.max(10, getTouchDistance(e.touches[0], e.touches[1]));
-          state.pinchStartZoom = state.zoomPercent;
-          const mid = getTouchMidpoint(e.touches[0], e.touches[1]);
-          state.pinchStartMidX = mid.x;
-          state.pinchStartMidY = mid.y;
-          state.pinchInitialPanX = state.panX;
-          state.pinchInitialPanY = state.panY;
-        } else if (e.touches.length === 1) {
-          state.isPinching = false;
-          handlePointerDown(e.touches[0].clientX, e.touches[0].clientY);
-        }
-      }, { passive: false });
-
-      canvas.addEventListener('touchmove', (e) => {
-        if (!state.bgImage) return;
-
-        if (state.isPinching && e.touches.length === 2) {
-          e.preventDefault();
-          const currentDist = Math.max(10, getTouchDistance(e.touches[0], e.touches[1]));
-          const rect = canvas.getBoundingClientRect();
-
-          const distDelta = currentDist - state.pinchStartDist;
-          const zoomDelta = (distDelta / Math.max(180, rect.width * 0.55)) * 120;
-          state.zoomPercent = Math.max(-60, Math.min(200, Math.round(state.pinchStartZoom + zoomDelta)));
-
-          const mid = getTouchMidpoint(e.touches[0], e.touches[1]);
-          const deltaX = ((mid.x - state.pinchStartMidX) / rect.width) * 140;
-          const deltaY = ((mid.y - state.pinchStartMidY) / rect.height) * 140;
-          state.panX = Math.max(-100, Math.min(100, Math.round(state.pinchInitialPanX + deltaX)));
-          state.panY = Math.max(-100, Math.min(100, Math.round(state.pinchInitialPanY + deltaY)));
-
-          syncTransformControlsUI();
-          renderCanvas();
-        } else if (state.isDragging && e.touches.length === 1) {
-          e.preventDefault();
-          handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
-        }
-      }, { passive: false });
-
-      window.addEventListener('touchend', (e) => {
-        if (!e.touches || e.touches.length === 0) {
-          handlePointerUp();
-        } else if (e.touches.length === 1) {
-          state.isPinching = false;
-          handlePointerDown(e.touches[0].clientX, e.touches[0].clientY);
-        }
-      });
-
-      canvas.addEventListener('wheel', (e) => {
-        if (!state.bgImage) return;
-        e.preventDefault();
-        const step = e.deltaY < 0 ? 5 : -5;
-        state.zoomPercent = Math.max(-60, Math.min(200, Math.round(state.zoomPercent + step)));
-        syncTransformControlsUI();
-        renderCanvas();
-      }, { passive: false });
-
-      const textInputs = [
-        categoriaInput,
-        tipoGaraInput,
-        ospiteInput,
-        scoreCasaInput,
-        scoreOspiteInput,
-        stagioneInput,
-        hashtagInput,
-        scoreStyleSelect
-      ];
-
-      textInputs.forEach((inputEl) => {
-        inputEl.addEventListener('input', renderCanvas);
-        inputEl.addEventListener('change', renderCanvas);
-      });
-
-      btnCastelloCasa.addEventListener('click', function () {
         state.castelloIsHome = true;
-        btnCastelloCasa.className = 'px-2.5 py-1 rounded-md text-xs font-extrabold bg-[#25AE3F] text-[#041B0F] transition';
-        btnCastelloFuori.className = 'px-2.5 py-1 rounded-md text-xs font-extrabold bg-black/50 text-gray-300 hover:text-white transition';
-        renderCanvas();
-      });
-
-      btnCastelloFuori.addEventListener('click', function () {
-        state.castelloIsHome = false;
-        btnCastelloFuori.className = 'px-2.5 py-1 rounded-md text-xs font-extrabold bg-[#25AE3F] text-[#041B0F] transition';
-        btnCastelloCasa.className = 'px-2.5 py-1 rounded-md text-xs font-extrabold bg-black/50 text-gray-300 hover:text-white transition';
-        renderCanvas();
-      });
-
-      resetAllBtn.addEventListener('click', function () {
-        categoriaInput.value = '';
-        document.querySelectorAll('.tree-node').forEach((node) => {
-          const c = node.querySelector('.tree-children');
-          const b = node.querySelector('.tree-macro-btn');
-          const a = node.querySelector('.tree-arrow');
-          if (c) c.classList.remove('open');
-          if (b) b.classList.remove('open');
-          if (a) a.textContent = '▸';
-        });
-        syncCategoryLeavesActiveUI();
-        tipoGaraInput.value = '';
-        tipoGaraInput.placeholder = 'CAMPIONATO';
-        syncTipoGaraChipsUI();
-        ospiteInput.value = '';
-        scoreCasaInput.value = '0';
-        scoreOspiteInput.value = '0';
-        state.scorersList = [];
-        scorerSingleInput.value = '';
-        renderScorerChips();
-        stagioneInput.value = 'STAGIONE 2026/27';
-        hashtagInput.value = '#siAMObiancoverdi';
-        scoreStyleSelect.value = 'outline';
+        state.scorers = [];
         state.gradientIntensity = 130;
         gradientIntensityInput.value = 130;
         gradIntensityLabel.textContent = '130%';
-        state.zoomPercent = 0;
-        state.panX = 0;
-        state.panY = 0;
-        syncTransformControlsUI();
-        btnCastelloCasa.click();
+
+        categoriaInput.value = '';
+        tipoGaraInput.value = 'CAMPIONATO';
+        tipoGaraInput.placeholder = 'CAMPIONATO';
+        ospiteInput.value = '';
+        scoreCasaInput.value = '0';
+        scoreOspiteInput.value = '0';
+        stagioneInput.value = 'STAGIONE 2026/27';
+        hashtagInput.value = '#siAMObiancoverdi';
+        scoreStyleSelect.value = 'outline';
+        castelloTextStyleSelect.value = 'massiccio';
+        syncCastelloStyleChips('massiccio');
+        exportResolutionSelect.value = '1080';
+
+        Object.values(subTreePanels).forEach(p => p.classList.add('hidden'));
+        macroButtons.forEach(b => {
+          b.classList.remove('open');
+          const arrow = b.querySelector('.tree-arrow');
+          if (arrow) arrow.textContent = '▸';
+        });
+
+        photoStatusBadge.textContent = 'Demo Prato Attiva';
+        photoStatusBadge.className = 'text-[10px] font-semibold px-2 py-0.5 rounded bg-[#004B20] text-emerald-300';
+
+        syncCropInputsAndLabels();
+        updateHomeAwayUI();
+        renderScorersTags();
         renderCanvas();
+        showToast('Impostazioni ripristinate');
       });
 
-      /**
-       * Conversione sincrona DataURL -> Blob (fondamentale per Safari iOS:
-       * mantiene il contesto del tap utente e supera il limite sulle stringhe data:image nei link <a download>)
-       */
-      function dataURLToBlobSync(dataUrl) {
-        const parts = dataUrl.split(',');
-        const mimeMatch = parts[0].match(/:(.*?);/);
-        const mime = mimeMatch ? mimeMatch[1] : 'image/png';
-        const bstr = atob(parts[1]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-        while (n--) {
-          u8arr[n] = bstr.charCodeAt(n);
-        }
-        return new Blob([u8arr], { type: mime });
-      }
-
-      const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-      if (isIOSDevice && navigator.share && iosShareBtn) {
-        iosShareBtn.classList.remove('hidden');
-        iosShareBtn.classList.add('inline-flex');
-      }
-
-      if (closeSafariPreviewBtn) {
-        closeSafariPreviewBtn.addEventListener('click', function () {
-          safariPreviewFallbackBox.classList.add('hidden');
-        });
-      }
-
-      function generateExportBlobAndDataUrl() {
-        const targetRes = parseInt(exportResolutionSelect.value, 10) || 1080;
+      // ============================================================================
+      // 11. ESPORTAZIONE / DOWNLOAD COMPATIBILE SAFARI iOS, CHROME E DESKTOP
+      // ============================================================================
+      function generateExportCanvasAndData() {
         renderCanvas();
+        const targetRes = parseInt(exportResolutionSelect.value || '1080', 10);
+        const scaleFactor = targetRes / CW;
 
-        const exportCanvas = document.createElement('canvas');
-        exportCanvas.width = targetRes;
-        exportCanvas.height = targetRes;
-        const exportCtx = exportCanvas.getContext('2d');
-        renderSceneOnContext(exportCtx, targetRes);
+        let exportCanvas = canvas;
+        if (scaleFactor !== 1) {
+          exportCanvas = document.createElement('canvas');
+          exportCanvas.width = targetRes;
+          exportCanvas.height = targetRes;
+          const exportCtx = exportCanvas.getContext('2d');
+          exportCtx.imageSmoothingEnabled = true;
+          exportCtx.imageSmoothingQuality = 'high';
+          renderSceneToContext(exportCtx, scaleFactor);
+        }
 
         const dataUrl = exportCanvas.toDataURL('image/png', 1.0);
-        const blob = dataURLToBlobSync(dataUrl);
-        return { blob, dataUrl, targetRes };
+        const byteString = atob(dataUrl.split(',')[1]);
+        const mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([ab], { type: mimeString });
+        const fileName = targetRes > 1080 ? `post_partita_HQ_${targetRes}x${targetRes}.png` : 'post_partita.png';
+
+        return { dataUrl, blob, fileName, targetRes };
       }
 
-      /**
-       * Esportazione PNG compatibile con Safari iPhone, Chrome iOS, Android e Desktop
-       */
-      downloadBtn.addEventListener('click', function () {
+      downloadBtn.addEventListener('click', () => {
         try {
-          const { blob, dataUrl, targetRes } = generateExportBlobAndDataUrl();
+          const { dataUrl, blob, fileName, targetRes } = generateExportCanvasAndData();
           const blobUrl = URL.createObjectURL(blob);
 
           const link = document.createElement('a');
-          link.download = 'post_partita.png';
           link.href = blobUrl;
+          link.download = fileName;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
 
-          // Su iPhone/Safari mostra anche l'anteprima rapida nel caso l'utente preferisca tenere premuto e fare "Salva su Foto"
-          if (isIOSDevice && safariPreviewFallbackBox && safariFallbackImg) {
-            safariFallbackImg.src = dataUrl;
-            safariPreviewFallbackBox.classList.remove('hidden');
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 15000);
+
+          if (isIOS) {
+            iosSavePreviewImg.src = dataUrl;
+            iosSaveModal.classList.remove('hidden');
           }
 
-          setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-
-          statusFeedback.textContent = `✓ Generato "post_partita.png" (${targetRes}×${targetRes}px)!`;
-          setTimeout(() => {
-            statusFeedback.textContent = '';
-          }, 5000);
+          showToast(`Grafica ${targetRes}×${targetRes}px pronta!`);
         } catch (err) {
-          statusFeedback.textContent = 'Impossibile esportare il file PNG. Riprova.';
+          showToast('Errore durante l\'esportazione del Canvas.');
         }
       });
 
-      // Pulsante dedicato iOS Condividi / Salva direttamente nel Rullino Foto di iPhone
-      if (iosShareBtn) {
-        iosShareBtn.addEventListener('click', async function () {
-          try {
-            const { blob, dataUrl } = generateExportBlobAndDataUrl();
-            const file = new File([blob], 'post_partita.png', { type: 'image/png' });
+      shareIosBtn.addEventListener('click', async () => {
+        try {
+          const { dataUrl, blob, fileName } = generateExportCanvasAndData();
+          const file = new File([blob], fileName, { type: 'image/png' });
 
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-              await navigator.share({
-                files: [file],
-                title: 'Post Partita Atletica Castello'
-              });
-              statusFeedback.textContent = '✓ Immagine condivisa / salvata con successo!';
-            } else if (safariPreviewFallbackBox && safariFallbackImg) {
-              safariFallbackImg.src = dataUrl;
-              safariPreviewFallbackBox.classList.remove('hidden');
-            }
-          } catch (err) {
-            if (err && err.name !== 'AbortError') {
-              statusFeedback.textContent = 'Usa il riquadro qui sotto tenendo premuto sull\'immagine per salvarla.';
-            }
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: 'Post Partita Atletica Castello'
+            });
+            showToast('Menu condivisione / Salva in Foto aperto!');
+          } else {
+            iosSavePreviewImg.src = dataUrl;
+            iosSaveModal.classList.remove('hidden');
+            showToast('Tieni premuto sull\'anteprima per salvare in Foto');
           }
-        });
-      }
-
-      /**
-       * ==========================================================================
-       * GESTIONE LISTA MARCATORI CON PALLONE SEPARATORE
-       * ==========================================================================
-       */
-      function renderScorerChips() {
-        scorersTagsContainer.innerHTML = '';
-        if (state.scorersList.length === 0) {
-          const emptyHint = document.createElement('span');
-          emptyHint.className = 'text-[11px] text-gray-400 italic';
-          emptyHint.textContent = 'Nessun marcatore inserito.';
-          scorersTagsContainer.appendChild(emptyHint);
-          return;
+        } catch (err) {
+          if (err && err.name !== 'AbortError') {
+            const { dataUrl } = generateExportCanvasAndData();
+            iosSavePreviewImg.src = dataUrl;
+            iosSaveModal.classList.remove('hidden');
+          }
         }
+      });
 
-        state.scorersList.forEach((name, idx) => {
-          const pill = document.createElement('span');
-          pill.className = 'scorer-pill';
-          pill.innerHTML = `
-            <span>⚽ ${name}</span>
-            <button type="button" data-idx="${idx}" class="ml-1 text-white/80 hover:text-white font-black text-xs leading-none" title="Rimuovi">&times;</button>
-          `;
-          pill.querySelector('button').addEventListener('click', function () {
-            state.scorersList.splice(idx, 1);
-            renderScorerChips();
+      closeIosModalBtn.addEventListener('click', () => {
+        iosSaveModal.classList.add('hidden');
+      });
+
+      // ============================================================================
+      // 12. AVVIO APPLICAZIONE
+      // ============================================================================
+      function initApp() {
+        syncCropInputsAndLabels();
+        renderScorersTags();
+        initLogo();
+        renderCanvas();
+
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(() => {
             renderCanvas();
           });
-          scorersTagsContainer.appendChild(pill);
-        });
-      }
-
-      function addScorersFromString(rawStr) {
-        if (!rawStr) return;
-        const parts = rawStr
-          .split(/[,;\n]+/)
-          .map((s) => s.trim().toUpperCase())
-          .filter(Boolean);
-
-        if (parts.length > 0) {
-          state.scorersList.push(...parts);
-          renderScorerChips();
-          renderCanvas();
         }
       }
 
-      addScorerBtn.addEventListener('click', () => {
-        if (scorerSingleInput.value.trim()) {
-          addScorersFromString(scorerSingleInput.value);
-          scorerSingleInput.value = '';
-          scorerSingleInput.focus();
-        }
-      });
-
-      scorerSingleInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ',') {
-          e.preventDefault();
-          if (scorerSingleInput.value.trim()) {
-            addScorersFromString(scorerSingleInput.value);
-            scorerSingleInput.value = '';
-          }
-        }
-      });
-
-      scorerSingleInput.addEventListener('input', () => {
-        if (scorerSingleInput.value.includes(',')) {
-          addScorersFromString(scorerSingleInput.value);
-          scorerSingleInput.value = '';
-        } else {
-          renderCanvas();
-        }
-      });
-
-      clearScorersBtn.addEventListener('click', () => {
-        state.scorersList = [];
-        scorerSingleInput.value = '';
-        renderScorerChips();
-        renderCanvas();
-      });
-
-      function getEffectiveScorers() {
-        const list = [...state.scorersList];
-        const pending = scorerSingleInput.value.trim().toUpperCase();
-        if (pending) {
-          const extra = pending.split(/[,;\n]+/).map((s) => s.trim()).filter(Boolean);
-          list.push(...extra);
-        }
-        return list;
-      }
-
-      // Inizializzazione
-      renderScorerChips();
-      syncTransformControlsUI();
-      initLogoOnStartup();
-      renderCanvas();
-
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(() => {
-          renderCanvas();
-        });
-      }
+      window.addEventListener('load', initApp);
     })();
   </script>
 </body>
