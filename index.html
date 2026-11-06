@@ -619,7 +619,27 @@
                   <span>SFUMATURA FONDO</span>
                   <span id="gradIntensityLabel" class="text-[#25AE3F] font-extrabold ml-2">130%</span>
                 </div>
-                <input type="range" id="gradientIntensityInput" min="0" max="150" value="130" step="5" disabled />
+                <input type="range" id="gradientIntensityInput" min="0" max="200" value="130" step="5" disabled />
+              </div>
+
+              <!-- Selettore Colore Verde per ATLETICA CASTELLO e Numero Gol -->
+              <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-lg px-3 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div class="flex items-center justify-between sm:justify-start gap-2">
+                  <span class="text-[10px] font-bold text-gray-300 uppercase">VERDE SQUADRA & GOL</span>
+                  <span id="castelloGreenHexLabel" class="text-[10px] font-mono font-extrabold text-[#25AE3F] bg-[#041B0F] px-1.5 py-0.5 rounded border border-[#25AE3F]/30">#0B7828</span>
+                </div>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border-2 border-white shadow-md transition transform hover:scale-110 ring-2 ring-[#25AE3F]" style="background-color: #0B7828;" data-color="#0B7828" title="1. Attuale (#0B7828)" disabled></button>
+                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #086420;" data-color="#086420" title="2. Medio Scuro (#086420)" disabled></button>
+                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #065219;" data-color="#065219" title="3. Scuro (#065219)" disabled></button>
+                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #044013;" data-color="#044013" title="4. Molto Scuro (#044013)" disabled></button>
+                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #02300D;" data-color="#02300D" title="5. Verde Foresta (#02300D)" disabled></button>
+                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #012008;" data-color="#012008" title="6. Extra Scuro (#012008)" disabled></button>
+                  <label class="relative inline-flex items-center justify-center w-6 h-6 rounded-full border border-dashed border-white/60 bg-[#041B0F] cursor-pointer hover:border-[#25AE3F] transition" title="Scegli tonalità libera">
+                    <span class="text-[10px] leading-none pointer-events-none">🎨</span>
+                    <input type="color" id="customCastelloGreenPicker" value="#0B7828" class="sr-only" disabled />
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -740,8 +760,8 @@
 
       const COLORS = {
         greenMain: '#0B8731',          // Verde principale societario
-        greenBright: '#0D8A34',        // Verde per Tipo Gara, 2026/27, AMO e numero gol Castello
-        castelloTeamGreen: '#0B7828',  // Verde richiesto per la scritta ATLETICA CASTELLO (#0B7828)
+        greenBright: '#0D8A34',        // Verde per Tipo Gara, 2026/27 e AMO
+        castelloTeamGreen: '#0B7828',  // Verde per la scritta ATLETICA CASTELLO e numero gol Castello
         greenDarkest: '#041B0F',       // Verde scurissimo (header 0% trasparenza, tappetino e footer)
         greenSecondary: '#004B20',     // Verde istituzionale secondario
         white: '#FFFFFF',              // Bianco puro
@@ -891,6 +911,9 @@
       const castelloStyleChips = document.querySelectorAll('.castello-style-chip');
       const gradientIntensityInput = document.getElementById('gradientIntensityInput');
       const gradIntensityLabel = document.getElementById('gradIntensityLabel');
+      const castelloGreenSwatches = document.querySelectorAll('.castello-green-swatch');
+      const customCastelloGreenPicker = document.getElementById('customCastelloGreenPicker');
+      const castelloGreenHexLabel = document.getElementById('castelloGreenHexLabel');
 
       const logoInput = document.getElementById('logoInput');
       const embedLogoHtmlBtn = document.getElementById('embedLogoHtmlBtn');
@@ -1443,15 +1466,15 @@
         targetCtx.fillText(tipoGaraText, CW - 44, 47);
         targetCtx.restore();
 
-        // 3. FASCIA INFERIORE (SFUMATURA COMPATTA PER RISULTATO E FOOTER)
+        // 3. FASCIA INFERIORE (SFUMATURA COMPATTA PER RISULTATO E FOOTER, FINO AL 200%)
         const gradScale = state.gradientIntensity / 100;
         if (gradScale > 0) {
-          const startY = Math.max(720, Math.round(815 - (gradScale - 1) * 95));
+          const startY = Math.max(600, Math.round(815 - (gradScale - 1) * 195));
           const footerGrad = targetCtx.createLinearGradient(0, startY, 0, CH);
           footerGrad.addColorStop(0, 'rgba(4, 27, 15, 0)');
-          footerGrad.addColorStop(0.28, `rgba(4, 27, 15, ${Math.min(1, 0.35 * gradScale)})`);
-          footerGrad.addColorStop(0.62, `rgba(4, 27, 15, ${Math.min(1, 0.82 * gradScale)})`);
-          footerGrad.addColorStop(0.88, `rgba(4, 27, 15, ${Math.min(1, 0.97 * gradScale)})`);
+          footerGrad.addColorStop(0.25, `rgba(4, 27, 15, ${Math.min(0.95, 0.28 * gradScale)})`);
+          footerGrad.addColorStop(0.55, `rgba(4, 27, 15, ${Math.min(0.98, 0.68 * gradScale)})`);
+          footerGrad.addColorStop(0.82, `rgba(4, 27, 15, ${Math.min(1, 0.94 * gradScale)})`);
           footerGrad.addColorStop(1, COLORS.greenDarkest);
           targetCtx.fillStyle = footerGrad;
           targetCtx.fillRect(0, startY, CW, CH - startY);
@@ -1485,11 +1508,11 @@
         const rightScoreX = 621;
 
         if (scoreMode === 'parallelogram') {
-          const leftBoxColor = state.castelloIsHome ? COLORS.greenMain : COLORS.white;
+          const leftBoxColor = state.castelloIsHome ? COLORS.castelloTeamGreen : COLORS.white;
           const leftTextColor = state.castelloIsHome ? COLORS.white : COLORS.greenDarkest;
           const leftStroke = state.castelloIsHome ? COLORS.white : null;
 
-          const rightBoxColor = !state.castelloIsHome ? COLORS.greenMain : COLORS.white;
+          const rightBoxColor = !state.castelloIsHome ? COLORS.castelloTeamGreen : COLORS.white;
           const rightTextColor = !state.castelloIsHome ? COLORS.white : COLORS.greenDarkest;
           const rightStroke = !state.castelloIsHome ? COLORS.white : null;
 
@@ -1522,7 +1545,7 @@
             targetCtx.lineWidth = 6.5;
             targetCtx.strokeStyle = COLORS.white;
             targetCtx.strokeText(leftScore, leftScoreX, centerY + 4);
-            targetCtx.fillStyle = COLORS.greenBright;
+            targetCtx.fillStyle = COLORS.castelloTeamGreen;
             targetCtx.fillText(leftScore, leftScoreX, centerY + 4);
           } else {
             targetCtx.fillStyle = COLORS.white;
@@ -1534,7 +1557,7 @@
             targetCtx.lineWidth = 6.5;
             targetCtx.strokeStyle = COLORS.white;
             targetCtx.strokeText(rightScore, rightScoreX, centerY + 4);
-            targetCtx.fillStyle = COLORS.greenBright;
+            targetCtx.fillStyle = COLORS.castelloTeamGreen;
             targetCtx.fillText(rightScore, rightScoreX, centerY + 4);
           } else {
             targetCtx.fillStyle = COLORS.white;
@@ -1729,6 +1752,8 @@
         panXInput.disabled = locked;
         panYInput.disabled = locked;
         gradientIntensityInput.disabled = locked;
+        customCastelloGreenPicker.disabled = locked;
+        castelloGreenSwatches.forEach(btn => { btn.disabled = locked; });
         resetCropBtn.disabled = locked;
 
         if (locked) {
@@ -2127,6 +2152,36 @@
         renderCanvas();
       });
 
+      function applyCastelloGreenColor(hexColor) {
+        if (!hexColor) return;
+        const normalized = hexColor.toUpperCase();
+        COLORS.castelloTeamGreen = normalized;
+        castelloGreenHexLabel.textContent = normalized;
+        customCastelloGreenPicker.value = normalized;
+
+        castelloGreenSwatches.forEach((btn) => {
+          const isMatch = btn.getAttribute('data-color').toUpperCase() === normalized;
+          if (isMatch) {
+            btn.className = 'castello-green-swatch w-6 h-6 rounded-full border-2 border-white shadow-md transition transform hover:scale-110 ring-2 ring-[#25AE3F]';
+          } else {
+            btn.className = 'castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110';
+          }
+        });
+        renderCanvas();
+      }
+
+      castelloGreenSwatches.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (state.isCropLocked) return;
+          applyCastelloGreenColor(btn.getAttribute('data-color'));
+        });
+      });
+
+      customCastelloGreenPicker.addEventListener('input', () => {
+        if (state.isCropLocked) return;
+        applyCastelloGreenColor(customCastelloGreenPicker.value);
+      });
+
       // Gestione Logo in Impostazioni Avanzate
       logoInput.addEventListener('change', (e) => {
         const file = e.target.files && e.target.files[0];
@@ -2225,6 +2280,7 @@
         state.gradientIntensity = 130;
         gradientIntensityInput.value = 130;
         gradIntensityLabel.textContent = '130%';
+        applyCastelloGreenColor('#0B7828');
 
         categoriaInput.value = '';
         tipoGaraInput.value = 'CAMPIONATO';
