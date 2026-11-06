@@ -1,4 +1,4 @@
-# ⚽ Atletica Castello — Generatore Post Partita
+# Atletica Castello: Generatore Post Full Time
 
 Web app single-page per creare in pochi secondi la grafica **post-partita** dell'Atletica Castello, pronta per Instagram, Facebook e WhatsApp.
 
