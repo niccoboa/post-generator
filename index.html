@@ -64,6 +64,10 @@
     #postCanvas:active {
       cursor: grabbing;
     }
+    #postCanvas.canvas-locked {
+      cursor: default;
+      touch-action: pan-y;
+    }
 
     /* Input sportivi */
     .sport-input {
@@ -275,13 +279,11 @@
             2. Intestazione (Fascia Verde Solida)
           </div>
 
-          <!-- Categoria con struttura ad albero -->
-          <div>
-            <label for="categoriaInput" class="field-label">Categoria (Bianco)</label>
-            <input type="text" id="categoriaInput" value="" placeholder="" class="sport-input font-bold uppercase" />
-
-            <div class="mt-2 space-y-2">
-              <span class="block text-[10px] font-bold uppercase tracking-wider text-gray-400">
+          <!-- Categoria con struttura ad albero PRIMA dell'input di output -->
+          <div class="space-y-2">
+            <div>
+              <span class="field-label !mb-1">Seleziona Categoria (Albero Squadre)</span>
+              <span class="block text-[10px] font-semibold text-gray-400 mb-2">
                 Tocca una macro-categoria per scegliere la squadra:
               </span>
 
@@ -302,14 +304,14 @@
               </div>
 
               <!-- Sotto-rami espandibili -->
-              <div id="subTree_PRIMA_SQUADRA" class="hidden p-2.5 rounded-xl bg-[#041B0F] border border-[#25AE3F]/40">
+              <div id="subTree_PRIMA_SQUADRA" class="hidden mt-2 p-2.5 rounded-xl bg-[#041B0F] border border-[#25AE3F]/40">
                 <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#25AE3F] mb-1.5">Prima Squadra:</div>
                 <div class="flex flex-wrap gap-1.5">
                   <button type="button" class="preset-chip cat-preset" data-value="PRIMA SQUADRA" data-gara="SECONDA CATEGORIA">PRIMA SQUADRA</button>
                 </div>
               </div>
 
-              <div id="subTree_SETTORE_GIOVANILE" class="hidden p-2.5 rounded-xl bg-[#041B0F] border border-[#25AE3F]/40">
+              <div id="subTree_SETTORE_GIOVANILE" class="hidden mt-2 p-2.5 rounded-xl bg-[#041B0F] border border-[#25AE3F]/40">
                 <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#25AE3F] mb-1.5">Settore Giovanile (dal più grande):</div>
                 <div class="flex flex-wrap gap-1.5">
                   <button type="button" class="preset-chip cat-preset" data-value="JUNIORES" data-gara="CAMPIONATO">JUNIORES</button>
@@ -320,7 +322,7 @@
                 </div>
               </div>
 
-              <div id="subTree_ESORDIENTI" class="hidden p-2.5 rounded-xl bg-[#041B0F] border border-[#25AE3F]/40">
+              <div id="subTree_ESORDIENTI" class="hidden mt-2 p-2.5 rounded-xl bg-[#041B0F] border border-[#25AE3F]/40">
                 <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#25AE3F] mb-1.5">Esordienti (dal più grande):</div>
                 <div class="flex flex-wrap gap-1.5">
                   <button type="button" class="preset-chip cat-preset" data-value="ESORDIENTI 2014" data-gara="RISULTATO FIGC">ESORDIENTI 2014</button>
@@ -329,7 +331,7 @@
                 </div>
               </div>
 
-              <div id="subTree_PULCINI_PRIMI_CALCI" class="hidden p-2.5 rounded-xl bg-[#041B0F] border border-[#25AE3F]/40">
+              <div id="subTree_PULCINI_PRIMI_CALCI" class="hidden mt-2 p-2.5 rounded-xl bg-[#041B0F] border border-[#25AE3F]/40">
                 <div class="text-[10px] font-extrabold uppercase tracking-wider text-[#25AE3F] mb-1.5">Pulcini e Primi Calci (dal più grande):</div>
                 <div class="flex flex-wrap gap-1.5">
                   <button type="button" class="preset-chip cat-preset" data-value="PULCINI 2016" data-gara="RISULTATO FIGC">PULCINI 2016</button>
@@ -340,6 +342,12 @@
                   <button type="button" class="preset-chip cat-preset" data-value="PRIMI CALCI 2019" data-gara="RISULTATO FIGC">PRIMI CALCI 2019</button>
                 </div>
               </div>
+            </div>
+
+            <!-- Blocco di testo Categoria sotto la selezione -->
+            <div class="pt-1">
+              <label for="categoriaInput" class="field-label">Testo Categoria (Bianco in alto a sinistra)</label>
+              <input type="text" id="categoriaInput" value="" placeholder="Seleziona sopra o scrivi categoria..." class="sport-input font-bold uppercase" />
             </div>
           </div>
 
@@ -377,19 +385,19 @@
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div>
-              <label class="field-label">Squadra Castello</label>
+            <div id="teamBoxCastello" class="order-1">
+              <label id="teamCastelloLabel" class="field-label !text-[#25AE3F]">Squadra Casa (Castello)</label>
               <input type="text" value="ATLETICA CASTELLO" disabled class="sport-input font-extrabold uppercase opacity-75 cursor-not-allowed !text-[#25AE3F] !border-[#25AE3F]/40" />
             </div>
-            <div>
-              <label for="ospiteInput" class="field-label">Squadra Avversaria</label>
+            <div id="teamBoxOspite" class="order-2">
+              <label for="ospiteInput" id="teamOspiteLabel" class="field-label">Squadra Avversaria (Ospite)</label>
               <input type="text" id="ospiteInput" value="" placeholder="Scrivi squadra avversaria..." class="sport-input font-bold uppercase" />
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-3 pt-0.5">
-            <div class="bg-[#041B0F] p-2.5 rounded-xl border border-[#0B8731]/60">
-              <label for="scoreCasaInput" id="scoreLeftLabel" class="field-label !text-[#25AE3F]">Gol Castello</label>
+            <div id="scoreBoxCastello" class="order-1 bg-[#041B0F] p-2.5 rounded-xl border border-[#0B8731]/60">
+              <label for="scoreCasaInput" id="scoreCastelloLabel" class="field-label !text-[#25AE3F]">Gol Castello (Casa)</label>
               <div class="flex items-center gap-1.5">
                 <button type="button" data-score-target="scoreCasaInput" data-delta="-1" class="w-9 h-9 rounded-lg bg-[#004B20] hover:bg-[#0B8731] text-white font-bold text-lg flex items-center justify-center transition">−</button>
                 <input type="number" id="scoreCasaInput" value="0" min="0" max="99" class="sport-input text-center font-black text-xl !py-1" />
@@ -397,8 +405,8 @@
               </div>
             </div>
 
-            <div class="bg-[#041B0F] p-2.5 rounded-xl border border-white/20">
-              <label for="scoreOspiteInput" id="scoreRightLabel" class="field-label !text-white">Gol Avversario</label>
+            <div id="scoreBoxOspite" class="order-2 bg-[#041B0F] p-2.5 rounded-xl border border-white/20">
+              <label for="scoreOspiteInput" id="scoreOspiteLabel" class="field-label !text-white">Gol Avversario (Ospite)</label>
               <div class="flex items-center gap-1.5">
                 <button type="button" data-score-target="scoreOspiteInput" data-delta="-1" class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-lg flex items-center justify-center transition">−</button>
                 <input type="number" id="scoreOspiteInput" value="0" min="0" max="99" class="sport-input text-center font-black text-xl !py-1" />
@@ -429,8 +437,8 @@
           <div id="scorersTagsContainer" class="flex flex-wrap gap-1.5 pt-1 min-h-[26px]"></div>
         </div>
 
-        <!-- 5. IMPOSTAZIONI AVANZATE -->
-        <details id="advancedSettingsDetails" class="bg-[#021209]/75 border border-[#25AE3F]/30 rounded-xl p-3.5 group" open>
+        <!-- 5. IMPOSTAZIONI AVANZATE (CHIUSE DI DEFAULT) -->
+        <details id="advancedSettingsDetails" class="bg-[#021209]/75 border border-[#25AE3F]/30 rounded-xl p-3.5 group">
           <summary class="text-xs font-extrabold uppercase tracking-wider text-[#25AE3F] cursor-pointer list-none flex items-center justify-between">
             <span class="flex items-center gap-1.5">
               <svg class="w-4 h-4 text-[#25AE3F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -448,27 +456,27 @@
                 <label for="castelloTextStyleSelect" class="field-label !mb-0 !text-[#25AE3F]">
                   Spessore / Risalto "ATLETICA CASTELLO"
                 </label>
-                <span class="text-[10px] font-bold text-gray-400">Stesso colore & font</span>
+                <span class="text-[10px] font-bold text-gray-400">Colore #0B7828</span>
               </div>
 
               <select id="castelloTextStyleSelect" class="sport-input !py-2 !text-xs !border-[#25AE3F]/60 font-bold">
-                <option value="massiccio" selected>Opzione 1 — Massiccio Nitido (Consigliato: corpo verde ispessito)</option>
+                <option value="massiccio">Opzione 1 — Massiccio Nitido (Corpo verde ispessito)</option>
                 <option value="extra_massiccio">Opzione 2 — Extra Massiccio (Corpo verde molto pieno e largo)</option>
                 <option value="bordo_forte">Opzione 3 — Massiccio + Bordo Bianco Marcato (Stile adesivo)</option>
                 <option value="stacco_3d">Opzione 4 — Massiccio + Ombra Scura Netta (Stacco 3D sul prato)</option>
                 <option value="doppio_bordo">Opzione 5 — Massiccio + Profilo Scuro Esterno (Alta leggibilità)</option>
-                <option value="leggero">Opzione 6 — Leggero (Versione precedente senza ispessimento)</option>
+                <option value="leggero" selected>Opzione 6 — Leggero (Predefinito)</option>
               </select>
 
               <!-- Pulsanti rapidi 1-6 per confronto immediato -->
               <div class="flex flex-wrap items-center gap-1 pt-0.5">
                 <span class="text-[10px] font-bold text-gray-400 mr-1">Prova rapida:</span>
-                <button type="button" class="preset-chip castello-style-chip active" data-style="massiccio">1. Massiccio</button>
+                <button type="button" class="preset-chip castello-style-chip" data-style="massiccio">1. Massiccio</button>
                 <button type="button" class="preset-chip castello-style-chip" data-style="extra_massiccio">2. Extra</button>
                 <button type="button" class="preset-chip castello-style-chip" data-style="bordo_forte">3. Bordo+</button>
                 <button type="button" class="preset-chip castello-style-chip" data-style="stacco_3d">4. Ombra 3D</button>
                 <button type="button" class="preset-chip castello-style-chip" data-style="doppio_bordo">5. Profilo Scuro</button>
-                <button type="button" class="preset-chip castello-style-chip" data-style="leggero">6. Leggero</button>
+                <button type="button" class="preset-chip castello-style-chip active" data-style="leggero">6. Leggero</button>
               </div>
             </div>
 
@@ -483,21 +491,12 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-center">
-              <div>
-                <label for="scoreStyleSelect" class="field-label">Stile Punteggio</label>
-                <select id="scoreStyleSelect" class="sport-input !py-2 !text-xs">
-                  <option value="outline" selected>Numeri Sagomati (Default)</option>
-                  <option value="parallelogram">Parallelogrammi Obliqui</option>
-                </select>
-              </div>
-              <div>
-                <div class="flex justify-between text-[10px] font-bold text-gray-300 mb-1">
-                  <span>SFUMATURA FONDO</span>
-                  <span id="gradIntensityLabel" class="text-[#25AE3F]">130%</span>
-                </div>
-                <input type="range" id="gradientIntensityInput" min="0" max="150" value="130" step="5" />
-              </div>
+            <div>
+              <label for="scoreStyleSelect" class="field-label">Stile Punteggio</label>
+              <select id="scoreStyleSelect" class="sport-input !py-2 !text-xs">
+                <option value="outline" selected>Numeri Sagomati (Default)</option>
+                <option value="parallelogram">Parallelogrammi Obliqui</option>
+              </select>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-center pt-1">
@@ -564,51 +563,70 @@
             </label>
           </div>
 
-          <!-- BARRA CONTROLLI INQUADRATURA E VALORI IN TEMPO REALE (UNICA, VICINO ALL'IMMAGINE) -->
-          <div class="bg-[#041B0F]/95 border border-[#25AE3F]/35 rounded-xl p-3 shadow-lg space-y-2">
-            <div class="flex items-center justify-between">
+          <!-- RIQUADRO UNICO DI MODIFICA (INQUADRATURA + SFUMATURA FONDO) CON TASTO BLOCCA/SBLOCCA -->
+          <div class="bg-[#041B0F]/95 border border-[#25AE3F]/35 rounded-xl p-3 shadow-lg space-y-2.5">
+            <div class="flex items-center justify-between gap-2 flex-wrap">
               <div class="flex items-center gap-2">
-                <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#25AE3F] animate-pulse"></span>
+                <span id="cropStatusDot" class="inline-block w-2.5 h-2.5 rounded-full bg-amber-400"></span>
                 <span class="text-xs font-extrabold uppercase tracking-wider text-gray-200">
-                  Inquadratura Foto (Touch 1 o 2 dita)
+                  Modifica Inquadratura & Sfumatura
                 </span>
               </div>
-              <button type="button" id="resetCropBtn" class="text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded bg-[#004B20] hover:bg-[#0B8731] text-[#25AE3F] hover:text-white border border-[#25AE3F]/40 transition">
-                Reset
-              </button>
+
+              <div class="flex items-center gap-1.5">
+                <button type="button" id="lockCropBtn" class="text-[11px] font-extrabold uppercase px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/50 transition flex items-center gap-1 cursor-pointer">
+                  <span id="lockCropIcon">🔒</span>
+                  <span id="lockCropText">Bloccato (Sblocca)</span>
+                </button>
+                <button type="button" id="resetCropBtn" disabled class="text-[11px] font-extrabold uppercase px-2.5 py-1 rounded-lg bg-[#004B20] hover:bg-[#0B8731] text-[#25AE3F] hover:text-white border border-[#25AE3F]/40 transition opacity-40 pointer-events-none">
+                  Reset
+                </button>
+              </div>
             </div>
 
-            <!-- Sliders Zoom, Orizz. (X), Vert. (Y) -->
-            <div class="grid grid-cols-3 gap-2.5 pt-0.5">
-              <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-lg px-2.5 py-1.5">
-                <div class="flex justify-between text-[10px] font-bold text-gray-300 mb-1">
-                  <span>ZOOM</span>
-                  <span id="zoomValLabel" class="text-[#25AE3F] font-extrabold">100%</span>
+            <!-- Controlli raggruppati (disabilitati quando bloccato per evitare tocchi involontari) -->
+            <div id="cropControlsGroup" class="space-y-2 opacity-45 pointer-events-none transition-opacity duration-200">
+              <!-- Sliders Zoom, Orizz. (X), Vert. (Y) -->
+              <div class="grid grid-cols-3 gap-2">
+                <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-lg px-2.5 py-1.5">
+                  <div class="flex justify-between text-[10px] font-bold text-gray-300 mb-1">
+                    <span>ZOOM</span>
+                    <span id="zoomValLabel" class="text-[#25AE3F] font-extrabold">100%</span>
+                  </div>
+                  <input type="range" id="zoomRangeInput" min="35" max="260" step="1" value="100" disabled />
                 </div>
-                <input type="range" id="zoomRangeInput" min="35" max="260" step="1" value="100" />
+
+                <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-lg px-2.5 py-1.5">
+                  <div class="flex justify-between text-[10px] font-bold text-gray-300 mb-1">
+                    <span>ORIZZ. (X)</span>
+                    <span id="panXValLabel" class="text-[#25AE3F] font-extrabold">0</span>
+                  </div>
+                  <input type="range" id="panXInput" min="-650" max="650" step="1" value="0" disabled />
+                </div>
+
+                <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-lg px-2.5 py-1.5">
+                  <div class="flex justify-between text-[10px] font-bold text-gray-300 mb-1">
+                    <span>VERT. (Y)</span>
+                    <span id="panYValLabel" class="text-[#25AE3F] font-extrabold">0</span>
+                  </div>
+                  <input type="range" id="panYInput" min="-650" max="650" step="1" value="0" disabled />
+                </div>
               </div>
 
-              <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-lg px-2.5 py-1.5">
-                <div class="flex justify-between text-[10px] font-bold text-gray-300 mb-1">
-                  <span>ORIZZ. (X)</span>
-                  <span id="panXValLabel" class="text-[#25AE3F] font-extrabold">0</span>
+              <!-- Slider Sfumatura Sfondo subito sotto gli slider dello zoom -->
+              <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-lg px-3 py-1.5 flex items-center gap-3">
+                <div class="flex justify-between items-center text-[10px] font-bold text-gray-300 shrink-0 min-w-[130px]">
+                  <span>SFUMATURA FONDO</span>
+                  <span id="gradIntensityLabel" class="text-[#25AE3F] font-extrabold ml-2">130%</span>
                 </div>
-                <input type="range" id="panXInput" min="-650" max="650" step="1" value="0" />
-              </div>
-
-              <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-lg px-2.5 py-1.5">
-                <div class="flex justify-between text-[10px] font-bold text-gray-300 mb-1">
-                  <span>VERT. (Y)</span>
-                  <span id="panYValLabel" class="text-[#25AE3F] font-extrabold">0</span>
-                </div>
-                <input type="range" id="panYInput" min="-650" max="650" step="1" value="0" />
+                <input type="range" id="gradientIntensityInput" min="0" max="150" value="130" step="5" disabled />
               </div>
             </div>
           </div>
 
           <!-- CONTENITORE CANVAS -->
           <div class="relative group">
-            <canvas id="postCanvas" width="1080" height="1080"></canvas>
+            <canvas id="postCanvas" width="1080" height="1080" class="canvas-locked"></canvas>
           </div>
 
           <!-- SEZIONE DOWNLOAD IN FONDO ALLA PAGINA -->
@@ -622,8 +640,8 @@
               </div>
 
               <select id="exportResolutionSelect" class="sport-input !w-auto !py-2 !px-3 font-bold text-xs sm:text-sm border-[#25AE3F]/60">
-                <option value="1080" selected>1080 × 1080 px (Consigliato)</option>
-                <option value="2160">HQ — 2160 × 2160 px (Risoluzione più alta)</option>
+                <option value="2160" selected>HD / HQ — 2160 × 2160 px (Risoluzione più alta)</option>
+                <option value="1080">Standard — 1080 × 1080 px</option>
               </select>
             </div>
 
@@ -723,7 +741,7 @@
       const COLORS = {
         greenMain: '#0B8731',          // Verde principale societario
         greenBright: '#0D8A34',        // Verde per Tipo Gara, 2026/27, AMO e numero gol Castello
-        castelloTeamGreen: '#169E3B',  // Verde per la scritta ATLETICA CASTELLO
+        castelloTeamGreen: '#0B7828',  // Verde richiesto per la scritta ATLETICA CASTELLO (#0B7828)
         greenDarkest: '#041B0F',       // Verde scurissimo (header 0% trasparenza, tappetino e footer)
         greenSecondary: '#004B20',     // Verde istituzionale secondario
         white: '#FFFFFF',              // Bianco puro
@@ -839,14 +857,25 @@
       const panXValLabel = document.getElementById('panXValLabel');
       const panYValLabel = document.getElementById('panYValLabel');
       const resetCropBtn = document.getElementById('resetCropBtn');
+      const lockCropBtn = document.getElementById('lockCropBtn');
+      const lockCropIcon = document.getElementById('lockCropIcon');
+      const lockCropText = document.getElementById('lockCropText');
+      const cropStatusDot = document.getElementById('cropStatusDot');
+      const cropControlsGroup = document.getElementById('cropControlsGroup');
 
       const categoriaInput = document.getElementById('categoriaInput');
       const tipoGaraInput = document.getElementById('tipoGaraInput');
       const ospiteInput = document.getElementById('ospiteInput');
       const scoreCasaInput = document.getElementById('scoreCasaInput');
       const scoreOspiteInput = document.getElementById('scoreOspiteInput');
-      const scoreLeftLabel = document.getElementById('scoreLeftLabel');
-      const scoreRightLabel = document.getElementById('scoreRightLabel');
+      const teamBoxCastello = document.getElementById('teamBoxCastello');
+      const teamBoxOspite = document.getElementById('teamBoxOspite');
+      const scoreBoxCastello = document.getElementById('scoreBoxCastello');
+      const scoreBoxOspite = document.getElementById('scoreBoxOspite');
+      const teamCastelloLabel = document.getElementById('teamCastelloLabel');
+      const teamOspiteLabel = document.getElementById('teamOspiteLabel');
+      const scoreCastelloLabel = document.getElementById('scoreCastelloLabel');
+      const scoreOspiteLabel = document.getElementById('scoreOspiteLabel');
       const castelloHomeBtn = document.getElementById('castelloHomeBtn');
       const castelloAwayBtn = document.getElementById('castelloAwayBtn');
 
@@ -892,6 +921,7 @@
         zoom: 1.0,
         panX: 0,
         panY: 0,
+        isCropLocked: true,
         castelloIsHome: true,
         scorers: [],
         gradientIntensity: 130,
@@ -1552,50 +1582,59 @@
           }
         }
 
-        // 5. MARCATORI ATLETICA CASTELLO CON PALLONE SEPARATORE
+        // 5. MARCATORI ATLETICA CASTELLO SU PIÙ RIGHE (VAI A CAPO AUTOMATICO SENZA RIMPICCIOLIRE IL FONT)
         if (state.scorers.length > 0) {
           const castelloCenterX = state.castelloIsHome ? leftCenterX : rightCenterX;
           const scorersAreaMaxW = 420;
-          const scorerY = 934;
-
-          let scorerFontSize = 26;
+          const scorerFontSize = 26;
           const ballRadius = 9.5;
           const ballGapLeft = 14;
           const ballGapRight = 8;
-
-          while (scorerFontSize > 15) {
-            targetCtx.font = `italic 600 ${scorerFontSize}px ${CONDENSED_FONT_STACK}`;
-            let totalWidth = 0;
-            state.scorers.forEach((name, idx) => {
-              const iconSpace = (idx === 0 ? 0 : ballGapLeft) + ballRadius * 2 + ballGapRight;
-              totalWidth += iconSpace + targetCtx.measureText(name).width;
-            });
-            if (totalWidth <= scorersAreaMaxW) break;
-            scorerFontSize -= 1;
-          }
 
           targetCtx.save();
           targetCtx.font = `italic 600 ${scorerFontSize}px ${CONDENSED_FONT_STACK}`;
           targetCtx.textBaseline = 'middle';
           targetCtx.textAlign = 'left';
 
-          let totalRowWidth = 0;
-          const segments = state.scorers.map((name, idx) => {
+          // Suddivide i marcatori in righe quando superano la larghezza massima
+          const rows = [];
+          let currentRow = [];
+          let currentRowWidth = 0;
+
+          state.scorers.forEach((name) => {
             const textW = targetCtx.measureText(name).width;
-            const leadGap = idx === 0 ? 0 : ballGapLeft;
-            const segW = leadGap + ballRadius * 2 + ballGapRight + textW;
-            totalRowWidth += segW;
-            return { name, textW, leadGap };
+            const itemBaseW = ballRadius * 2 + ballGapRight + textW;
+            const leadGap = currentRow.length === 0 ? 0 : ballGapLeft;
+
+            if (currentRow.length > 0 && currentRowWidth + leadGap + itemBaseW > scorersAreaMaxW) {
+              rows.push({ items: currentRow, totalWidth: currentRowWidth });
+              currentRow = [{ name, textW, leadGap: 0 }];
+              currentRowWidth = itemBaseW;
+            } else {
+              currentRow.push({ name, textW, leadGap });
+              currentRowWidth += leadGap + itemBaseW;
+            }
           });
 
-          let cursorX = castelloCenterX - totalRowWidth / 2;
-          segments.forEach((seg) => {
-            cursorX += seg.leadGap;
-            drawSoccerBallIcon(targetCtx, cursorX + ballRadius, scorerY - 1, ballRadius);
-            cursorX += ballRadius * 2 + ballGapRight;
-            targetCtx.fillStyle = COLORS.warmWhite;
-            targetCtx.fillText(seg.name, cursorX, scorerY);
-            cursorX += seg.textW;
+          if (currentRow.length > 0) {
+            rows.push({ items: currentRow, totalWidth: currentRowWidth });
+          }
+
+          const lineHeight = rows.length >= 3 ? 27 : 31;
+          const baseStartY = rows.length === 1 ? 934 : (rows.length === 2 ? 928 : 922);
+
+          rows.forEach((row, rowIdx) => {
+            const rowY = baseStartY + rowIdx * lineHeight;
+            let cursorX = castelloCenterX - row.totalWidth / 2;
+
+            row.items.forEach((seg) => {
+              cursorX += seg.leadGap;
+              drawSoccerBallIcon(targetCtx, cursorX + ballRadius, rowY - 1, ballRadius);
+              cursorX += ballRadius * 2 + ballGapRight;
+              targetCtx.fillStyle = COLORS.warmWhite;
+              targetCtx.fillText(seg.name, cursorX, rowY);
+              cursorX += seg.textW;
+            });
           });
 
           targetCtx.restore();
@@ -1684,6 +1723,42 @@
         panYValLabel.textContent = `${py}`;
       }
 
+      function updateCropLockUI() {
+        const locked = state.isCropLocked;
+        zoomRangeInput.disabled = locked;
+        panXInput.disabled = locked;
+        panYInput.disabled = locked;
+        gradientIntensityInput.disabled = locked;
+        resetCropBtn.disabled = locked;
+
+        if (locked) {
+          cropControlsGroup.classList.add('opacity-45', 'pointer-events-none');
+          resetCropBtn.classList.add('opacity-40', 'pointer-events-none');
+          canvas.classList.add('canvas-locked');
+          lockCropIcon.textContent = '🔒';
+          lockCropText.textContent = 'Bloccato (Sblocca)';
+          lockCropBtn.className = 'text-[11px] font-extrabold uppercase px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/50 transition flex items-center gap-1 cursor-pointer';
+          cropStatusDot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-amber-400';
+        } else {
+          cropControlsGroup.classList.remove('opacity-45', 'pointer-events-none');
+          resetCropBtn.classList.remove('opacity-40', 'pointer-events-none');
+          canvas.classList.remove('canvas-locked');
+          lockCropIcon.textContent = '🔓';
+          lockCropText.textContent = 'Sbloccato (Blocca)';
+          lockCropBtn.className = 'text-[11px] font-extrabold uppercase px-2.5 py-1 rounded-lg bg-[#0B8731] hover:bg-[#25AE3F] text-white border border-[#25AE3F] transition flex items-center gap-1 cursor-pointer';
+          cropStatusDot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-[#25AE3F] animate-pulse';
+        }
+      }
+
+      lockCropBtn.addEventListener('click', () => {
+        state.isCropLocked = !state.isCropLocked;
+        state.activePointers.clear();
+        state.lastPanCenter = null;
+        state.initialPinchDist = null;
+        updateCropLockUI();
+        showToast(state.isCropLocked ? 'Comandi inquadratura bloccati (anti-tocco)' : 'Comandi inquadratura sbloccati!');
+      });
+
       // ============================================================================
       // 9. EVENT LISTENERS E TOUCH / PINCH-TO-ZOOM
       // ============================================================================
@@ -1730,9 +1805,13 @@
       });
 
       resetCropBtn.addEventListener('click', () => {
+        if (state.isCropLocked) return;
         state.zoom = 1.0;
         state.panX = 0;
         state.panY = 0;
+        state.gradientIntensity = 130;
+        gradientIntensityInput.value = 130;
+        gradIntensityLabel.textContent = '130%';
         syncCropInputsAndLabels();
         renderCanvas();
       });
@@ -1751,6 +1830,7 @@
       }
 
       canvas.addEventListener('pointerdown', (e) => {
+        if (state.isCropLocked) return;
         canvas.setPointerCapture(e.pointerId);
         state.activePointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
 
@@ -1765,6 +1845,7 @@
       });
 
       canvas.addEventListener('pointermove', (e) => {
+        if (state.isCropLocked) return;
         if (!state.activePointers.has(e.pointerId)) return;
         state.activePointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
 
@@ -1819,6 +1900,7 @@
 
       // Zoom con rotellina mouse su PC
       canvas.addEventListener('wheel', (e) => {
+        if (state.isCropLocked) return;
         e.preventDefault();
         const delta = e.deltaY < 0 ? 0.05 : -0.05;
         state.zoom = Math.max(0.35, Math.min(2.6, state.zoom + delta));
@@ -1879,41 +1961,68 @@
         });
       });
 
+      // Click sui singoli chip delle categorie dentro i rami dell'albero
       document.querySelectorAll('.cat-preset').forEach((btn) => {
         btn.addEventListener('click', () => {
+          const val = btn.getAttribute('data-value');
+          const defaultGara = btn.getAttribute('data-gara');
+          categoriaInput.value = val;
           document.querySelectorAll('.cat-preset').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
-          categoriaInput.value = btn.getAttribute('data-value');
-
-          const garaDefault = btn.getAttribute('data-gara');
-          if (garaDefault) {
-            updateTipoGaraFromMacro(garaDefault);
-          }
+          updateTipoGaraFromMacro(defaultGara);
           renderCanvas();
         });
       });
 
+      // Click sui chip rapidi del Tipo Gara
       document.querySelectorAll('.gara-preset').forEach((btn) => {
         btn.addEventListener('click', () => {
+          const val = btn.getAttribute('data-value');
+          tipoGaraInput.value = val;
           document.querySelectorAll('.gara-preset').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
-          tipoGaraInput.value = btn.getAttribute('data-value');
           renderCanvas();
         });
       });
 
-      // Casa / Trasferta
+      // Casa / Trasferta (Inverte anche visivamente la posizione sinistra/destra dei box nel pannello)
       function updateHomeAwayUI() {
         if (state.castelloIsHome) {
           castelloHomeBtn.className = 'text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md bg-[#0B8731] text-white transition';
           castelloAwayBtn.className = 'text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md text-gray-300 hover:text-white transition';
-          scoreLeftLabel.textContent = 'Gol Castello (Casa)';
-          scoreRightLabel.textContent = 'Gol Avversario';
+
+          teamBoxCastello.classList.remove('order-2');
+          teamBoxCastello.classList.add('order-1');
+          teamBoxOspite.classList.remove('order-1');
+          teamBoxOspite.classList.add('order-2');
+
+          scoreBoxCastello.classList.remove('order-2');
+          scoreBoxCastello.classList.add('order-1');
+          scoreBoxOspite.classList.remove('order-1');
+          scoreBoxOspite.classList.add('order-2');
+
+          teamCastelloLabel.textContent = 'Squadra Casa (Castello)';
+          teamOspiteLabel.textContent = 'Squadra Avversaria (Ospite)';
+          scoreCastelloLabel.textContent = 'Gol Castello (Casa)';
+          scoreOspiteLabel.textContent = 'Gol Avversario (Ospite)';
         } else {
           castelloAwayBtn.className = 'text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md bg-[#0B8731] text-white transition';
           castelloHomeBtn.className = 'text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md text-gray-300 hover:text-white transition';
-          scoreLeftLabel.textContent = 'Gol Squadra Casa';
-          scoreRightLabel.textContent = 'Gol Castello (Ospite)';
+
+          teamBoxOspite.classList.remove('order-2');
+          teamBoxOspite.classList.add('order-1');
+          teamBoxCastello.classList.remove('order-1');
+          teamBoxCastello.classList.add('order-2');
+
+          scoreBoxOspite.classList.remove('order-2');
+          scoreBoxOspite.classList.add('order-1');
+          scoreBoxCastello.classList.remove('order-1');
+          scoreBoxCastello.classList.add('order-2');
+
+          teamOspiteLabel.textContent = 'Squadra Casa (Avversario)';
+          teamCastelloLabel.textContent = 'Squadra Ospite (Castello)';
+          scoreOspiteLabel.textContent = 'Gol Avversario (Casa)';
+          scoreCastelloLabel.textContent = 'Gol Castello (Trasferta)';
         }
         renderCanvas();
       }
@@ -2110,6 +2219,7 @@
         state.zoom = 1.0;
         state.panX = 0;
         state.panY = 0;
+        state.isCropLocked = true;
         state.castelloIsHome = true;
         state.scorers = [];
         state.gradientIntensity = 130;
@@ -2125,9 +2235,9 @@
         stagioneInput.value = 'STAGIONE 2026/27';
         hashtagInput.value = '#siAMObiancoverdi';
         scoreStyleSelect.value = 'outline';
-        castelloTextStyleSelect.value = 'massiccio';
-        syncCastelloStyleChips('massiccio');
-        exportResolutionSelect.value = '1080';
+        castelloTextStyleSelect.value = 'leggero';
+        syncCastelloStyleChips('leggero');
+        exportResolutionSelect.value = '2160';
 
         Object.values(subTreePanels).forEach(p => p.classList.add('hidden'));
         macroButtons.forEach(b => {
@@ -2140,6 +2250,7 @@
         photoStatusBadge.className = 'text-[10px] font-semibold px-2 py-0.5 rounded bg-[#004B20] text-emerald-300';
 
         syncCropInputsAndLabels();
+        updateCropLockUI();
         updateHomeAwayUI();
         renderScorersTags();
         renderCanvas();
@@ -2238,6 +2349,8 @@
       // ============================================================================
       function initApp() {
         syncCropInputsAndLabels();
+        updateCropLockUI();
+        updateHomeAwayUI();
         renderScorersTags();
         initLogo();
         renderCanvas();
