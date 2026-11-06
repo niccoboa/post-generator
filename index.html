@@ -456,7 +456,7 @@
                 <label for="castelloTextStyleSelect" class="field-label !mb-0 !text-[#25AE3F]">
                   Spessore / Risalto "ATLETICA CASTELLO"
                 </label>
-                <span class="text-[10px] font-bold text-gray-400">Colore #0B7828</span>
+                <span class="text-[10px] font-bold text-gray-400">Preset 1-6</span>
               </div>
 
               <select id="castelloTextStyleSelect" class="sport-input !py-2 !text-xs !border-[#25AE3F]/60 font-bold">
@@ -477,6 +477,26 @@
                 <button type="button" class="preset-chip castello-style-chip" data-style="stacco_3d">4. Ombra 3D</button>
                 <button type="button" class="preset-chip castello-style-chip" data-style="doppio_bordo">5. Profilo Scuro</button>
                 <button type="button" class="preset-chip castello-style-chip active" data-style="leggero">6. Leggero</button>
+              </div>
+
+              <!-- Selettore Colore Verde per ATLETICA CASTELLO e Numero Gol -->
+              <div class="pt-2 border-t border-[#25AE3F]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div class="flex items-center justify-between sm:justify-start gap-2">
+                  <span class="text-[10px] font-bold text-gray-300 uppercase">VERDE SQUADRA & GOL</span>
+                  <span id="castelloGreenHexLabel" class="text-[10px] font-mono font-extrabold text-[#25AE3F] bg-[#021209] px-1.5 py-0.5 rounded border border-[#25AE3F]/30">#086420</span>
+                </div>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #0B7828;" data-color="#0B7828" title="1. Chiaro (#0B7828)"></button>
+                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border-2 border-white shadow-md transition transform hover:scale-110 ring-2 ring-[#25AE3F]" style="background-color: #086420;" data-color="#086420" title="2. Medio Scuro - Predefinito (#086420)"></button>
+                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #065219;" data-color="#065219" title="3. Scuro (#065219)"></button>
+                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #044013;" data-color="#044013" title="4. Molto Scuro (#044013)"></button>
+                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #02300D;" data-color="#02300D" title="5. Verde Foresta (#02300D)"></button>
+                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #012008;" data-color="#012008" title="6. Extra Scuro (#012008)"></button>
+                  <label class="relative inline-flex items-center justify-center w-6 h-6 rounded-full border border-dashed border-white/60 bg-[#021209] cursor-pointer hover:border-[#25AE3F] transition" title="Scegli tonalità libera">
+                    <span class="text-[10px] leading-none pointer-events-none">🎨</span>
+                    <input type="color" id="customCastelloGreenPicker" value="#086420" class="sr-only" />
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -621,26 +641,6 @@
                 </div>
                 <input type="range" id="gradientIntensityInput" min="0" max="200" value="130" step="5" disabled />
               </div>
-
-              <!-- Selettore Colore Verde per ATLETICA CASTELLO e Numero Gol -->
-              <div class="bg-[#021209]/90 border border-[#25AE3F]/20 rounded-lg px-3 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div class="flex items-center justify-between sm:justify-start gap-2">
-                  <span class="text-[10px] font-bold text-gray-300 uppercase">VERDE SQUADRA & GOL</span>
-                  <span id="castelloGreenHexLabel" class="text-[10px] font-mono font-extrabold text-[#25AE3F] bg-[#041B0F] px-1.5 py-0.5 rounded border border-[#25AE3F]/30">#0B7828</span>
-                </div>
-                <div class="flex items-center gap-1.5 flex-wrap">
-                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border-2 border-white shadow-md transition transform hover:scale-110 ring-2 ring-[#25AE3F]" style="background-color: #0B7828;" data-color="#0B7828" title="1. Attuale (#0B7828)" disabled></button>
-                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #086420;" data-color="#086420" title="2. Medio Scuro (#086420)" disabled></button>
-                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #065219;" data-color="#065219" title="3. Scuro (#065219)" disabled></button>
-                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #044013;" data-color="#044013" title="4. Molto Scuro (#044013)" disabled></button>
-                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #02300D;" data-color="#02300D" title="5. Verde Foresta (#02300D)" disabled></button>
-                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #012008;" data-color="#012008" title="6. Extra Scuro (#012008)" disabled></button>
-                  <label class="relative inline-flex items-center justify-center w-6 h-6 rounded-full border border-dashed border-white/60 bg-[#041B0F] cursor-pointer hover:border-[#25AE3F] transition" title="Scegli tonalità libera">
-                    <span class="text-[10px] leading-none pointer-events-none">🎨</span>
-                    <input type="color" id="customCastelloGreenPicker" value="#0B7828" class="sr-only" disabled />
-                  </label>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -761,7 +761,7 @@
       const COLORS = {
         greenMain: '#0B8731',          // Verde principale societario
         greenBright: '#0D8A34',        // Verde per Tipo Gara, 2026/27 e AMO
-        castelloTeamGreen: '#0B7828',  // Verde per la scritta ATLETICA CASTELLO e numero gol Castello
+        castelloTeamGreen: '#086420',  // Verde predefinito medio scuro per ATLETICA CASTELLO e numero gol Castello
         greenDarkest: '#041B0F',       // Verde scurissimo (header 0% trasparenza, tappetino e footer)
         greenSecondary: '#004B20',     // Verde istituzionale secondario
         white: '#FFFFFF',              // Bianco puro
@@ -1752,8 +1752,6 @@
         panXInput.disabled = locked;
         panYInput.disabled = locked;
         gradientIntensityInput.disabled = locked;
-        customCastelloGreenPicker.disabled = locked;
-        castelloGreenSwatches.forEach(btn => { btn.disabled = locked; });
         resetCropBtn.disabled = locked;
 
         if (locked) {
@@ -2172,13 +2170,11 @@
 
       castelloGreenSwatches.forEach((btn) => {
         btn.addEventListener('click', () => {
-          if (state.isCropLocked) return;
           applyCastelloGreenColor(btn.getAttribute('data-color'));
         });
       });
 
       customCastelloGreenPicker.addEventListener('input', () => {
-        if (state.isCropLocked) return;
         applyCastelloGreenColor(customCastelloGreenPicker.value);
       });
 
@@ -2280,7 +2276,7 @@
         state.gradientIntensity = 130;
         gradientIntensityInput.value = 130;
         gradIntensityLabel.textContent = '130%';
-        applyCastelloGreenColor('#0B7828');
+        applyCastelloGreenColor('#086420');
 
         categoriaInput.value = '';
         tipoGaraInput.value = 'CAMPIONATO';
