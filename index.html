@@ -483,18 +483,18 @@
               <div class="pt-2 border-t border-[#25AE3F]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div class="flex items-center justify-between sm:justify-start gap-2">
                   <span class="text-[10px] font-bold text-gray-300 uppercase">VERDE SQUADRA & GOL</span>
-                  <span id="castelloGreenHexLabel" class="text-[10px] font-mono font-extrabold text-[#25AE3F] bg-[#021209] px-1.5 py-0.5 rounded border border-[#25AE3F]/30">#086420</span>
+                  <span id="castelloGreenHexLabel" class="text-[10px] font-mono font-extrabold text-[#25AE3F] bg-[#021209] px-1.5 py-0.5 rounded border border-[#25AE3F]/30">#0B7828</span>
                 </div>
                 <div class="flex items-center gap-1.5 flex-wrap">
-                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #0B7828;" data-color="#0B7828" title="1. Chiaro (#0B7828)"></button>
-                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border-2 border-white shadow-md transition transform hover:scale-110 ring-2 ring-[#25AE3F]" style="background-color: #086420;" data-color="#086420" title="2. Medio Scuro - Predefinito (#086420)"></button>
+                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border-2 border-white shadow-md transition transform hover:scale-110 ring-2 ring-[#25AE3F]" style="background-color: #0B7828;" data-color="#0B7828" title="1. Chiaro - Predefinito (#0B7828)"></button>
+                  <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #086420;" data-color="#086420" title="2. Medio Scuro (#086420)"></button>
                   <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #065219;" data-color="#065219" title="3. Scuro (#065219)"></button>
                   <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #044013;" data-color="#044013" title="4. Molto Scuro (#044013)"></button>
                   <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #02300D;" data-color="#02300D" title="5. Verde Foresta (#02300D)"></button>
                   <button type="button" class="castello-green-swatch w-6 h-6 rounded-full border border-white/60 shadow-md transition transform hover:scale-110" style="background-color: #012008;" data-color="#012008" title="6. Extra Scuro (#012008)"></button>
                   <label class="relative inline-flex items-center justify-center w-6 h-6 rounded-full border border-dashed border-white/60 bg-[#021209] cursor-pointer hover:border-[#25AE3F] transition" title="Scegli tonalità libera">
                     <span class="text-[10px] leading-none pointer-events-none">🎨</span>
-                    <input type="color" id="customCastelloGreenPicker" value="#086420" class="sr-only" />
+                    <input type="color" id="customCastelloGreenPicker" value="#0B7828" class="sr-only" />
                   </label>
                 </div>
               </div>
@@ -523,8 +523,8 @@
               <div>
                 <label for="fontPresetSelect" class="field-label">Carattere Grafica (Preset)</label>
                 <select id="fontPresetSelect" class="sport-input !py-2 !text-xs">
-                  <option value="roboto" selected>Roboto Condensed (Squadrato Deciso)</option>
-                  <option value="fira">Fira Sans Condensed (Sportivo Nitido)</option>
+                  <option value="fira" selected>Avenir Next / Fira Condensed (Tondo & Pieno - Default)</option>
+                  <option value="roboto">Roboto Condensed (Squadrato Deciso)</option>
                   <option value="saira">Saira Condensed (Tecnico Squadrato)</option>
                   <option value="asap">Asap Condensed (Morbido)</option>
                 </select>
@@ -535,7 +535,7 @@
                   <span>🔤 Carica .ttf/.otf/.ttc</span>
                   <input id="customFontInput" type="file" accept=".ttf,.otf,.ttc,.woff,.woff2" class="hidden" />
                 </label>
-                <div id="fontStatusText" class="text-[10px] text-gray-400 mt-0.5">Attivo: Roboto Condensed</div>
+                <div id="fontStatusText" class="text-[10px] text-gray-400 mt-0.5">Attivo: Avenir Next / Fira Condensed</div>
               </div>
             </div>
 
@@ -761,7 +761,7 @@
       const COLORS = {
         greenMain: '#0B8731',          // Verde principale societario
         greenBright: '#0D8A34',        // Verde per Tipo Gara, 2026/27 e AMO
-        castelloTeamGreen: '#086420',  // Verde predefinito medio scuro per ATLETICA CASTELLO e numero gol Castello
+        castelloTeamGreen: '#0B7828',  // Verde predefinito chiaro per ATLETICA CASTELLO e numero gol Castello
         greenDarkest: '#041B0F',       // Verde scurissimo (header 0% trasparenza, tappetino e footer)
         greenSecondary: '#004B20',     // Verde istituzionale secondario
         white: '#FFFFFF',              // Bianco puro
@@ -769,14 +769,14 @@
       };
 
       const FONT_PRESETS = {
-        roboto: `"Avenir Next Condensed", "Roboto Condensed", "Fira Sans Condensed", "Barlow Condensed", sans-serif`,
-        fira: `"Avenir Next Condensed", "Fira Sans Condensed", "Roboto Condensed", sans-serif`,
-        saira: `"Avenir Next Condensed", "Saira Condensed", "Roboto Condensed", sans-serif`,
-        asap: `"Avenir Next Condensed", "Asap Condensed", "Roboto Condensed", sans-serif`
+        fira: `"CastelloCustomFont", "Avenir Next Condensed", "AvenirNextCondensed-HeavyItalic", "Fira Sans Condensed", "Roboto Condensed", sans-serif`,
+        roboto: `"CastelloCustomFont", "Avenir Next Condensed", "Roboto Condensed", "Fira Sans Condensed", "Barlow Condensed", sans-serif`,
+        saira: `"CastelloCustomFont", "Avenir Next Condensed", "Saira Condensed", "Roboto Condensed", sans-serif`,
+        asap: `"CastelloCustomFont", "Avenir Next Condensed", "Asap Condensed", "Roboto Condensed", sans-serif`
       };
 
-      let TEAM_RESULT_FONT_STACK = FONT_PRESETS.roboto;
-      let CONDENSED_FONT_STACK = FONT_PRESETS.roboto;
+      let TEAM_RESULT_FONT_STACK = FONT_PRESETS.fira;
+      let CONDENSED_FONT_STACK = FONT_PRESETS.fira;
 
       // ============================================================================
       // PRESET DI SPESSORE E RISALTO PER LA SCRITTA "ATLETICA CASTELLO"
@@ -2276,7 +2276,7 @@
         state.gradientIntensity = 130;
         gradientIntensityInput.value = 130;
         gradIntensityLabel.textContent = '130%';
-        applyCastelloGreenColor('#086420');
+        applyCastelloGreenColor('#0B7828');
 
         categoriaInput.value = '';
         tipoGaraInput.value = 'CAMPIONATO';
@@ -2399,12 +2399,40 @@
       // ============================================================================
       // 12. AVVIO APPLICAZIONE
       // ============================================================================
+      async function tryAutoLoadExternalFont() {
+        const fontCandidates = [
+          'AvenirNextCondensed.ttc',
+          'Avenir Next Condensed.ttc',
+          'AvenirNextCondensed-BoldItalic.ttf',
+          'avenir-next-condensed.ttf',
+          'avenir-next-condensed.woff2'
+        ];
+        for (const fileUrl of fontCandidates) {
+          try {
+            const resp = await fetch(fileUrl);
+            if (resp.ok) {
+              const buffer = await resp.arrayBuffer();
+              const loadedFont = new FontFace('CastelloCustomFont', buffer);
+              await loadedFont.load();
+              document.fonts.add(loadedFont);
+              fontStatusText.textContent = `Attivo: Avenir Next (${fileUrl})`;
+              fontStatusText.className = 'text-[10px] text-[#25AE3F] font-bold mt-0.5';
+              renderCanvas();
+              return;
+            }
+          } catch (e) {
+            // File font esterno non presente, usa il fallback
+          }
+        }
+      }
+
       function initApp() {
         syncCropInputsAndLabels();
         updateCropLockUI();
         updateHomeAwayUI();
         renderScorersTags();
         initLogo();
+        tryAutoLoadExternalFont();
         renderCanvas();
 
         if (document.fonts && document.fonts.ready) {
